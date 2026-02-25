@@ -97,7 +97,6 @@ public class CardView : MonoBehaviour,
     }
 
     // IPointer
-
     public void OnPointerClick(PointerEventData eventData)
     {
         OnCardClicked?.Invoke(this);
@@ -116,7 +115,6 @@ public class CardView : MonoBehaviour,
     }
 
     // Public API
-
     public void SetSelected(bool selected)
     {
         IsSelected = selected;

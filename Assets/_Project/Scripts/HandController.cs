@@ -16,7 +16,7 @@ public class HandController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject _cardPrefab;   // prefab с картой
-    [SerializeField] private RectTransform _handArea;    // контейнер руки
+    [SerializeField] private RectTransform _handArea;  // контейнер руки
 
     [Header("Layout")]
     [SerializeField] private float _cardSpacing = 110f;
