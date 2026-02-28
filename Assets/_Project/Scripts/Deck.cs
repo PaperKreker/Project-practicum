@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-// Стандартная колода 52 карты.
-// Управляет перемешиванием и раздачей.
+// Standard 52-card deck with shuffle and draw mechanics
 public class Deck
 {
     private List<Card> _cards = new List<Card>();
@@ -14,7 +13,7 @@ public class Deck
         Reset();
     }
 
-    // Создаёт и перемешивает полную колоду
+    // Creates a standard 52-card deck and shuffles it
     public void Reset()
     {
         _cards.Clear();
@@ -30,7 +29,7 @@ public class Deck
         Shuffle();
     }
 
-    // Перемешивает колоду алгоритмом Fisher-Yates
+    // Shuffles the deck using Fisher-Yates algorithm
     public void Shuffle()
     {
         for (int i = _cards.Count - 1; i > 0; i--)
@@ -40,7 +39,7 @@ public class Deck
         }
     }
 
-    // Берёт одну карту с верха колоды.
+    // Draws a single card from the top of the deck
     public Card Draw()
     {
         if (_cards.Count == 0) return null;
@@ -50,7 +49,7 @@ public class Deck
         return card;
     }
 
-    // Берёт несколько карт за раз
+    // Draws multiple cards
     public List<Card> Draw(int count)
     {
         List<Card> drawn = new List<Card>();
@@ -63,7 +62,7 @@ public class Deck
         return drawn;
     }
 
-    // Применяет шанс крита ко всем взятым картам
+    // Applies critical chance to a list of cards
     public void ApplyCriticalChance(List<Card> cards, float critChance)
     {
         foreach (var card in cards)

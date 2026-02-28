@@ -1,15 +1,15 @@
 using UnityEngine;
 
-// Масть карты
+// Card suit
 public enum Suit
 {
-    Spades,   // Пики
-    Hearts,   // Червы
-    Diamonds, // Бубны
-    Clubs     // Трефы
+    Spades,
+    Hearts,
+    Diamonds,
+    Clubs
 }
 
-// Ранг карты
+// Card rank
 public enum Rank
 {
     Two = 2,
@@ -27,7 +27,7 @@ public enum Rank
     Ace = 14
 }
 
-// Данные одной карты
+// Card class representing a single playing card
 [System.Serializable]
 public class Card
 {
@@ -35,7 +35,7 @@ public class Card
     public Rank Rank;
     public bool IsCritical;
 
-    // Номинальная стоимость карты для расчёта урона.
+    // Card value
     public int NominalValue
     {
         get

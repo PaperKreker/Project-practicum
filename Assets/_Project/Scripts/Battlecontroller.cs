@@ -37,7 +37,7 @@ public class BattleController : MonoBehaviour
     [Header("Player Stats")]
     [SerializeField] private int _playerMaxHp = 100;
 
-    // Состояние
+    // State
     private int _attackCoins;
     private int _discardsLeft;
     private int _enemyHp;
@@ -49,15 +49,21 @@ public class BattleController : MonoBehaviour
     {
         _attackButton.onClick.AddListener(OnAttack);
         _discardButton.onClick.AddListener(OnDiscard);
+
+        // Update combo preview and button states only when selection changes
+        _hand.OnSelectionChanged += UpdateComboPreview;
+        _hand.OnSelectionChanged += UpdateButtonStates;
+    }
+
+    private void OnDestroy()
+    {
+        _hand.OnSelectionChanged -= UpdateComboPreview;
+        _hand.OnSelectionChanged -= UpdateButtonStates;
     }
 
     private void Update()
     {
-        // Обновляем превью комбо каждый кадр
-        UpdateComboPreview();
-        UpdateButtonStates();
-
-        // Пробел = атака
+        // Space for attack
         if (UnityEngine.InputSystem.Keyboard.current?.spaceKey.wasPressedThisFrame == true)
             OnAttack();
     }
@@ -76,7 +82,7 @@ public class BattleController : MonoBehaviour
         RefreshAllUI();
     }
 
-    // Атака
+    // Attack enemy
     private void OnAttack()
     {
         List<Card> selected = _hand.GetSelectedCards();
@@ -94,14 +100,14 @@ public class BattleController : MonoBehaviour
         _hand.DiscardSelected();
         _hand.DrawUpToMax();
 
-        // Враг отвечает когда Attack Coin = 0
+        // Attack player when attack coin turns to 0
         if (_attackCoins <= 0)
             EnemyAttack();
 
         RefreshAllUI();
     }
 
-    // Сброс
+    // Discard selected cards
     private void OnDiscard()
     {
         if (_discardsLeft <= 0) return;
@@ -117,7 +123,7 @@ public class BattleController : MonoBehaviour
         RefreshAllUI();
     }
 
-    // Ответная атака врага
+    // Enemy attacks player
     private void EnemyAttack()
     {
         if (_enemyHp <= 0) return;
@@ -173,14 +179,14 @@ public class BattleController : MonoBehaviour
 
     private void RefreshAllUI()
     {
-        if (_attackCoinText) _attackCoinText.text = $"Атаки: {_attackCoins}";
-        if (_discardsLeftText) _discardsLeftText.text = $"Сбросы: {_discardsLeft}/{_maxDiscards}";
-        if (_enemyHpText) _enemyHpText.text = $"HP: {Mathf.Max(0, _enemyHp)}/{_enemyMaxHp}";
-        if (_enemyDamageText) _enemyDamageText.text = $"Урон: {_enemyDamage}";
-        if (_playerHpText) _playerHpText.text = $"HP: {Mathf.Max(0, _playerHp)}/{_playerMaxHp}";
+        if (_attackCoinText) _attackCoinText.text = $"{_attackCoins}";
+        if (_discardsLeftText) _discardsLeftText.text = $"{_discardsLeft}/{_maxDiscards}";
+        if (_enemyHpText) _enemyHpText.text = $"{Mathf.Max(0, _enemyHp)}/{_enemyMaxHp}";
+        if (_enemyDamageText) _enemyDamageText.text = $"{_enemyDamage}";
+        if (_playerHpText) _playerHpText.text = $"{Mathf.Max(0, _playerHp)}/{_playerMaxHp}";
     }
 
-    // Helpers
+    // Display name for combo types
     private static string ComboDisplayName(ComboType t) => t switch
     {
         ComboType.High => "High",
