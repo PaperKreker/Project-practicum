@@ -14,7 +14,7 @@ public class GameBootstrap : MonoBehaviour
 
         if (_battleController == null)
         {
-            Debug.LogError("GameBootstrap: BattleController не найден!");
+            Debug.LogError("GameBootstrap: BattleController not found!");
             return;
         }
 

@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 using System;
 
-// Визуальное представление карты
+// Visual representation of a card in the player's hand
 public class CardView : MonoBehaviour,
     IPointerClickHandler,
     IPointerEnterHandler,
@@ -28,14 +28,14 @@ public class CardView : MonoBehaviour,
     [SerializeField] private float _hoverLift   = 30f;
     [SerializeField] private float _hoverSpeed  = 8f;
 
-    // Данные
+    // Card fields
     public Card Data { get; private set; }
     public bool IsSelected { get; private set; }
 
-    // Событие — HandController
+    // HandController
     public event Action<CardView> OnCardClicked;
 
-    // Анимация
+    // Animation
     private RectTransform _rect;
     private Vector2       _basePosition;
     private Vector2       _targetPosition;
@@ -48,7 +48,6 @@ public class CardView : MonoBehaviour,
 
     private void Update()
     {
-        // Плавное движение к целевой позиции
         _rect.anchoredPosition = Vector2.Lerp(
             _rect.anchoredPosition,
             _targetPosition,
@@ -56,7 +55,7 @@ public class CardView : MonoBehaviour,
         );
     }
 
-    // Инициализирует карту данными и позицией в руке
+    // Initialize the card view with card data and position
     public void Setup(Card card, Vector2 basePosition)
     {
         Data          = card;
@@ -70,7 +69,6 @@ public class CardView : MonoBehaviour,
         RefreshVisuals();
     }
 
-    // Устанавливает базовую позицию
     public void SetBasePosition(Vector2 pos)
     {
         _basePosition = pos;
@@ -114,14 +112,13 @@ public class CardView : MonoBehaviour,
         _targetPosition = _basePosition + (IsSelected ? Vector2.up * (_hoverLift * 0.5f) : Vector2.zero);
     }
 
-    // Public API
     public void SetSelected(bool selected)
     {
         IsSelected = selected;
         _selectedOverlay.SetActive(selected);
         _background.color = selected ? _selectedBg : _normalBg;
 
-        // Выбранная карта остаётся чуть приподнятой
+        // Selected card lifts slightly
         if (!_isHovered)
             _targetPosition = _basePosition + (selected ? Vector2.up * (_hoverLift * 0.5f) : Vector2.zero);
     }

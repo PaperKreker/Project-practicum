@@ -1,22 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 /* 
-Управляет рукой игрока:
-- хранит до 8 карт
-- раскладывает их веером/линией
-- обрабатывает выбор (макс 5)
-- сортировка по Q (масть / ранг)
-- добор карт из Deck 
+Manages the player's hand:
+- holds up to 8 cards
+- lays them out as a fan
+- handles selection (max 5)
+- sorting toggle with Q (suit / rank)
+- draws cards from the Deck
 */
 public class HandController : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject _cardPrefab;   // prefab с картой
-    [SerializeField] private RectTransform _handArea;  // контейнер руки
+    [SerializeField] private GameObject _cardPrefab;   // card prefab
+    [SerializeField] private RectTransform _handArea;  // hand container
 
     [Header("Layout")]
     [SerializeField] private float _cardSpacing = 110f;
@@ -27,12 +28,15 @@ public class HandController : MonoBehaviour
     [SerializeField] private int _maxHandSize = 8;
     [SerializeField] private int _maxSelected = 5;
 
-    // Состояние
+    // State
     private List<CardView> _hand = new List<CardView>();
     private List<CardView> _selected = new List<CardView>();
     private Deck _deck;
 
     private bool _sortBySuit = true;
+
+    // Fired whenever the selection changes
+    public event Action OnSelectionChanged;
 
     // Unity
     private void Update()
@@ -41,14 +45,14 @@ public class HandController : MonoBehaviour
             ToggleSort();
     }
 
-    // Инициализация с колодой и начальной раздачей
+    // Initialize with a deck and initial draw
     public void Init(Deck deck)
     {
         _deck = deck;
         DrawUpToMax();
     }
 
-    // Добирает карты до максимального размера руки
+    // Draws cards up to the maximum hand size
     public void DrawUpToMax()
     {
         int needed = _maxHandSize - _hand.Count;
@@ -61,13 +65,13 @@ public class HandController : MonoBehaviour
         LayoutHand();
     }
 
-    // Возвращает список выбранных карт
+    // Returns the list of selected cards
     public List<Card> GetSelectedCards()
     {
         return _selected.Select(v => v.Data).ToList();
     }
 
-    // Убирает выбранные карты из руки
+    // Removes selected cards from the hand
     public void DiscardSelected()
     {
         foreach (var view in _selected)
@@ -77,9 +81,10 @@ public class HandController : MonoBehaviour
         }
         _selected.Clear();
         LayoutHand();
+        OnSelectionChanged?.Invoke();
     }
 
-    // Убирает переданные карты
+    // Removes the provided cards
     public void DiscardCards(List<CardView> cards)
     {
         foreach (var view in cards)
@@ -89,13 +94,15 @@ public class HandController : MonoBehaviour
             Destroy(view.gameObject);
         }
         LayoutHand();
+        OnSelectionChanged?.Invoke();
     }
 
-    // Снимает выделение со всех карт
+    // Clears selection from all cards
     public void ClearSelection()
     {
         foreach (var v in _selected) v.SetSelected(false);
         _selected.Clear();
+        OnSelectionChanged?.Invoke();
     }
 
     // Internal
@@ -114,7 +121,7 @@ public class HandController : MonoBehaviour
     {
         if (view.IsSelected)
         {
-            // Снять выделение
+            // Deselect
             view.SetSelected(false);
             _selected.Remove(view);
         }
@@ -125,9 +132,11 @@ public class HandController : MonoBehaviour
             view.SetSelected(true);
             _selected.Add(view);
         }
+
+        OnSelectionChanged?.Invoke();
     }
 
-    // Раскладывает карты веером/линией с центрированием
+    // Layout cards as a fan/line with centering
     private void LayoutHand()
     {
         int count = _hand.Count;
