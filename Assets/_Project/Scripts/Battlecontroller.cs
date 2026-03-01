@@ -18,11 +18,13 @@ public class BattleController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _attackCoinText;
     [SerializeField] private TextMeshProUGUI _discardsLeftText;
 
-    [Header("Enemy (заглушка)")]
+    [Header("UI — Enemy")]
+    [SerializeField] private TextMeshProUGUI _enemyNameText;
     [SerializeField] private TextMeshProUGUI _enemyHpText;
     [SerializeField] private TextMeshProUGUI _enemyDamageText;
+    [SerializeField] private TextMeshProUGUI _enemyEffectText;
 
-    [Header("Player")]
+    [Header("UI — Player")]
     [SerializeField] private TextMeshProUGUI _playerHpText;
 
     [Header("Rules")]
@@ -30,12 +32,13 @@ public class BattleController : MonoBehaviour
     [SerializeField] private int _maxDiscards = 3;
     [SerializeField] private int _maxDiscardCards = 5;
 
-    [Header("Enemy Stats")]
-    [SerializeField] private int _enemyMaxHp = 100;
-    [SerializeField] private int _enemyDamage = 15;
-
     [Header("Player Stats")]
     [SerializeField] private int _playerMaxHp = 100;
+
+    // Current enemy
+    private EnemyData _enemyData;
+    private EnemyEffect _enemyEffect;
+    private BattleContext _ctx;
 
     // State
     private int _attackCoins;
@@ -50,7 +53,6 @@ public class BattleController : MonoBehaviour
         _attackButton.onClick.AddListener(OnAttack);
         _discardButton.onClick.AddListener(OnDiscard);
 
-        // Update combo preview and button states only when selection changes
         _hand.OnSelectionChanged += UpdateComboPreview;
         _hand.OnSelectionChanged += UpdateButtonStates;
     }
@@ -69,33 +71,58 @@ public class BattleController : MonoBehaviour
     }
 
     // Public Init
-    public void StartBattle(Deck deck)
+    public void StartBattle(Deck deck, EnemyData enemy)
     {
         _deck = deck;
+        _enemyData = enemy;
 
-        _enemyHp = _enemyMaxHp;
         _playerHp = _playerMaxHp;
-        _attackCoins = _attackCoinsPerRound;
+        _enemyHp = enemy.MaxHp;
+        _attackCoins = enemy.AttackCoinsPerRound;
         _discardsLeft = _maxDiscards;
+
+        _ctx = new BattleContext
+        {
+            Hand = _hand,
+            PlayerHp = _playerHp,
+            EnemyDamage = enemy.AttackDamage,
+            Discards = _discardsLeft,
+            RequestUIRefresh = RefreshAllUI,
+        };
+
+        _enemyEffect = enemy.CreateEffect();
+        _enemyEffect.OnBattleStart(_ctx);
+        SyncFromContext();
 
         _hand.Init(_deck);
         RefreshAllUI();
+        RefreshEnemyUI();
+        UpdateComboPreview();
+        UpdateButtonStates();
     }
 
     // Attack enemy
     private void OnAttack()
     {
         List<Card> selected = _hand.GetSelectedCards();
-        if (selected.Count == 0) return;
-        if (_attackCoins <= 0) return;
+        if (selected.Count == 0 || _attackCoins <= 0) return;
 
         ComboResult result = ComboEvaluator.Evaluate(selected);
         int damage = Mathf.RoundToInt(result.TotalDamage);
+
+        // Fox: remove chip damage from blocked suit cards
+        if (_ctx.BlockedDamageSuit.HasValue)
+            damage = ApplyBlockedSuit(selected, damage);
+
+        // Let the enemy effect modify damage (Scarab, Spider, etc.)
+        damage = Mathf.Max(0, _enemyEffect.ModifyPlayerDamage(_ctx, result, damage));
 
         _enemyHp -= damage;
         _attackCoins -= 1;
 
         Debug.Log($"[Attack] {result} → Enemy HP: {_enemyHp}");
+
+        _enemyEffect.OnPlayerAttack(_ctx, result);
 
         _hand.DiscardSelected();
         _hand.DrawUpToMax();
@@ -104,7 +131,11 @@ public class BattleController : MonoBehaviour
         if (_attackCoins <= 0)
             EnemyAttack();
 
+        SyncFromContext();
         RefreshAllUI();
+
+        if (_enemyHp <= 0)
+            OnVictory();
     }
 
     // Discard selected cards
@@ -115,11 +146,16 @@ public class BattleController : MonoBehaviour
         List<Card> selected = _hand.GetSelectedCards();
         if (selected.Count == 0 || selected.Count > _maxDiscardCards) return;
 
+        int cardCount = selected.Count;
         _discardsLeft--;
+        _ctx.Discards = _discardsLeft;
 
         _hand.DiscardSelected();
         _hand.DrawUpToMax();
 
+        _enemyEffect.OnPlayerDiscard(_ctx, cardCount);
+
+        SyncFromContext();
         RefreshAllUI();
     }
 
@@ -128,19 +164,46 @@ public class BattleController : MonoBehaviour
     {
         if (_enemyHp <= 0) return;
 
-        _playerHp -= _enemyDamage;
-        _attackCoins = _attackCoinsPerRound;
+        _ctx.PlayerHp -= _ctx.EnemyDamage;
+        _attackCoins = _enemyData.AttackCoinsPerRound;
 
-        Debug.Log($"[Enemy Attack] -{_enemyDamage} → Player HP: {_playerHp}");
+        Debug.Log($"[Enemy Attack] -{_ctx.EnemyDamage} → Player HP: {_ctx.PlayerHp}");
+
+        _enemyEffect.OnEnemyAttack(_ctx);
+        SyncFromContext();
 
         if (_playerHp <= 0)
-            Debug.Log("[Game Over] Player died!");
+            OnGameOver();
+    }
 
-        if (_enemyHp <= 0)
-        {
-            Debug.Log("[Victory] Enemy defeated!");
-            _discardsLeft = _maxDiscards;
-        }
+    private void OnVictory()
+    {
+        _enemyEffect.OnBattleEnd(_ctx);
+        Debug.Log($"[Victory] {_enemyData.EnemyName} defeated! +{_enemyData.GoldReward} Gold");
+        // TODO: award gold, advance map
+    }
+
+    private void OnGameOver()
+    {
+        Debug.Log("[Game Over] Player died!");
+        // TODO: show game over screen
+    }
+
+    // Remove chip damage from cards in the blocked suit
+    private int ApplyBlockedSuit(List<Card> cards, int baseDamage)
+    {
+        int blockedChips = 0;
+        foreach (var card in cards)
+            if (card.Suit == _ctx.BlockedDamageSuit.Value)
+                blockedChips += card.NominalValue;
+        return Mathf.Max(0, baseDamage - blockedChips);
+    }
+
+    // Write context values back to local state after effects may have changed them
+    private void SyncFromContext()
+    {
+        _playerHp = _ctx.PlayerHp;
+        _discardsLeft = _ctx.Discards;
     }
 
     // UI
@@ -181,9 +244,16 @@ public class BattleController : MonoBehaviour
     {
         if (_attackCoinText) _attackCoinText.text = $"{_attackCoins}";
         if (_discardsLeftText) _discardsLeftText.text = $"{_discardsLeft}/{_maxDiscards}";
-        if (_enemyHpText) _enemyHpText.text = $"{Mathf.Max(0, _enemyHp)}/{_enemyMaxHp}";
-        if (_enemyDamageText) _enemyDamageText.text = $"{_enemyDamage}";
+        if (_enemyHpText) _enemyHpText.text = $"{Mathf.Max(0, _enemyHp)}/{_enemyData?.MaxHp}";
+        if (_enemyDamageText) _enemyDamageText.text = $"{_ctx?.EnemyDamage}";
         if (_playerHpText) _playerHpText.text = $"{Mathf.Max(0, _playerHp)}/{_playerMaxHp}";
+    }
+
+    private void RefreshEnemyUI()
+    {
+        if (_enemyData == null) return;
+        if (_enemyNameText) _enemyNameText.text = _enemyData.EnemyName;
+        if (_enemyEffectText) _enemyEffectText.text = _enemyEffect?.Description;
     }
 
     // Display name for combo types

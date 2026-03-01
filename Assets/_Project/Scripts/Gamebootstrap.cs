@@ -19,6 +19,6 @@ public class GameBootstrap : MonoBehaviour
         }
 
         _deck = new Deck();
-        _battleController.StartBattle(_deck);
+        _battleController.StartBattle(_deck, EnemyDatabase.Raven); // swap enemy here to test others
     }
 }

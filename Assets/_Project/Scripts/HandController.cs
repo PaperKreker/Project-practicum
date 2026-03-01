@@ -17,7 +17,7 @@ public class HandController : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject _cardPrefab;   // card prefab
-    [SerializeField] private RectTransform _handArea;  // hand container
+    [SerializeField] private RectTransform _handArea;     // hand container
 
     [Header("Layout")]
     [SerializeField] private float _cardSpacing = 110f;
@@ -32,11 +32,13 @@ public class HandController : MonoBehaviour
     private List<CardView> _hand = new List<CardView>();
     private List<CardView> _selected = new List<CardView>();
     private Deck _deck;
-
     private bool _sortBySuit = true;
 
-    // Fired whenever the selection changes
+    // Fired when the selection changes
     public event Action OnSelectionChanged;
+
+    // Fired when a card is drawn — used by FaceDownCards effect
+    public event Action<CardView> OnCardDrawn;
 
     // Unity
     private void Update()
@@ -105,6 +107,14 @@ public class HandController : MonoBehaviour
         OnSelectionChanged?.Invoke();
     }
 
+    // Locks a random card in hand so it cannot be selected or played
+    public void PetrifyRandom()
+    {
+        var available = _hand.Where(v => !v.IsPetrified).ToList();
+        if (available.Count == 0) return;
+        available[UnityEngine.Random.Range(0, available.Count)].SetPetrified(true);
+    }
+
     // Internal
     private void SpawnCard(Card card)
     {
@@ -115,10 +125,13 @@ public class HandController : MonoBehaviour
         view.OnCardClicked += HandleCardClicked;
 
         _hand.Add(view);
+        OnCardDrawn?.Invoke(view);
     }
 
     private void HandleCardClicked(CardView view)
     {
+        if (view.IsPetrified) return;
+
         if (view.IsSelected)
         {
             // Deselect
