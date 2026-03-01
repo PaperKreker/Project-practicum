@@ -14,7 +14,7 @@ using System.Linq;
  * Royal Flush - 10, J, Q, K, A of the same suit
  */
 
-// Тип комбинации
+// Combo type
 public enum ComboType
 {
     None,
@@ -36,8 +36,10 @@ public class ComboResult
     public ComboType Type;
     public int BaseDamage;
     public int NominalSum;
-    public int CritCount; 
+    public int CritCount;
     public List<Card> Cards;
+
+    public int CardCount => Cards?.Count ?? 0;
 
     // Total damage considering nominal values and crits.
     public float TotalDamage
@@ -110,7 +112,7 @@ public static class ComboEvaluator
     {
         var groups = cards.GroupBy(c => c.Rank).ToList();
 
-        if (groups.Count == 1) 
+        if (groups.Count == 1)
             return ComboType.Pair;   // Pair
 
         return ComboType.High;       // High Card
@@ -121,7 +123,7 @@ public static class ComboEvaluator
     {
         var groups = cards.GroupBy(c => c.Rank).OrderByDescending(g => g.Count()).ToList();
 
-        if (groups[0].Count() == 3) return ComboType.Set;  // High Card
+        if (groups[0].Count() == 3) return ComboType.Set;  // Three of a Kind
         if (groups[0].Count() == 2) return ComboType.Pair; // Pair
 
         return ComboType.High;
@@ -132,15 +134,15 @@ public static class ComboEvaluator
     {
         var groups = cards.GroupBy(c => c.Rank).OrderByDescending(g => g.Count()).ToList();
 
-        if (groups[0].Count() == 4) 
+        if (groups[0].Count() == 4)
             return ComboType.FOK;           // Four of a Kind
-        if (groups[0].Count() == 3) 
+        if (groups[0].Count() == 3)
             return ComboType.Set;           // Three of a Kind
 
         if (groups.Count == 2 && groups.All(g => g.Count() == 2))
             return ComboType.TwoPair;       // Two Pair
 
-        if (groups[0].Count() == 2) 
+        if (groups[0].Count() == 2)
             return ComboType.Pair;          // Pair
 
         return ComboType.High;              // High Card
@@ -152,31 +154,31 @@ public static class ComboEvaluator
         bool isFlush = cards.All(c => c.Suit == cards[0].Suit);
         bool isStraight = IsStraight(cards);
 
-        if (isFlush && IsRoyal(cards)) 
+        if (isFlush && IsRoyal(cards))
             return ComboType.RoyalFlush;            // Royal Flush
-        if (isFlush && isStraight) 
+        if (isFlush && isStraight)
             return ComboType.StraightFlush;         // Straight Flush
 
         var groups = cards.GroupBy(c => c.Rank).OrderByDescending(g => g.Count()).ToList();
 
-        if (groups[0].Count() == 4) 
+        if (groups[0].Count() == 4)
             return ComboType.FOK;                   // Four of a Kind
 
         if (groups[0].Count() == 3 && groups.Count > 1 && groups[1].Count() == 2)
-            return ComboType.FullHouse;             // Фулл-хаус
+            return ComboType.FullHouse;             // Full House
 
-        if (isFlush) 
+        if (isFlush)
             return ComboType.Flush;                 // Flush
-        if (isStraight) 
+        if (isStraight)
             return ComboType.Straight;              // Straight
 
-        if (groups[0].Count() == 3) 
+        if (groups[0].Count() == 3)
             return ComboType.Set;                   // Three of a Kind
 
         if (groups.Count <= 3 && groups.Count(g => g.Count() == 2) >= 2)
             return ComboType.TwoPair;               // Two Pair
 
-        if (groups[0].Count() == 2) 
+        if (groups[0].Count() == 2)
             return ComboType.Pair;                  // Pair
 
         return ComboType.High;                      // High Card
