@@ -2,38 +2,17 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class BattleController : MonoBehaviour
 {
+    public event Action OnRefreshAll;
+    public event Action OnRefresh;
+
     [Header("References")]
     [SerializeField] private HandController _hand;
-    [SerializeField] private Button _attackButton;
-    [SerializeField] private Button _discardButton;
 
-    [Header("UI — Preview")]
-    [SerializeField] private TextMeshProUGUI _comboNameText;
-    [SerializeField] private TextMeshProUGUI _comboDamageText;
-
-    [Header("UI — Counters")]
-    [SerializeField] private TextMeshProUGUI _attackCoinText;
-    [SerializeField] private TextMeshProUGUI _discardsLeftText;
-
-    [Header("UI — Enemy")]
-    [SerializeField] private TextMeshProUGUI _enemyNameText;
-    [SerializeField] private TextMeshProUGUI _enemyHpText;
-    [SerializeField] private TextMeshProUGUI _enemyDamageText;
-    [SerializeField] private TextMeshProUGUI _enemyEffectText;
-
-    [Header("UI — Player")]
-    [SerializeField] private TextMeshProUGUI _playerHpText;
-
-    [Header("Rules")]
-    [SerializeField] private int _attackCoinsPerRound = 3;
-    [SerializeField] private int _maxDiscards = 3;
-    [SerializeField] private int _maxDiscardCards = 5;
-
-    [Header("Player Stats")]
-    [SerializeField] private int _playerMaxHp = 100;
+    [SerializeField] private BattleConfig _battleConfig;
 
     // Current enemy
     private EnemyData _enemyData;
@@ -48,26 +27,11 @@ public class BattleController : MonoBehaviour
     private Deck _deck;
 
     // Unity
-    private void Start()
-    {
-        _attackButton.onClick.AddListener(OnAttack);
-        _discardButton.onClick.AddListener(OnDiscard);
-
-        _hand.OnSelectionChanged += UpdateComboPreview;
-        _hand.OnSelectionChanged += UpdateButtonStates;
-    }
-
-    private void OnDestroy()
-    {
-        _hand.OnSelectionChanged -= UpdateComboPreview;
-        _hand.OnSelectionChanged -= UpdateButtonStates;
-    }
-
     private void Update()
     {
         // Space for attack
         if (UnityEngine.InputSystem.Keyboard.current?.spaceKey.wasPressedThisFrame == true)
-            OnAttack();
+            Attack();
     }
 
     // Public Init
@@ -76,10 +40,10 @@ public class BattleController : MonoBehaviour
         _deck = deck;
         _enemyData = enemy;
 
-        _playerHp = _playerMaxHp;
+        _playerHp = _battleConfig.PlayerMaxHp;
         _enemyHp = enemy.MaxHp;
         _attackCoins = enemy.AttackCoinsPerRound;
-        _discardsLeft = _maxDiscards;
+        _discardsLeft = _battleConfig.MaxDiscards;
 
         _ctx = new BattleContext
         {
@@ -87,7 +51,7 @@ public class BattleController : MonoBehaviour
             PlayerHp = _playerHp,
             EnemyDamage = enemy.AttackDamage,
             Discards = _discardsLeft,
-            RequestUIRefresh = RefreshAllUI,
+            RequestUIRefresh = OnRefresh,
         };
 
         _enemyEffect = enemy.CreateEffect();
@@ -95,14 +59,12 @@ public class BattleController : MonoBehaviour
         SyncFromContext();
 
         _hand.Init(_deck);
-        RefreshAllUI();
-        RefreshEnemyUI();
-        UpdateComboPreview();
-        UpdateButtonStates();
+
+        OnRefreshAll?.Invoke();
     }
 
     // Attack enemy
-    private void OnAttack()
+    public void Attack()
     {
         List<Card> selected = _hand.GetSelectedCards();
         if (selected.Count == 0 || _attackCoins <= 0) return;
@@ -132,19 +94,19 @@ public class BattleController : MonoBehaviour
             EnemyAttack();
 
         SyncFromContext();
-        RefreshAllUI();
+        OnRefresh?.Invoke();
 
         if (_enemyHp <= 0)
-            OnVictory();
+            Victory();
     }
 
     // Discard selected cards
-    private void OnDiscard()
+    public void Discard()
     {
         if (_discardsLeft <= 0) return;
 
         List<Card> selected = _hand.GetSelectedCards();
-        if (selected.Count == 0 || selected.Count > _maxDiscardCards) return;
+        if (selected.Count == 0 || selected.Count > _battleConfig.MaxDiscardCards) return;
 
         int cardCount = selected.Count;
         _discardsLeft--;
@@ -156,7 +118,7 @@ public class BattleController : MonoBehaviour
         _enemyEffect.OnPlayerDiscard(_ctx, cardCount);
 
         SyncFromContext();
-        RefreshAllUI();
+        OnRefresh?.Invoke();
     }
 
     // Enemy attacks player
@@ -173,17 +135,17 @@ public class BattleController : MonoBehaviour
         SyncFromContext();
 
         if (_playerHp <= 0)
-            OnGameOver();
+            GameOver();
     }
 
-    private void OnVictory()
+    private void Victory()
     {
         _enemyEffect.OnBattleEnd(_ctx);
         Debug.Log($"[Victory] {_enemyData.EnemyName} defeated! +{_enemyData.GoldReward} Gold");
         // TODO: award gold, advance map
     }
 
-    private void OnGameOver()
+    private void GameOver()
     {
         Debug.Log("[Game Over] Player died!");
         // TODO: show game over screen
@@ -206,69 +168,32 @@ public class BattleController : MonoBehaviour
         _discardsLeft = _ctx.Discards;
     }
 
-    // UI
-    private void UpdateComboPreview()
+    public State GetCurrentState()
     {
-        List<Card> selected = _hand.GetSelectedCards();
-
-        if (selected.Count == 0)
+        return new State
         {
-            if (_comboNameText) _comboNameText.text = "—";
-            if (_comboDamageText) _comboDamageText.text = "";
-            return;
-        }
+            enemyData = _enemyData,
+            enemyEffect = _enemyEffect,
+            ctx = _ctx,
 
-        ComboResult result = ComboEvaluator.Evaluate(selected);
-
-        if (_comboNameText)
-            _comboNameText.text = ComboDisplayName(result.Type);
-
-        if (_comboDamageText)
-            _comboDamageText.text = result.Type == ComboType.None
-                ? "NaN"
-                : $"{Mathf.RoundToInt(result.TotalDamage)}";
+            attackCoins = _attackCoins,
+            discardsLeft = _discardsLeft,
+            enemyHp = _enemyHp,
+            playerHp = _playerHp,
+            deck = _deck,
+        };
     }
 
-    private void UpdateButtonStates()
+    public struct State
     {
-        bool hasSelection = _hand.GetSelectedCards().Count > 0;
+        public EnemyData enemyData;
+        public EnemyEffect enemyEffect;
+        public BattleContext ctx;
 
-        if (_attackButton)
-            _attackButton.interactable = hasSelection && _attackCoins > 0;
-
-        if (_discardButton)
-            _discardButton.interactable = hasSelection && _discardsLeft > 0;
+        public int attackCoins;
+        public int discardsLeft;
+        public int enemyHp;
+        public int playerHp;
+        public Deck deck;
     }
-
-    private void RefreshAllUI()
-    {
-        if (_attackCoinText) _attackCoinText.text = $"{_attackCoins}";
-        if (_discardsLeftText) _discardsLeftText.text = $"{_discardsLeft}/{_maxDiscards}";
-        if (_enemyHpText) _enemyHpText.text = $"{Mathf.Max(0, _enemyHp)}/{_enemyData?.MaxHp}";
-        if (_enemyDamageText) _enemyDamageText.text = $"{_ctx?.EnemyDamage}";
-        if (_playerHpText) _playerHpText.text = $"{Mathf.Max(0, _playerHp)}/{_playerMaxHp}";
-    }
-
-    private void RefreshEnemyUI()
-    {
-        if (_enemyData == null) return;
-        if (_enemyNameText) _enemyNameText.text = _enemyData.EnemyName;
-        if (_enemyEffectText) _enemyEffectText.text = _enemyEffect?.Description;
-    }
-
-    // Display name for combo types
-    private static string ComboDisplayName(ComboType t) => t switch
-    {
-        ComboType.High => "High",
-        ComboType.Pair => "Pair",
-        ComboType.TwoPair => "Pair Set",
-        ComboType.Set => "Set",
-        ComboType.FOK => "FOK",
-        ComboType.Straight => "Straight",
-        ComboType.Flush => "Flush",
-        ComboType.FullHouse => "Full House",
-        ComboType.StraightFlush => "Straight Flush",
-        ComboType.RoyalFlush => "ROYAL FLUSH",
-        _ => "—"
-    };
 }
