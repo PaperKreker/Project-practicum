@@ -21,13 +21,13 @@ public class GameManager : MonoBehaviour
     private const string SCENE_VICTORY = "Victory";
 
     // Auto-creates GameManager before any scene loads — no need to place it in a scene
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void CreateInstance()
-    {
-        if (Instance != null) return;
-        var go = new GameObject("GameManager");
-        go.AddComponent<GameManager>();
-    }
+    //[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    //private static void CreateInstance()
+    //{
+    //    if (Instance != null) return;
+    //    var go = new GameObject("GameManager");
+    //    go.AddComponent<GameManager>();
+    //}
 
     private void Awake()
     {
