@@ -12,21 +12,21 @@ public class BattleView : MonoBehaviour
     [SerializeField] private Button _attackButton;
     [SerializeField] private Button _discardButton;
 
-    [Header("UI — Preview")]
+    [Header("UI ï¿½ Preview")]
     [SerializeField] private TextMeshProUGUI _comboNameText;
     [SerializeField] private TextMeshProUGUI _comboDamageText;
 
-    [Header("UI — Counters")]
+    [Header("UI ï¿½ Counters")]
     [SerializeField] private TextMeshProUGUI _attackCoinText;
     [SerializeField] private TextMeshProUGUI _discardsLeftText;
 
-    [Header("UI — Enemy")]
+    [Header("UI ï¿½ Enemy")]
     [SerializeField] private TextMeshProUGUI _enemyNameText;
     [SerializeField] private TextMeshProUGUI _enemyHpText;
     [SerializeField] private TextMeshProUGUI _enemyDamageText;
     [SerializeField] private TextMeshProUGUI _enemyEffectText;
 
-    [Header("UI — Player")]
+    [Header("UI ï¿½ Player")]
     [SerializeField] private TextMeshProUGUI _playerHpText;
 
     private void OnEnable()
@@ -39,6 +39,8 @@ public class BattleView : MonoBehaviour
 
         _battleController.OnRefresh += RefreshText;
         _battleController.OnRefreshAll += RefreshAll;
+        _battleController.OnAnimationStarted += DisableGameplayButtons;
+        _battleController.OnAnimationStopped += EnableGameplayButtons;
     }
 
     private void OnDisable()
@@ -51,6 +53,8 @@ public class BattleView : MonoBehaviour
 
         _battleController.OnRefresh -= RefreshText;
         _battleController.OnRefreshAll -= RefreshAll;
+        _battleController.OnAnimationStarted -= DisableGameplayButtons;
+        _battleController.OnAnimationStopped -= EnableGameplayButtons;
     }
 
     private void UpdateComboPreview()
@@ -59,7 +63,7 @@ public class BattleView : MonoBehaviour
 
         if (selected.Count == 0)
         {
-            if (_comboNameText) _comboNameText.text = "—";
+            if (_comboNameText) _comboNameText.text = "ï¿½";
             if (_comboDamageText) _comboDamageText.text = "";
             return;
         }
@@ -83,6 +87,16 @@ public class BattleView : MonoBehaviour
         _attackButton.interactable = hasSelection && battleState.attackCoins > 0;
 
         _discardButton.interactable = hasSelection && battleState.discardsLeft > 0;
+    }
+
+    private void EnableGameplayButtons()
+    {
+        UpdateButtonStates();
+    }
+    private void DisableGameplayButtons()
+    {
+        _attackButton.interactable = false;
+        _discardButton.interactable = false;
     }
 
     private void RefreshAll()
@@ -128,6 +142,6 @@ public class BattleView : MonoBehaviour
         ComboType.FullHouse => "Full House",
         ComboType.StraightFlush => "Straight Flush",
         ComboType.RoyalFlush => "ROYAL FLUSH",
-        _ => "—"
+        _ => "ï¿½"
     };
 }

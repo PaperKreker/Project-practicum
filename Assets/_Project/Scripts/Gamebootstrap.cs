@@ -12,7 +12,7 @@ public class GameBootstrap : MonoBehaviour
         if (!_testMode) return;
 
         if (_battleController == null)
-            _battleController = FindObjectOfType<BattleController>();
+            _battleController = FindFirstObjectByType<BattleController>();
 
         if (_battleController == null)
         {

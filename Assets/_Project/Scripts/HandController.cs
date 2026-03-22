@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 /* 
 Manages the player's hand:
@@ -15,9 +16,12 @@ Manages the player's hand:
 */
 public class HandController : MonoBehaviour
 {
+    public event Action<Deck> OnInit;
+
     [Header("References")]
     [SerializeField] private GameObject _cardPrefab;   // card prefab
     [SerializeField] private RectTransform _handArea;     // hand container
+    [SerializeField] private RectTransform _deckTransform;
 
     [Header("Layout")]
     [SerializeField] private float _cardSpacing = 110f;
@@ -27,6 +31,10 @@ public class HandController : MonoBehaviour
     [Header("Rules")]
     [SerializeField] private int _maxHandSize = 8;
     [SerializeField] private int _maxSelected = 5;
+
+    [Header("Animation")]
+    [SerializeField] private float _attackDelay = 0.1f;
+    [SerializeField] private float _discardDelay = 0.05f;
 
     // State
     private List<CardView> _hand = new List<CardView>();
@@ -52,6 +60,7 @@ public class HandController : MonoBehaviour
     {
         _deck = deck;
         DrawUpToMax();
+        OnInit?.Invoke(deck);
     }
 
     // Draws cards up to the maximum hand size
@@ -115,13 +124,44 @@ public class HandController : MonoBehaviour
         available[UnityEngine.Random.Range(0, available.Count)].SetPetrified(true);
     }
 
+    public void SetCardsInteractable(bool interactable)
+    {
+        foreach (CardView card in _hand)
+        {
+            card.SetInteractable(interactable);
+        }
+    }
+
+    public IEnumerator AnimateAttack(Vector2 enemyPosition)
+    {
+        List<Coroutine> routines = new ();
+
+        for (int i = 0; i < _selected.Count; ++i)
+        {
+            routines.Add(_selected[i].PlayAttackAnimation(enemyPosition));
+            yield return new WaitForSeconds(_attackDelay);
+        }
+        yield return CoroutineUtils.WhenAll(this, routines);
+    }
+
+    public IEnumerator AnimateDiscard()
+    {
+        while (_selected.Count > 0)
+        {
+            _selected[0].PlayDiscardAnimation();
+            _hand.Remove(_selected[0]);
+            _selected.Remove(_selected[0]);
+            yield return new WaitForSeconds(_discardDelay);
+        }
+    }
+
     // Internal
     private void SpawnCard(Card card)
     {
         GameObject go = Instantiate(_cardPrefab, _handArea);
         CardView view = go.GetComponent<CardView>();
 
-        view.Setup(card, Vector2.zero);
+        view.Setup(card, _deckTransform.position, Vector2.zero);
         view.OnCardClicked += HandleCardClicked;
 
         _hand.Add(view);

@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb57edceeaf67cc4ba51c324329ccf9f, type: 3}
+  m_Name: CardAnimationConfig
+  m_EditorClassIdentifier: Assembly-CSharp::CardAnimationConfig
+  <HoverCurve>k__BackingField:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.0840642
+      outSlope: 3.0840642
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.04444445
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0.000075790114
+      outSlope: -0.000075790114
+      tangentMode: 0
+      weightedMode: 1
+      inWeight: 0.9059829
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  <HoverLift>k__BackingField: 50
+  <HoverTime>k__BackingField: 0.2
+  <AttackCurve>k__BackingField:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: -0.05590542
+      outSlope: -0.05590542
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.71090496
+    - serializedVersion: 3
+      time: 0.6217902
+      value: -0.092638135
+      inSlope: -0.019100236
+      outSlope: 0.039329488
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0.9496691
+      outWeight: 0.7582349
+    - serializedVersion: 3
+      time: 1
+      value: 1.0017776
+      inSlope: 30.318207
+      outSlope: 30.318207
+      tangentMode: 0
+      weightedMode: 1
+      inWeight: 0.046060648
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  <AttackTime>k__BackingField: 1
+  <DiscardLifetime>k__BackingField: 0.5
+  <DiscardXVelocity>k__BackingField: 200
+  <DiscardYVelocity>k__BackingField: 800
+  <DiscardGravitation>k__BackingField: -6000
+  <DiscardRotation>k__BackingField: 45

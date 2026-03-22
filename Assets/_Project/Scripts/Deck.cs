@@ -4,6 +4,8 @@ using UnityEngine;
 // Standard 52-card deck with shuffle and draw mechanics
 public class Deck
 {
+    public event System.Action OnRefresh;
+
     private List<Card> _cards = new List<Card>();
 
     public int Remaining => _cards.Count;
@@ -27,6 +29,7 @@ public class Deck
         }
 
         Shuffle();
+        OnRefresh?.Invoke();
     }
 
     // Shuffles the deck using Fisher-Yates algorithm
@@ -46,6 +49,7 @@ public class Deck
 
         Card card = _cards[_cards.Count - 1];
         _cards.RemoveAt(_cards.Count - 1);
+        OnRefresh?.Invoke();
         return card;
     }
 
