@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
 
+// Only for testing BattleController without going through the whole map and GameManager flow.
 public class GameBootstrap : MonoBehaviour
 {
-    [Header("References")]
+    [Header("Test mode (без GameManager)")]
     [SerializeField] private BattleController _battleController;
-
-    private Deck _deck;
+    [SerializeField] private bool _testMode = false;
 
     private void Start()
     {
+        if (!_testMode) return;
+
         if (_battleController == null)
             _battleController = FindObjectOfType<BattleController>();
 
@@ -18,7 +20,7 @@ public class GameBootstrap : MonoBehaviour
             return;
         }
 
-        _deck = new Deck();
-        _battleController.StartBattle(_deck, EnemyDatabase.Raven); // swap enemy here to test others
+        var deck = new Deck();
+        _battleController.StartBattle(deck, EnemyDatabase.Raven);
     }
 }
