@@ -2,19 +2,18 @@
 using System.Linq;
 
 /* Combination reference:
- * High Card - 1 card
- * Pair - 2 cards of the same rank
- * Two Pair - 2 different pairs
- * Set (Three of a Kind) - 3 cards of the same rank
- * Four of a Kind - 4 cards of the same rank
- * Straight - 5 consecutive ranks, not necessarily the same suit
- * Flush - 5 cards of the same suit, not necessarily consecutive
- * Full House - 3 cards of one rank + 2 cards of another rank
- * Straight Flush - 5 consecutive ranks of the same suit
- * Royal Flush - 10, J, Q, K, A of the same suit
+ * High Card       - only the highest-rank card scores
+ * Pair            - 2 cards of the same rank
+ * Two Pair        - 2 different pairs (4 cards)
+ * Set             - 3 cards of the same rank
+ * Four of a Kind  - 4 cards of the same rank
+ * Straight        - 5 consecutive ranks, any suit
+ * Flush           - 5 cards of the same suit
+ * Full House      - 3 of one rank + 2 of another
+ * Straight Flush  - 5 consecutive ranks, same suit
+ * Royal Flush     - 10 J Q K A of the same suit
  */
 
-// Combo type
 public enum ComboType
 {
     None,
@@ -30,18 +29,17 @@ public enum ComboType
     RoyalFlush
 }
 
-// Result of combo evaluation
 public class ComboResult
 {
     public ComboType Type;
     public int BaseDamage;
     public int NominalSum;
     public int CritCount;
-    public List<Card> Cards;
+    public List<Card> Cards;        // all selected cards
+    public List<Card> ScoringCards; // only cards that form the combo
 
     public int CardCount => Cards?.Count ?? 0;
 
-    // Total damage considering nominal values and crits.
     public float TotalDamage
     {
         get
@@ -54,48 +52,44 @@ public class ComboResult
         }
     }
 
-    public override string ToString()
-    {
-        return $"{Type} | Base:{BaseDamage} + Nominal:{NominalSum} x{(CritCount > 0 ? $"CRIT×{CritCount}" : "1")} = {TotalDamage:F0} dmg";
-    }
+    public override string ToString() =>
+        $"{Type} | Base:{BaseDamage} + Nominal:{NominalSum} x{(CritCount > 0 ? $"CRIT×{CritCount}" : "1")} = {TotalDamage:F0} dmg";
 }
 
-// Determines the combo type and calculates damage based on the given cards
 public static class ComboEvaluator
 {
-    // Base damage per combo type
     private static readonly Dictionary<ComboType, int> BaseDamageTable = new()
     {
-        { ComboType.High,          10  },
-        { ComboType.Pair,          20  },
-        { ComboType.TwoPair,       40  },
-        { ComboType.Set,           80  },
-        { ComboType.FOK,           400 },
-        { ComboType.Straight,      100 },
-        { ComboType.Flush,         125 },
-        { ComboType.FullHouse,     175 },
-        { ComboType.StraightFlush, 600 },
-        { ComboType.RoyalFlush,    2000},
+        { ComboType.High,          10   },
+        { ComboType.Pair,          20   },
+        { ComboType.TwoPair,       40   },
+        { ComboType.Set,           80   },
+        { ComboType.FOK,           400  },
+        { ComboType.Straight,      100  },
+        { ComboType.Flush,         125  },
+        { ComboType.FullHouse,     175  },
+        { ComboType.StraightFlush, 600  },
+        { ComboType.RoyalFlush,    2000 },
     };
 
-    // Calculate the combo result based on ranks and hand type
     public static ComboResult Evaluate(List<Card> cards)
     {
         if (cards == null || cards.Count == 0)
             return new ComboResult { Type = ComboType.None };
 
+        List<Card> scoring;
         ComboType type = cards.Count switch
         {
-            1 => ComboType.High,
-            2 => EvaluateTwo(cards),
-            3 => EvaluateThree(cards),
-            4 => EvaluateFour(cards),
-            5 => EvaluateFive(cards),
-            _ => ComboType.None
+            1 => EvaluateOne(cards, out scoring),
+            2 => EvaluateTwo(cards, out scoring),
+            3 => EvaluateThree(cards, out scoring),
+            4 => EvaluateFour(cards, out scoring),
+            5 => EvaluateFive(cards, out scoring),
+            _ => Fallback(cards, out scoring),
         };
 
-        int nominalSum = cards.Sum(c => c.NominalValue);
-        int critCount = cards.Count(c => c.IsCritical);
+        int nominalSum = scoring.Sum(c => c.NominalValue);
+        int critCount = scoring.Count(c => c.IsCritical);
 
         return new ComboResult
         {
@@ -103,88 +97,146 @@ public static class ComboEvaluator
             BaseDamage = BaseDamageTable.GetValueOrDefault(type, 0),
             NominalSum = nominalSum,
             CritCount = critCount,
-            Cards = cards
+            Cards = cards,
+            ScoringCards = scoring,
         };
     }
 
-    // 2 cards
-    private static ComboType EvaluateTwo(List<Card> cards)
+    // 1 card — the card itself scores
+    private static ComboType EvaluateOne(List<Card> cards, out List<Card> scoring)
     {
-        var groups = cards.GroupBy(c => c.Rank).ToList();
+        scoring = new List<Card>(cards);
+        return ComboType.High;
+    }
 
-        if (groups.Count == 1)
-            return ComboType.Pair;   // Pair
+    // 2 cards
+    private static ComboType EvaluateTwo(List<Card> cards, out List<Card> scoring)
+    {
+        if (cards[0].Rank == cards[1].Rank)
+        {
+            scoring = new List<Card>(cards);
+            return ComboType.Pair;
+        }
 
-        return ComboType.High;       // High Card
+        scoring = new List<Card> { cards.OrderByDescending(c => c.Rank).First() };
+        return ComboType.High;
     }
 
     // 3 cards
-    private static ComboType EvaluateThree(List<Card> cards)
+    private static ComboType EvaluateThree(List<Card> cards, out List<Card> scoring)
     {
         var groups = cards.GroupBy(c => c.Rank).OrderByDescending(g => g.Count()).ToList();
 
-        if (groups[0].Count() == 3) return ComboType.Set;  // Three of a Kind
-        if (groups[0].Count() == 2) return ComboType.Pair; // Pair
+        if (groups[0].Count() == 3)
+        {
+            scoring = new List<Card>(cards);
+            return ComboType.Set;
+        }
+        if (groups[0].Count() == 2)
+        {
+            scoring = groups[0].ToList();
+            return ComboType.Pair;
+        }
 
+        scoring = new List<Card> { cards.OrderByDescending(c => c.Rank).First() };
         return ComboType.High;
     }
 
     // 4 cards
-    private static ComboType EvaluateFour(List<Card> cards)
+    private static ComboType EvaluateFour(List<Card> cards, out List<Card> scoring)
     {
         var groups = cards.GroupBy(c => c.Rank).OrderByDescending(g => g.Count()).ToList();
 
         if (groups[0].Count() == 4)
-            return ComboType.FOK;           // Four of a Kind
+        {
+            scoring = new List<Card>(cards);
+            return ComboType.FOK;
+        }
         if (groups[0].Count() == 3)
-            return ComboType.Set;           // Three of a Kind
-
+        {
+            scoring = groups[0].ToList();
+            return ComboType.Set;
+        }
         if (groups.Count == 2 && groups.All(g => g.Count() == 2))
-            return ComboType.TwoPair;       // Two Pair
-
+        {
+            scoring = new List<Card>(cards);
+            return ComboType.TwoPair;
+        }
         if (groups[0].Count() == 2)
-            return ComboType.Pair;          // Pair
+        {
+            scoring = groups[0].ToList();
+            return ComboType.Pair;
+        }
 
-        return ComboType.High;              // High Card
+        scoring = new List<Card> { cards.OrderByDescending(c => c.Rank).First() };
+        return ComboType.High;
     }
 
     // 5 cards
-    private static ComboType EvaluateFive(List<Card> cards)
+    private static ComboType EvaluateFive(List<Card> cards, out List<Card> scoring)
     {
         bool isFlush = cards.All(c => c.Suit == cards[0].Suit);
         bool isStraight = IsStraight(cards);
 
         if (isFlush && IsRoyal(cards))
-            return ComboType.RoyalFlush;            // Royal Flush
+        {
+            scoring = new List<Card>(cards);
+            return ComboType.RoyalFlush;
+        }
         if (isFlush && isStraight)
-            return ComboType.StraightFlush;         // Straight Flush
+        {
+            scoring = new List<Card>(cards);
+            return ComboType.StraightFlush;
+        }
 
         var groups = cards.GroupBy(c => c.Rank).OrderByDescending(g => g.Count()).ToList();
 
         if (groups[0].Count() == 4)
-            return ComboType.FOK;                   // Four of a Kind
-
+        {
+            scoring = new List<Card>(cards);
+            return ComboType.FOK;
+        }
         if (groups[0].Count() == 3 && groups.Count > 1 && groups[1].Count() == 2)
-            return ComboType.FullHouse;             // Full House
-
+        {
+            scoring = new List<Card>(cards);
+            return ComboType.FullHouse;
+        }
         if (isFlush)
-            return ComboType.Flush;                 // Flush
+        {
+            scoring = new List<Card>(cards);
+            return ComboType.Flush;
+        }
         if (isStraight)
-            return ComboType.Straight;              // Straight
-
+        {
+            scoring = new List<Card>(cards);
+            return ComboType.Straight;
+        }
         if (groups[0].Count() == 3)
-            return ComboType.Set;                   // Three of a Kind
-
+        {
+            scoring = groups[0].ToList();
+            return ComboType.Set;
+        }
         if (groups.Count <= 3 && groups.Count(g => g.Count() == 2) >= 2)
-            return ComboType.TwoPair;               // Two Pair
-
+        {
+            scoring = groups.Where(g => g.Count() == 2).SelectMany(g => g).ToList();
+            return ComboType.TwoPair;
+        }
         if (groups[0].Count() == 2)
-            return ComboType.Pair;                  // Pair
+        {
+            scoring = groups[0].ToList();
+            return ComboType.Pair;
+        }
 
-        return ComboType.High;                      // High Card
+        scoring = new List<Card> { cards.OrderByDescending(c => c.Rank).First() };
+        return ComboType.High;
     }
 
-    // Check for straight
+    private static ComboType Fallback(List<Card> cards, out List<Card> scoring)
+    {
+        scoring = new List<Card> { cards.OrderByDescending(c => c.Rank).First() };
+        return ComboType.High;
+    }
+
     private static bool IsStraight(List<Card> cards)
     {
         var ranks = cards.Select(c => (int)c.Rank).OrderBy(r => r).ToList();
@@ -193,7 +245,6 @@ public static class ComboEvaluator
         return true;
     }
 
-    // Check for royal flush (10, J, Q, K, A)
     private static bool IsRoyal(List<Card> cards)
     {
         var ranks = cards.Select(c => c.Rank).ToHashSet();

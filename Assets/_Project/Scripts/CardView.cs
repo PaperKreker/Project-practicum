@@ -167,7 +167,7 @@ public class CardView : MonoBehaviour,
             _critGlow.gameObject.SetActive(Data.IsCritical && !IsPetrified);
     }
 
-    // Helpers
+    // String Helpers
     private static string RankToString(Rank r)
     {
         return r switch

@@ -516,7 +516,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 258ca84a8a9ba8b49b91ffcce4077548, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameBootstrap
-  _battleController: {fileID: 0}
+  _battleController: {fileID: 6423315937641050232}
+  _testMode: 0
 --- !u!4 &1224705019
 Transform:
   m_ObjectHideFlags: 0
@@ -708,6 +709,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
+--- !u!114 &6423315937641050232 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7707334605099630341, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
+  m_PrefabInstance: {fileID: 6423315937641050231}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21454439b2f231c4aac2f595d722c1bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleController
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
