@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -6,11 +8,14 @@ using System;
 
 public class BattleController : MonoBehaviour
 {
+    public event Action OnAnimationStarted;
+    public event Action OnAnimationStopped;
     public event Action OnRefreshAll;
     public event Action OnRefresh;
 
     [Header("References")]
     [SerializeField] private HandController _hand;
+    [SerializeField] private Transform _enemy;
 
     [SerializeField] private BattleConfig _battleConfig;
 
@@ -66,8 +71,15 @@ public class BattleController : MonoBehaviour
     // Attack enemy
     public void Attack()
     {
+        StartCoroutine(AttackSequence());
+    }
+
+    private IEnumerator AttackSequence()
+    {
+        OnAnimationStarted?.Invoke();
+        _hand.SetCardsInteractable(false);
         List<Card> selected = _hand.GetSelectedCards();
-        if (selected.Count == 0 || _attackCoins <= 0) return;
+        if (selected.Count == 0 || _attackCoins <= 0) yield return null;
 
         ComboResult result = ComboEvaluator.Evaluate(selected);
         int damage = Mathf.RoundToInt(result.TotalDamage);
@@ -86,8 +98,11 @@ public class BattleController : MonoBehaviour
 
         _enemyEffect.OnPlayerAttack(_ctx, result);
 
+        yield return _hand.AnimateAttack(_enemy.position);
+
         _hand.DiscardSelected();
         _hand.DrawUpToMax();
+        _hand.SetCardsInteractable(true);
 
         // Attack player when attack coin turns to 0
         if (_attackCoins <= 0)
@@ -98,19 +113,28 @@ public class BattleController : MonoBehaviour
 
         if (_enemyHp <= 0)
             Victory();
+        OnAnimationStopped?.Invoke();
     }
 
     // Discard selected cards
     public void Discard()
     {
-        if (_discardsLeft <= 0) return;
+        StartCoroutine(DiscardSequence());
+    }
+
+    private IEnumerator DiscardSequence()
+    {
+        OnAnimationStarted?.Invoke();
+        if (_discardsLeft <= 0) yield return null;
 
         List<Card> selected = _hand.GetSelectedCards();
-        if (selected.Count == 0 || selected.Count > _battleConfig.MaxDiscardCards) return;
+        if (selected.Count == 0 || selected.Count > _battleConfig.MaxDiscardCards) yield return null;
 
         int cardCount = selected.Count;
         _discardsLeft--;
         _ctx.Discards = _discardsLeft;
+
+        yield return _hand.AnimateDiscard();
 
         _hand.DiscardSelected();
         _hand.DrawUpToMax();
@@ -119,6 +143,7 @@ public class BattleController : MonoBehaviour
 
         SyncFromContext();
         OnRefresh?.Invoke();
+        OnAnimationStopped?.Invoke();
     }
 
     // Enemy attacks player

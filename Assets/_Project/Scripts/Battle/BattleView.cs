@@ -39,6 +39,8 @@ public class BattleView : MonoBehaviour
 
         _battleController.OnRefresh += RefreshText;
         _battleController.OnRefreshAll += RefreshAll;
+        _battleController.OnAnimationStarted += DisableGameplayButtons;
+        _battleController.OnAnimationStopped += EnableGameplayButtons;
     }
 
     private void OnDisable()
@@ -51,6 +53,8 @@ public class BattleView : MonoBehaviour
 
         _battleController.OnRefresh -= RefreshText;
         _battleController.OnRefreshAll -= RefreshAll;
+        _battleController.OnAnimationStarted -= DisableGameplayButtons;
+        _battleController.OnAnimationStopped -= EnableGameplayButtons;
     }
 
     private void UpdateComboPreview()
@@ -83,6 +87,16 @@ public class BattleView : MonoBehaviour
         _attackButton.interactable = hasSelection && battleState.attackCoins > 0;
 
         _discardButton.interactable = hasSelection && battleState.discardsLeft > 0;
+    }
+
+    private void EnableGameplayButtons()
+    {
+        UpdateButtonStates();
+    }
+    private void DisableGameplayButtons()
+    {
+        _attackButton.interactable = false;
+        _discardButton.interactable = false;
     }
 
     private void RefreshAll()
