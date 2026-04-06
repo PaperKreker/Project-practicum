@@ -12,21 +12,21 @@ public class BattleView : MonoBehaviour
     [SerializeField] private Button _attackButton;
     [SerializeField] private Button _discardButton;
 
-    [Header("UI � Preview")]
+    [Header("UI Preview")]
     [SerializeField] private TextMeshProUGUI _comboNameText;
     [SerializeField] private TextMeshProUGUI _comboDamageText;
 
-    [Header("UI � Counters")]
+    [Header("UI Counters")]
     [SerializeField] private TextMeshProUGUI _attackCoinText;
     [SerializeField] private TextMeshProUGUI _discardsLeftText;
 
-    [Header("UI � Enemy")]
+    [Header("UI Enemy")]
     [SerializeField] private TextMeshProUGUI _enemyNameText;
     [SerializeField] private TextMeshProUGUI _enemyHpText;
     [SerializeField] private TextMeshProUGUI _enemyDamageText;
     [SerializeField] private TextMeshProUGUI _enemyEffectText;
 
-    [Header("UI � Player")]
+    [Header("UI Player")]
     [SerializeField] private TextMeshProUGUI _playerHpText;
 
     private void OnEnable()
@@ -63,7 +63,7 @@ public class BattleView : MonoBehaviour
 
         if (selected.Count == 0)
         {
-            if (_comboNameText) _comboNameText.text = "�";
+            if (_comboNameText) _comboNameText.text = "";
             if (_comboDamageText) _comboDamageText.text = "";
             return;
         }
