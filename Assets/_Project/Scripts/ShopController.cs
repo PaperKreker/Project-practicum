@@ -13,7 +13,6 @@ public class ShopController : MonoBehaviour
     [SerializeField] private TMP_Text _goldText;
     [SerializeField] private TMP_Text _rerollCostText;
     [SerializeField] private Button _rerollButton;
-    [SerializeField] private Button _leaveButton;
 
     private List<Sigil> _offered = new List<Sigil>();
     private int _rerollCost = 1;
@@ -59,10 +58,10 @@ public class ShopController : MonoBehaviour
 
         var pool = all.FindAll(s => !owned.Contains(s.Name));
 
-        // Pick OfferedCount random sigils
+        // Use run's Rng for reproducibility
         for (int i = 0; i < OfferedCount && pool.Count > 0; i++)
         {
-            int idx = Random.Range(0, pool.Count);
+            int idx = run.Rng.Next(pool.Count);
             _offered.Add(pool[idx]);
             pool.RemoveAt(idx);
         }
@@ -75,7 +74,7 @@ public class ShopController : MonoBehaviour
 
     private void SpawnSlot(Sigil sigil)
     {
-        GameObject go = Instantiate(_sigilSlotPrefab, _sigilContainer);
+        var go = Instantiate(_sigilSlotPrefab, _sigilContainer);
         var slot = go.GetComponent<SigilSlot>();
         if (slot == null) slot = go.AddComponent<SigilSlot>();
         slot.Setup(sigil, this);
@@ -89,24 +88,18 @@ public class ShopController : MonoBehaviour
 
         run.Gold -= sigil.Cost;
         run.ActiveSigils.Add(sigil);
-
         _offered.Remove(sigil);
 
-        // Remove slot from UI
         foreach (Transform child in _sigilContainer)
         {
             var slot = child.GetComponent<SigilSlot>();
             if (slot != null && slot.Sigil == sigil)
             {
-                child.SetParent(null);
-
-                child.gameObject.SetActive(false);
-
                 Destroy(child.gameObject);
                 break;
             }
         }
-        LayoutRebuilder.ForceRebuildLayoutImmediate(_sigilContainer as RectTransform);
+
         RefreshHUD();
         RefreshSlots();
     }
@@ -117,17 +110,11 @@ public class ShopController : MonoBehaviour
         if (_goldText) _goldText.text = $"Gold: {run.Gold}";
         if (_rerollCostText) _rerollCostText.text = $"Reroll: {_rerollCost}g";
         if (_rerollButton) _rerollButton.interactable = run.Gold >= _rerollCost;
-
-        bool full = run.ActiveSigils.Count >= RunData.MaxSigils;
-        if (_leaveButton) _leaveButton.interactable = true;
-
-        // Disable buy buttons if no gold or slots full
         RefreshSlots();
     }
 
     private void RefreshSlots()
     {
-        if (GameManager.Instance == null) return;
         var run = GameManager.Instance.Run;
         bool full = run.ActiveSigils.Count >= RunData.MaxSigils;
 
@@ -135,8 +122,7 @@ public class ShopController : MonoBehaviour
         {
             var slot = child.GetComponent<SigilSlot>();
             if (slot == null) continue;
-            bool canAfford = run.Gold >= slot.Sigil.Cost;
-            slot.SetBuyable(canAfford && !full);
+            slot.SetBuyable(!full && run.Gold >= slot.Sigil.Cost);
         }
     }
 }

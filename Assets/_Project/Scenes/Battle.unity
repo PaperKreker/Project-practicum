@@ -1227,6 +1227,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 323
       objectReference: {fileID: 0}
+    - target: {fileID: 7707334605099630341, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
+      propertyPath: _enemy
+      value: 
+      objectReference: {fileID: 793519049}
     - target: {fileID: 7824872635414624950, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -59.63

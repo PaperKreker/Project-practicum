@@ -20,15 +20,6 @@ public class GameManager : MonoBehaviour
     private const string SCENE_GAME_OVER = "GameOver";
     private const string SCENE_VICTORY = "Victory";
 
-    // Auto-creates GameManager before any scene loads — no need to place it in a scene
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    private static void CreateInstance()
-    {
-        if (Instance != null) return;
-        var go = new GameObject("GameManager");
-        go.AddComponent<GameManager>();
-    }
-
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -40,9 +31,13 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void StartNewRun(int playerMaxHp = 100)
+    // seed = -1 means random
+    public void StartNewRun(int playerMaxHp = 100, int seed = -1)
     {
         CurrentActIndex = 0;
+
+        int resolvedSeed = seed >= 0 ? seed : UnityEngine.Random.Range(0, int.MaxValue);
+
         Run = new RunData
         {
             PlayerMaxHp = playerMaxHp,
@@ -50,7 +45,11 @@ public class GameManager : MonoBehaviour
             Gold = 0,
             CurrentNodeIndex = 0,
             CurrentNodeCompleted = false,
+            Seed = resolvedSeed,
+            Rng = new System.Random(resolvedSeed),
         };
+
+        Debug.Log($"[GameManager] New run. Seed={resolvedSeed}");
         LoadAct(0);
     }
 
@@ -109,7 +108,7 @@ public class GameManager : MonoBehaviour
 
     private void LoadAct(int actIndex)
     {
-        CurrentMap = MapGenerator.BuildAct(actIndex);
+        CurrentMap = MapGenerator.BuildAct(actIndex, Run.Rng);
         Run.CurrentNodeIndex = CurrentMap.StartNodeIndex;
         Run.CurrentNodeCompleted = false;
         TransitionTo(RunState.Map, SCENE_MAP);
