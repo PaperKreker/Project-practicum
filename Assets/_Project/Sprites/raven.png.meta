@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4f59c8e21edf1a5438802473ae8facc6
+guid: b6fc5ea4003045648baac36862e6a05f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3676023523805422425
-    second: field-background_0
+      213: 8656711183680404767
+    second: raven 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: field-background_0
+      name: raven_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1920
-        height: 1080
+        x: 12
+        y: 15
+        width: 188
+        height: 74
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 953e6622bebd30330800000000000000
-      internalID: 3676023523805422425
+      spriteID: 8028fe5eabacac84babe67a9c9216dee
+      internalID: 1475817745
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 7d7de3a385cbee44f85e276a8ffe8312
     internalID: 0
     vertices: []
     indices: 
@@ -146,9 +146,11 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      field-background_0: 3676023523805422425
+      raven_0: 1475817745
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
