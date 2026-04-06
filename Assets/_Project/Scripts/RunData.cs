@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 public enum RunState
 {
@@ -22,4 +23,7 @@ public class RunData
     public List<Sigil> ActiveSigils = new List<Sigil>();
 
     public const int MaxSigils = 6;
+
+    public int Seed;
+    public Random Rng; // use this everywhere instead of UnityEngine.Random
 }

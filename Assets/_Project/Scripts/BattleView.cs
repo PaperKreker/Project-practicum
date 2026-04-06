@@ -142,6 +142,6 @@ public class BattleView : MonoBehaviour
         ComboType.FullHouse => "Full House",
         ComboType.StraightFlush => "Straight Flush",
         ComboType.RoyalFlush => "ROYAL FLUSH",
-        _ => "�"
+        _ => "?"
     };
 }
