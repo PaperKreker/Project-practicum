@@ -18,8 +18,8 @@ public class RunData
     public int PlayerMaxHp;
     public int Gold;
     public int CurrentNodeIndex;
-
     public bool CurrentNodeCompleted = false;
+    public List<Sigil> ActiveSigils = new List<Sigil>();
 
-    public List<object> ActiveSigils = new List<object>();
+    public const int MaxSigils = 6;
 }

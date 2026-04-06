@@ -2,9 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using System;
 
 public class BattleController : MonoBehaviour
 {
@@ -21,12 +18,12 @@ public class BattleController : MonoBehaviour
     private EnemyData _enemyData;
     private EnemyEffect _enemyEffect;
     private BattleContext _ctx;
+    private List<Sigil> _sigils;
 
     private int _attackCoins;
     private int _discardsLeft;
     private int _enemyHp;
     private Deck _deck;
-
     private bool _battleOver;
 
     public struct State
@@ -51,7 +48,6 @@ public class BattleController : MonoBehaviour
         ctx = _ctx,
     };
 
-    // Unity
     private void Start()
     {
         if (GameManager.Instance == null)
@@ -83,14 +79,17 @@ public class BattleController : MonoBehaviour
         _enemyHp = enemy.MaxHp;
         _attackCoins = enemy.AttackCoinsPerRound;
         _discardsLeft = _battleConfig != null ? _battleConfig.MaxDiscards : 3;
+        _sigils = GameManager.Instance?.Run.ActiveSigils ?? new List<Sigil>();
 
-        int resolvedHp = currentHp > 0 ? currentHp
+        int resolvedMaxHp = maxHp > 0 ? maxHp
             : _battleConfig != null ? _battleConfig.PlayerMaxHp : 100;
+        int resolvedHp = currentHp > 0 ? currentHp : resolvedMaxHp;
 
         _ctx = new BattleContext
         {
             Hand = _hand,
             PlayerHp = resolvedHp,
+            PlayerMaxHp = resolvedMaxHp,
             EnemyDamage = enemy.AttackDamage,
             Discards = _discardsLeft,
             RequestUIRefresh = () => OnRefresh?.Invoke(),
@@ -99,7 +98,10 @@ public class BattleController : MonoBehaviour
         _enemyEffect = enemy.CreateEffect();
         _enemyEffect.OnBattleStart(_ctx);
 
-        // Sync back in case effect modified discards (e.g. Wolf)
+        foreach (var s in _sigils)
+            s.OnBattleStart(_ctx);
+
+        // Sync back in case effects/sigils modified discards
         _discardsLeft = _ctx.Discards;
 
         _hand.Init(_deck);
@@ -116,9 +118,15 @@ public class BattleController : MonoBehaviour
     {
         OnAnimationStarted?.Invoke();
         _hand.SetCardsInteractable(false);
-        if (_battleOver) yield return null;
+
+        if (_battleOver) yield break;
         List<Card> selected = _hand.GetSelectedCards();
-        if (selected.Count == 0 || _attackCoins <= 0) yield return null;
+        if (selected.Count == 0 || _attackCoins <= 0)
+        {
+            _hand.SetCardsInteractable(true);
+            OnAnimationStopped?.Invoke();
+            yield break;
+        }
 
         ComboResult result = ComboEvaluator.Evaluate(selected);
         int damage = Mathf.RoundToInt(result.TotalDamage);
@@ -126,12 +134,27 @@ public class BattleController : MonoBehaviour
         if (_ctx.BlockedDamageSuit.HasValue)
             damage = ApplyBlockedSuit(selected, damage);
 
+        // Enemy modifies damage first
         damage = Mathf.Max(0, _enemyEffect.ModifyPlayerDamage(_ctx, result, damage));
 
+        // Sigils: flat bonus then multiplier
+        int bonus = 0;
+        float mult = 1f;
+        foreach (var s in _sigils)
+        {
+            bonus += s.BonusDamage(_ctx, result);
+            mult += s.BonusMultiplier(_ctx, result);
+        }
+        damage = Mathf.RoundToInt((damage + bonus) * mult);
+
         _enemyHp -= damage;
+
         _enemyEffect.OnPlayerAttack(_ctx, result);
+        foreach (var s in _sigils)
+            s.OnPlayerAttack(_ctx, result);
 
         yield return _hand.AnimateAttack(_enemy.position);
+
         _attackCoins--;
         _hand.DiscardSelected();
         _hand.DrawUpToMax();
@@ -141,8 +164,9 @@ public class BattleController : MonoBehaviour
         if (VictoryChecker.IsBattleWon(_enemyHp))
         {
             OnRefreshAll?.Invoke();
+            OnAnimationStopped?.Invoke();
             EndBattle(playerWon: true);
-            yield return null;
+            yield break;
         }
 
         if (_attackCoins <= 0)
@@ -161,13 +185,21 @@ public class BattleController : MonoBehaviour
     private IEnumerator DiscardSequence()
     {
         OnAnimationStarted?.Invoke();
-        if (_battleOver) yield return null;
-        if (_discardsLeft <= 0) yield return null;
+
+        if (_battleOver) yield break;
+        if (_discardsLeft <= 0) yield break;
 
         int count = _hand.GetSelectedCards().Count;
-        if (count == 0) yield return null;
+        if (count == 0)
+        {
+            OnAnimationStopped?.Invoke();
+            yield break;
+        }
 
         _enemyEffect.OnPlayerDiscard(_ctx, count);
+        foreach (var s in _sigils)
+            s.OnPlayerDiscard(_ctx, count);
+
         _discardsLeft = _ctx.Discards;
 
         yield return _hand.AnimateDiscard();
@@ -185,20 +217,25 @@ public class BattleController : MonoBehaviour
     private void EnemyTakeTurn()
     {
         _ctx.PlayerHp -= _ctx.EnemyDamage;
+
         _enemyEffect.OnEnemyAttack(_ctx);
+        foreach (var s in _sigils)
+            s.OnEnemyAttack(_ctx);
+
         _attackCoins = _enemyData.AttackCoinsPerRound;
 
         if (VictoryChecker.IsGameOver(_ctx.PlayerHp))
             EndBattle(playerWon: false);
     }
 
-    // Single exit point for battle resolution — never called twice thanks to _battleOver guard
     private void EndBattle(bool playerWon)
     {
         if (_battleOver) return;
         _battleOver = true;
 
         _enemyEffect.OnBattleEnd(_ctx);
+        foreach (var s in _sigils)
+            s.OnBattleEnd(_ctx);
 
         if (playerWon)
         {
@@ -219,18 +256,5 @@ public class BattleController : MonoBehaviour
             if (c.Suit == _ctx.BlockedDamageSuit.Value)
                 removed += (int)c.Rank;
         return Mathf.Max(0, damage - removed);
-    }
-
-    private void Victory()
-    {
-        _enemyEffect.OnBattleEnd(_ctx);
-        Debug.Log($"[Victory] {_enemyData.EnemyName} defeated! +{_enemyData.GoldReward} Gold");
-        // TODO: award gold, advance map
-    }
-
-    private void GameOver()
-    {
-        Debug.Log("[Game Over] Player died!");
-        // TODO: show game over screen
     }
 }

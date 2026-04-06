@@ -4,6 +4,7 @@ public class BattleContext
 {
     public HandController Hand;
     public int PlayerHp;
+    public int PlayerMaxHp;
     public int EnemyDamage;
     public int Discards;
 
