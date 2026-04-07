@@ -31,7 +31,24 @@ public class ReducedDiscards : EnemyEffect
         => ctx.Discards = Mathf.Max(0, ctx.Discards - _reduction);
 
     public override string Description
-        => $"You have {_reduction} fewer discard{(_reduction > 1 ? "s" : "")} this battle.";
+        => $"- {_reduction} {DiscardToRussian()} в этом раунде";
+
+    private string DiscardToRussian()
+    {
+        if (_reduction % 10 == 1 && _reduction % 100 != 11)
+        {
+            return "сброс";
+        }
+
+        if (_reduction % 10 == 2 && _reduction % 100 != 12 ||
+            _reduction % 10 == 3 && _reduction % 100 != 13 ||
+            _reduction % 10 == 4 && _reduction % 100 != 14)
+        {
+            return "сброса";
+        }
+
+        return "сбросов";
+    }
 }
 
 // Raven: every Nth card drawn is face-down
@@ -58,7 +75,7 @@ public class FaceDownCards : EnemyEffect
             card.SetFaceDown(true);
     }
 
-    public override string Description => $"Every {_interval}th card drawn is face-down.";
+    public override string Description => $"Каждая {_interval}-я карта вытягивается рубашкой вверх";
 }
 
 // Fox: one random suit contributes no chip damage
@@ -71,7 +88,7 @@ public class SuitNoDamage : EnemyEffect
     }
 
     public override string Description
-        => "Cards in one random suit deal no chip damage this battle (revealed at start).";
+        => "Карты одной из мастей не наносят урона (будет раскрыто в битве)";
 }
 
 // Alpha Wolf: lose HP per card discarded
@@ -86,7 +103,17 @@ public class DamageOnDiscard : EnemyEffect
         ctx.RequestUIRefresh?.Invoke();
     }
 
-    public override string Description => $"Lose {_damagePerCard} HP per card discarded.";
+    public override string Description => $"Получайте {_damagePerCard} {DamageToRussian()} за каждую сброшенную карту";
+
+    private string DamageToRussian()
+    {
+        if (_damagePerCard % 10 == 1 && _damagePerCard % 100 != 11)
+        {
+            return "урон";
+        }
+
+        return "урона";
+    }
 }
 
 // Basilisk: one random card locked at battle start and after each attack
@@ -96,7 +123,7 @@ public class PetrifyCard : EnemyEffect
     public override void OnPlayerAttack(BattleContext ctx, ComboResult result) => ctx.Hand.PetrifyRandom();
 
     public override string Description
-        => "At battle start and after each attack, one random card in hand becomes unusable.";
+        => "В начале битвы и после атаки одна из карт блокируется";
 }
 
 // Scarab: attacks using N+ cards deal reduced damage
@@ -115,7 +142,7 @@ public class LargeHandPenalty : EnemyEffect
         => result.CardCount >= _minCards ? Mathf.RoundToInt(damage * _multiplier) : damage;
 
     public override string Description
-        => $"Attacks using {_minCards}+ cards deal {(int)(_multiplier * 100)}% damage.";
+        => $"Атаки с {_minCards}+ картами наносят {(int)(_multiplier * 100)}% урона";
 }
 
 // Minotaur (Boss): enemy damage increases after each enemy attack
@@ -128,7 +155,7 @@ public class EscalateDamage : EnemyEffect
         => ctx.EnemyDamage += _increasePerAttack;
 
     public override string Description
-        => $"After each enemy attack, its damage increases by {_increasePerAttack}.";
+        => $"После каждой атаки врага, его урон увеличивается на {_increasePerAttack}";
 }
 
 // Spider (Boss): consecutive attacks of the same combo type deal 0 damage
@@ -147,7 +174,7 @@ public class NoRepeatCombo : EnemyEffect
         return damage;
     }
 
-    public override string Description => "Consecutive attacks of the same hand type deal 0 damage.";
+    public override string Description => "Одна и та же комбинация не может нанести урон 2 раза подряд";
 }
 
 // Leviathan (Boss): penalty cycles each time the enemy attacks
@@ -179,5 +206,5 @@ public class CyclingPenalty : EnemyEffect
     public override int ModifyPlayerDamage(BattleContext ctx, ComboResult result, int damage)
         => _phases[_phaseIndex].ModifyPlayerDamage(ctx, result, damage);
 
-    public override string Description => "Each time the enemy attacks, its penalty changes.";
+    public override string Description => "Каждую атаку врага, дебафф меняется";
 }

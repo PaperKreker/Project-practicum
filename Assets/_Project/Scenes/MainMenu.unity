@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf089812b2483824ab1820fb1f609a05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
+  _seedInput: {fileID: 0}
 --- !u!4 &59716523
 Transform:
   m_ObjectHideFlags: 0
@@ -715,7 +716,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Game
+  m_text: "\u041D\u043E\u0432\u0430\u044F \u0438\u0433\u0440\u0430"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 799f4692941302f4ea3c4685b31fbff3, type: 2}
   m_sharedMaterial: {fileID: -6866509923985786621, guid: 799f4692941302f4ea3c4685b31fbff3, type: 2}

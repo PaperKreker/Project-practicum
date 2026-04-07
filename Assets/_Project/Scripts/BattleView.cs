@@ -64,7 +64,7 @@ public class BattleView : MonoBehaviour
         if (selected.Count == 0)
         {
             if (_comboNameText) _comboNameText.text = "";
-            if (_comboDamageText) _comboDamageText.text = "";
+            if (_comboDamageText) _comboDamageText.text = "0";
             return;
         }
 
@@ -132,16 +132,16 @@ public class BattleView : MonoBehaviour
     // Display name for combo types
     private static string ComboDisplayName(ComboType t) => t switch
     {
-        ComboType.High => "High",
-        ComboType.Pair => "Pair",
-        ComboType.TwoPair => "Pair Set",
-        ComboType.Set => "Set",
-        ComboType.FOK => "FOK",
-        ComboType.Straight => "Straight",
-        ComboType.Flush => "Flush",
-        ComboType.FullHouse => "Full House",
-        ComboType.StraightFlush => "Straight Flush",
-        ComboType.RoyalFlush => "ROYAL FLUSH",
+        ComboType.High => "Старшая карта",
+        ComboType.Pair => "Пара",
+        ComboType.TwoPair => "Две пары",
+        ComboType.Set => "Сет",
+        ComboType.FOK => "Каре",
+        ComboType.Straight => "Стрит",
+        ComboType.Flush => "Флеш",
+        ComboType.FullHouse => "Фулл хаус",
+        ComboType.StraightFlush => "Стрит флеш",
+        ComboType.RoyalFlush => "Флеш рояль",
         _ => "?"
     };
 }
