@@ -822,6 +822,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: BattleController
       objectReference: {fileID: 0}
+    - target: {fileID: 7491806681553601250, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -1045
+      objectReference: {fileID: 0}
+    - target: {fileID: 7491806681553601250, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 78
+      objectReference: {fileID: 0}
     - target: {fileID: 7707334605099630341, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
       propertyPath: _enemy
       value: 

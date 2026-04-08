@@ -388,7 +388,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Reroll
+  m_text: "\u0420\u0435\u0440\u043E\u043B\u043B"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 799f4692941302f4ea3c4685b31fbff3, type: 2}
   m_sharedMaterial: {fileID: -6866509923985786621, guid: 799f4692941302f4ea3c4685b31fbff3, type: 2}
@@ -701,7 +701,6 @@ MonoBehaviour:
   _goldText: {fileID: 1122210031}
   _rerollCostText: {fileID: 2093844950}
   _rerollButton: {fileID: 324438151}
-  _leaveButton: {fileID: 1562210422}
 --- !u!4 &1442596879
 Transform:
   m_ObjectHideFlags: 0
@@ -1150,7 +1149,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Leave
+  m_text: "\u0412\u044B\u0439\u0442\u0438"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 799f4692941302f4ea3c4685b31fbff3, type: 2}
   m_sharedMaterial: {fileID: -6866509923985786621, guid: 799f4692941302f4ea3c4685b31fbff3, type: 2}

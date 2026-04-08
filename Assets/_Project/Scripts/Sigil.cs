@@ -27,8 +27,8 @@ public abstract class Sigil
 
 public class SigilTheMoon : Sigil
 {
-    public override string Name => "The Moon";
-    public override string Description => "Each attacking Spade suit card deals +15 damage.";
+    public override string Name => "Луна";
+    public override string Description => "Каждая карта пик наносит +15 урона.";
     public override int Cost => 6;
     public override SigilType Type => SigilType.Damage;
 
@@ -43,8 +43,8 @@ public class SigilTheMoon : Sigil
 
 public class SigilTheSun : Sigil
 {
-    public override string Name => "The Sun";
-    public override string Description => "Each attacking Heart suit card deals +15 damage.";
+    public override string Name => "Солнце";
+    public override string Description => "Каждая карта червей наносит +15 урона.";
     public override int Cost => 6;
     public override SigilType Type => SigilType.Damage;
 
@@ -59,8 +59,8 @@ public class SigilTheSun : Sigil
 
 public class SigilIsolation : Sigil
 {
-    public override string Name => "Isolation";
-    public override string Description => "Solo attacks deal +40 damage.";
+    public override string Name => "Изоляция";
+    public override string Description => "Старшая карта даёт +40 урона";
     public override int Cost => 6;
     public override SigilType Type => SigilType.Damage;
 
@@ -70,8 +70,8 @@ public class SigilIsolation : Sigil
 
 public class SigilDyadic : Sigil
 {
-    public override string Name => "Dyadic";
-    public override string Description => "Attacks containing a Pair deal +30 damage per Pair.";
+    public override string Name => "Двойная связь";
+    public override string Description => "Атаки с парами наносят по +40 урона за каждую пару.";
     public override int Cost => 7;
     public override SigilType Type => SigilType.Damage;
 
@@ -86,8 +86,8 @@ public class SigilDyadic : Sigil
 
 public class SigilTriadic : Sigil
 {
-    public override string Name => "Triadic";
-    public override string Description => "Attacks containing a Set deal +85 damage.";
+    public override string Name => "Триада";
+    public override string Description => "Атаки с сетом получают +85 урона.";
     public override int Cost => 8;
     public override SigilType Type => SigilType.Damage;
 
@@ -97,8 +97,8 @@ public class SigilTriadic : Sigil
 
 public class SigilAlignment : Sigil
 {
-    public override string Name => "Alignment";
-    public override string Description => "Attacks containing a Straight deal +70 damage.";
+    public override string Name => "Линия";
+    public override string Description => "Атаки со стритом получают +70.";
     public override int Cost => 7;
     public override SigilType Type => SigilType.Damage;
 
@@ -108,8 +108,8 @@ public class SigilAlignment : Sigil
 
 public class SigilFlow : Sigil
 {
-    public override string Name => "Flow";
-    public override string Description => "Attacks containing a Flush deal +100 damage.";
+    public override string Name => "Флоу";
+    public override string Description => "Атаки с флешем получают +100 урона.";
     public override int Cost => 8;
     public override SigilType Type => SigilType.Damage;
 
@@ -121,8 +121,8 @@ public class SigilMalice : Sigil
 {
     private bool _used;
 
-    public override string Name => "Malice";
-    public override string Description => "Your first attack each battle deals +30% damage.";
+    public override string Name => "Злой умысел";
+    public override string Description => "Первая атака в бою получает +30% к урону.";
     public override int Cost => 11;
     public override SigilType Type => SigilType.Damage;
 
@@ -138,8 +138,8 @@ public class SigilMalice : Sigil
 
 public class SigilRage : Sigil
 {
-    public override string Name => "Rage";
-    public override string Description => "While at or below 50% HP, deal +30% damage.";
+    public override string Name => "Ярость";
+    public override string Description => "Когда Ваше здоровье опускается до 50%, наносите +30% урона.";
     public override int Cost => 14;
     public override SigilType Type => SigilType.Damage;
 
@@ -151,8 +151,8 @@ public class SigilRage : Sigil
 
 public class SigilConformity : Sigil
 {
-    public override string Name => "Conformity";
-    public override string Description => "If an attack only contains cards of the same rank, it deals +70% damage.";
+    public override string Name => "Подчинение";
+    public override string Description => "Атаки с картами только одного ранга получают +70% к урону.";
     public override int Cost => 15;
     public override SigilType Type => SigilType.Damage;
 
@@ -170,8 +170,8 @@ public class SigilFortification : Sigil
 {
     private bool _triggered;
 
-    public override string Name => "Fortification";
-    public override string Description => "The enemy's first attack each battle deals 50% less damage.";
+    public override string Name => "Форт";
+    public override string Description => "Первая атака врага наносит на 50% меньше урона.";
     public override int Cost => 9;
     public override SigilType Type => SigilType.Defense;
 
@@ -192,8 +192,8 @@ public class SigilMediation : Sigil
 {
     private int _hpAtStart;
 
-    public override string Name => "Mediation";
-    public override string Description => "Restore 40% of HP lost in battle after it ends.";
+    public override string Name => "Посредник";
+    public override string Description => "Восстанавливает 40% потеряного в битве здоровья после победы.";
     public override int Cost => 10;
     public override SigilType Type => SigilType.Defense;
 
@@ -209,8 +209,8 @@ public class SigilMediation : Sigil
 
 public class SigilRefusal : Sigil
 {
-    public override string Name => "Refusal";
-    public override string Description => "Gain +1 discard each battle.";
+    public override string Name => "Отречение";
+    public override string Description => "+1 сброс каждую битву.";
     public override int Cost => 9;
     public override SigilType Type => SigilType.Utility;
 
@@ -219,8 +219,8 @@ public class SigilRefusal : Sigil
 
 public class SigilPower : Sigil
 {
-    public override string Name => "Power";
-    public override string Description => "Critical cards deal an additional +25% damage.";
+    public override string Name => "Мощь";
+    public override string Description => "Критические карты наносят на +25% больше урона.";
     public override int Cost => 14;
     public override SigilType Type => SigilType.Utility;
 
@@ -230,8 +230,8 @@ public class SigilPower : Sigil
 
 public class SigilConversion : Sigil
 {
-    public override string Name => "Conversion";
-    public override string Description => "When the battle ends, gain 2 Gold for each unused discard.";
+    public override string Name => "Конвертация";
+    public override string Description => "+2 золота за каждый неиспользованный сброс после окончания битвы.";
     public override int Cost => 11;
     public override SigilType Type => SigilType.Economy;
 

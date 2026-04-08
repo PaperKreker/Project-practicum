@@ -50,7 +50,7 @@ public static class EnemyDatabase
 
     public static EnemyData Wolf => new EnemyData
     {
-        EnemyName = "Wolf",
+        EnemyName = "Волк",
         Tier = EnemyTier.Regular,
         MaxHp = 80,
         AttackDamage = 12,
@@ -61,7 +61,7 @@ public static class EnemyDatabase
 
     public static EnemyData Raven => new EnemyData
     {
-        EnemyName = "Raven",
+        EnemyName = "Ворон",
         Tier = EnemyTier.Regular,
         MaxHp = 70,
         AttackDamage = 10,
@@ -72,7 +72,7 @@ public static class EnemyDatabase
 
     public static EnemyData Fox => new EnemyData
     {
-        EnemyName = "Fox",
+        EnemyName = "Лис",
         Tier = EnemyTier.Regular,
         MaxHp = 75,
         AttackDamage = 11,
@@ -83,7 +83,7 @@ public static class EnemyDatabase
 
     public static EnemyData AlphaWolf => new EnemyData
     {
-        EnemyName = "Alpha Wolf",
+        EnemyName = "Альфа волк",
         Tier = EnemyTier.Elite,
         MaxHp = 120,
         AttackDamage = 18,
@@ -95,7 +95,7 @@ public static class EnemyDatabase
 
     public static EnemyData Basilisk => new EnemyData
     {
-        EnemyName = "Basilisk",
+        EnemyName = "Василиск",
         Tier = EnemyTier.Elite,
         MaxHp = 130,
         AttackDamage = 16,
@@ -107,7 +107,7 @@ public static class EnemyDatabase
 
     public static EnemyData Scarab => new EnemyData
     {
-        EnemyName = "Scarab",
+        EnemyName = "Скарабей",
         Tier = EnemyTier.Elite,
         MaxHp = 110,
         AttackDamage = 15,
@@ -119,7 +119,7 @@ public static class EnemyDatabase
 
     public static EnemyData Minotaur => new EnemyData
     {
-        EnemyName = "Minotaur",
+        EnemyName = "Минотавр",
         Tier = EnemyTier.Boss,
         MaxHp = 200,
         AttackDamage = 20,
@@ -130,7 +130,7 @@ public static class EnemyDatabase
 
     public static EnemyData Spider => new EnemyData
     {
-        EnemyName = "Spider",
+        EnemyName = "Паук",
         Tier = EnemyTier.Boss,
         MaxHp = 220,
         AttackDamage = 22,
@@ -141,7 +141,7 @@ public static class EnemyDatabase
 
     public static EnemyData Leviathan => new EnemyData
     {
-        EnemyName = "Leviathan",
+        EnemyName = "Левиафан",
         Tier = EnemyTier.Boss,
         MaxHp = 300,
         AttackDamage = 25,
