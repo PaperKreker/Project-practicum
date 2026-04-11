@@ -55,8 +55,8 @@ public class MapController : MonoBehaviour
             string nodeLabel = node.Type switch
             {
                 NodeType.Battle => node.Enemy != null ? node.Enemy.EnemyName : "Battle",
-                NodeType.Shop => "Shop",
-                NodeType.Rest => "Rest",
+                NodeType.Shop => "Магазин",
+                NodeType.Rest => "Отдых",
                 _ => "?",
             };
             if (label) label.text = $"[{node.Index}] {nodeLabel}";
