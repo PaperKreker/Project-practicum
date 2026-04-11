@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b6fc5ea4003045648baac36862e6a05f
+guid: 73cff01ce3adf444ea30dfa700793c0d
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8656711183680404767
-    second: raven 1_0
+      213: -4668436313784537202
+    second: Amalgam_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: raven_0
+      name: Amalgam_0
       rect:
         serializedVersion: 2
-        x: 12
-        y: 31
-        width: 188
-        height: 74
+        x: 1
+        y: 7
+        width: 255
+        height: 129
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 8028fe5eabacac84babe67a9c9216dee
-      internalID: 1475817745
+      spriteID: e8fa65438e1663fb0800000000000000
+      internalID: -4668436313784537202
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 7d7de3a385cbee44f85e276a8ffe8312
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -146,11 +146,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      raven_0: 1475817745
+      Amalgam_0: -4668436313784537202
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
