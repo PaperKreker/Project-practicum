@@ -74,6 +74,6 @@ MonoBehaviour:
   <AttackTime>k__BackingField: 1
   <DiscardLifetime>k__BackingField: 0.5
   <DiscardXVelocity>k__BackingField: 200
-  <DiscardYVelocity>k__BackingField: 800
+  <DiscardYVelocity>k__BackingField: 600
   <DiscardGravitation>k__BackingField: -6000
   <DiscardRotation>k__BackingField: 45
