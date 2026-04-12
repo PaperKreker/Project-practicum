@@ -132,7 +132,7 @@ public class HandController : MonoBehaviour
         }
     }
 
-    public IEnumerator AnimateAttack(Vector2 enemyPosition)
+    public IEnumerator AnimateAttack(Vector2 enemyPosition, Action HitCallback)
     {
         List<Coroutine> routines = new ();
 
@@ -141,7 +141,7 @@ public class HandController : MonoBehaviour
             routines.Add(_selected[i].PlayAttackAnimation(enemyPosition));
             yield return new WaitForSeconds(_attackDelay);
         }
-        yield return CoroutineUtils.WhenAll(this, routines);
+        yield return CoroutineUtils.WhenAll(this, routines, HitCallback);
     }
 
     public IEnumerator AnimateDiscard()

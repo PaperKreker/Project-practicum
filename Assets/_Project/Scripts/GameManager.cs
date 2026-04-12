@@ -127,6 +127,13 @@ public class GameManager : MonoBehaviour
     {
         CurrentState = newState;
         OnStateChanged?.Invoke(newState);
-        SceneManager.LoadScene(sceneName);
+        if (TransitionManager.Instance != null)
+        {
+            TransitionManager.Instance.LoadScene(sceneName);
+        }
+        else
+        {
+            SceneManager.LoadScene(sceneName);
+        }
     }
 }
