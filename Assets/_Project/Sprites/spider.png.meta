@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8b99498dbd5c6af45b21e747ff8574e5
+guid: 73999a2c7bf81384b99b5e7b3eabdee2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8482712648628362555
-    second: Cross_0
+      213: -3438905571476058607
+    second: Spider_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Cross_0
+      name: Spider_0
       rect:
         serializedVersion: 2
-        x: 10
-        y: 8
-        width: 108
-        height: 109
+        x: 2
+        y: 2
+        width: 209
+        height: 125
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b3dd439e536a8b570800000000000000
-      internalID: 8482712648628362555
+      spriteID: 11ece045a9d8640d0800000000000000
+      internalID: -3438905571476058607
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Cross_0: 8482712648628362555
+      Spider_0: -3438905571476058607
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

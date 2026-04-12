@@ -492,7 +492,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 275, y: -290}
+  m_AnchoredPosition: {x: 170, y: -311}
   m_SizeDelta: {x: 1060, y: 480}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &793519051
@@ -972,26 +972,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 426548174099218441, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
-      propertyPath: m_AspectRatio
-      value: NaN
-      objectReference: {fileID: 0}
-    - target: {fileID: 1455151572449716319, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -130.00005
-      objectReference: {fileID: 0}
-    - target: {fileID: 3210311091851200010, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
-      propertyPath: m_fontSize
-      value: 72
-      objectReference: {fileID: 0}
-    - target: {fileID: 3737182149817997468, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -144.05545
-      objectReference: {fileID: 0}
-    - target: {fileID: 6642253351438066036, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6714195557661426006, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
       propertyPath: m_Name
       value: BattleController
@@ -1003,10 +983,6 @@ PrefabInstance:
     - target: {fileID: 6874939867834239413, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7241078281374955365, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -58.05545
       objectReference: {fileID: 0}
     - target: {fileID: 7707334605099630341, guid: 22fb9114d2533f6468655429e6efcd23, type: 3}
       propertyPath: _enemy

@@ -23,7 +23,7 @@ public class SigilSlot : MonoBehaviour
         if (_nameText) _nameText.text = sigil.Name;
         if (_descText) _descText.text = sigil.Description;
         if (_costText) _costText.text = $"{sigil.Cost}g";
-        if (_typeText) _typeText.text = sigil.Type.ToString();
+        if (_typeText) _typeText.text = sigil.Type.ToFriendlyString();
 
         if (_buyButton)
             _buyButton.onClick.AddListener(OnBuyClicked);

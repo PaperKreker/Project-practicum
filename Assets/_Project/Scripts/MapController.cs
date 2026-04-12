@@ -54,12 +54,12 @@ public class MapController : MonoBehaviour
 
             string nodeLabel = node.Type switch
             {
-                NodeType.Battle => node.Enemy != null ? node.Enemy.EnemyName : "Battle",
-                NodeType.Shop => "Shop",
-                NodeType.Rest => "Rest",
+                NodeType.Battle => node.Enemy != null ? node.Enemy.EnemyName : "Враг",
+                NodeType.Shop => "Магазин",
+                NodeType.Rest => "Отдых",
                 _ => "?",
             };
-            if (label) label.text = $"[{node.Index}] {nodeLabel}";
+            if (label) label.text = $"[{node.Index + 1}] {nodeLabel}";
 
             bool interactable = reachable.Contains(node.Index);
             button.interactable = interactable;
