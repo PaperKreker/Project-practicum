@@ -120,7 +120,6 @@ public class UITransition : MonoBehaviour
             float t = ticker / _animationTime;
 
             _material.SetFloat(transitionKey, 1 - t);
-            transform.localScale = Vector3.one * Mathf.Lerp(1.0f, _transitionScale, t);
         }
         if (_isLerping)
         {
