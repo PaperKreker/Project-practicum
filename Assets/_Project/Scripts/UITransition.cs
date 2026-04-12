@@ -50,7 +50,6 @@ public class UITransition : MonoBehaviour
         if (transitionType == TransitionType.Hide)
         {
             _image.enabled = false;
-            _targetCanvas.SetActive(false);
             yield return GetFrame();
             yield return AnimateHide();
             transform.localScale = Vector3.one;
@@ -63,7 +62,7 @@ public class UITransition : MonoBehaviour
 
     private IEnumerator GetFrame()
     {
-        yield return new WaitForEndOfFrame ();
+        yield return new WaitForEndOfFrame();
 
         RectTransform rectTransform = (RectTransform)transform;
         Vector2 size = rectTransform.rect.size * _renderCanvas.transform.localScale.x;
@@ -77,9 +76,9 @@ public class UITransition : MonoBehaviour
         Sprite chromaKey = TakeScreenshot(sizeInt, rectTransform, Color.green);
         _material.SetTexture("_GreenTex", chromaKey.texture);
 
-        _ignoreCanvas.SetActive(true);
-        _targetCanvas.SetActive(false);
 
+        _ignoreCanvas.SetActive(true);
+        _targetCanvas.SetActive(true);
         _targetCamera.Render();
     }
 
