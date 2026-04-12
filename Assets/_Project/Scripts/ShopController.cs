@@ -108,7 +108,7 @@ public class ShopController : MonoBehaviour
     {
         var run = GameManager.Instance.Run;
         if (_goldText) _goldText.text = $"Золото: {run.Gold}";
-        if (_rerollCostText) _rerollCostText.text = $"Рероллов: {_rerollCost}g";
+        if (_rerollCostText) _rerollCostText.text = $"Стоимость: {_rerollCost}g";
         if (_rerollButton) _rerollButton.interactable = run.Gold >= _rerollCost;
         RefreshSlots();
     }

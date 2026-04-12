@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3e2721e4f0a3dc348a4f6cca217c3f77
+guid: 44cc7771f04b94147b016767483c0e23
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Belwe Bd BT Alt Style [Rus by m
+  - Neue Pixel Sans
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

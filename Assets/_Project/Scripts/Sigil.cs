@@ -1,7 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public enum SigilType { Damage, Defense, Utility, Economy, Other }
+public enum SigilType { Damage, Defense, Utility, Economy }
+
+public static class SigilTypeExtensions
+{
+    public static string ToFriendlyString(this SigilType status)
+    {
+        return status switch
+        {
+            SigilType.Damage => "Урон",
+            SigilType.Defense => "Защита",
+            SigilType.Utility => "Прочее",
+            SigilType.Economy => "Экономика",
+            _ => status.ToString()
+        };
+    }
+}
 
 public abstract class Sigil
 {

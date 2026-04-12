@@ -1,0 +1,287 @@
+fileFormatVersion: 2
+guid: e64fae2acb5a316428e47c33e76de81d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3587704264600152089
+    second: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_0
+  - first:
+      213: -2756212234938552417
+    second: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_1
+  - first:
+      213: -3536380705248855633
+    second: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_2
+  - first:
+      213: 3694799706188365408
+    second: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_3
+  - first:
+      213: -3947572242648437755
+    second: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_4
+  - first:
+      213: -3674335801269214231
+    second: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_5
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_0
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 147
+        width: 51
+        height: 34
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 19, y: 16, z: 19, w: 14}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7e79a55daf9e53ec0800000000000000
+      internalID: -3587704264600152089
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_1
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 145
+        width: 76
+        height: 39
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f9fe6ea4397ffb9d0800000000000000
+      internalID: -2756212234938552417
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_2
+      rect:
+        serializedVersion: 2
+        x: 29
+        y: 76
+        width: 45
+        height: 58
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa9b8113c704ceec0800000000000000
+      internalID: -3536380705248855633
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_3
+      rect:
+        serializedVersion: 2
+        x: 116
+        y: 76
+        width: 51
+        height: 58
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 06e3393c1c0964330800000000000000
+      internalID: 3694799706188365408
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_4
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 15
+        width: 49
+        height: 49
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50c6fbfd5f76739c0800000000000000
+      internalID: -3947572242648437755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: pixellab-Spritesheet-for-buttons-in-fan-1775554264935_5
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 14
+        width: 70
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e329d36e03220dc0800000000000000
+      internalID: -3674335801269214231
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 00e8a1b32586fd14e914d7ea6769c0ae
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      pixellab-Spritesheet-for-buttons-in-fan-1775554264935_0: -3587704264600152089
+      pixellab-Spritesheet-for-buttons-in-fan-1775554264935_1: -2756212234938552417
+      pixellab-Spritesheet-for-buttons-in-fan-1775554264935_2: -3536380705248855633
+      pixellab-Spritesheet-for-buttons-in-fan-1775554264935_3: 3694799706188365408
+      pixellab-Spritesheet-for-buttons-in-fan-1775554264935_4: -3947572242648437755
+      pixellab-Spritesheet-for-buttons-in-fan-1775554264935_5: -3674335801269214231
+      pixellab-Spritesheet-for-buttons-in-fan-1775554264935_6: 35856922
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
