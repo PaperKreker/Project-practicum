@@ -37,7 +37,7 @@ public class CardView : MonoBehaviour
     private RectTransform _rect;
     private Vector2 _basePosition;
     private Vector2 _targetPosition;
-    private bool _isHovered;
+    private bool _isInDeck = true;
     private Sprite _originalSprite;
 
     private void Awake()
@@ -77,25 +77,28 @@ public class CardView : MonoBehaviour
 
     public void SetBasePosition(Vector2 pos)
     {
+        if (!_isInDeck) return;
+
         _basePosition = pos;
-        if (!_isHovered)
-        {
-            _targetPosition = pos;
-            PlayMoveToTarget();
-        }
+        _targetPosition = GetTargetPosition();
+        PlayMoveToTarget();
     }
 
     public void SetSelected(bool selected)
     {
+        if (!_isInDeck) return;
+
         IsSelected = selected;
         //_background.color = selected ? _selectedBg : _normalBg;
 
         // Selected card lifts slightly
-        if (!_isHovered)
-        {
-            _targetPosition = _basePosition + (selected ? Vector2.up * _animationConfig.HoverLift : Vector2.zero);
-            PlayMoveToTarget();
-        }
+        _targetPosition = GetTargetPosition();
+        PlayMoveToTarget();
+    }
+
+    private Vector3 GetTargetPosition()
+    {
+        return _basePosition + (IsSelected ? Vector2.up * _animationConfig.HoverLift : Vector2.zero);
     }
 
     // Petrified cards are visible but cannot be clicked
@@ -118,6 +121,7 @@ public class CardView : MonoBehaviour
 
     public Coroutine PlayAttackAnimation(Vector2 attackPosition)
     {
+        _isInDeck = false;
         _targetPosition = attackPosition;
         if (_currentAnimation != null)
             StopCoroutine(_currentAnimation);
@@ -127,6 +131,8 @@ public class CardView : MonoBehaviour
 
     public Coroutine PlayDiscardAnimation()
     {
+        _isInDeck = false;
+
         if (_currentAnimation != null)
             StopCoroutine(_currentAnimation);
         _currentAnimation = StartCoroutine(AnimateDiscard());
@@ -187,8 +193,9 @@ public class CardView : MonoBehaviour
                 _animationConfig.HoverCurve.Evaluate(1 - time / _animationConfig.HoverTime));
             
             time -= Time.deltaTime;
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForFixedUpdate();
         }
+        _rect.anchoredPosition = _targetPosition;
     }
 
     private IEnumerator AnimateAttackTarget()

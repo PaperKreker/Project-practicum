@@ -15,12 +15,14 @@ public class BattleView : MonoBehaviour
     [Header("UI Preview")]
     [SerializeField] private TextMeshProUGUI _comboNameText;
     [SerializeField] private TextMeshProUGUI _comboDamageText;
+    [SerializeField] private TextMeshProUGUI _comboNominalText;
 
     [Header("UI Counters")]
     [SerializeField] private TextMeshProUGUI _attackCoinText;
     [SerializeField] private TextMeshProUGUI _discardsLeftText;
 
     [Header("UI Enemy")]
+    [SerializeField] private Slider _enemyHpSlider;
     [SerializeField] private TextMeshProUGUI _enemyNameText;
     [SerializeField] private TextMeshProUGUI _enemyHpText;
     [SerializeField] private TextMeshProUGUI _enemyDamageText;
@@ -63,8 +65,9 @@ public class BattleView : MonoBehaviour
 
         if (selected.Count == 0)
         {
-            if (_comboNameText) _comboNameText.text = "";
-            if (_comboDamageText) _comboDamageText.text = "0";
+            _comboNameText.text = "";
+            _comboDamageText.text = "0";
+            _comboNominalText.text = "0";
             return;
         }
 
@@ -73,10 +76,12 @@ public class BattleView : MonoBehaviour
         if (_comboNameText)
             _comboNameText.text = ComboDisplayName(result.Type);
 
-        if (_comboDamageText)
-            _comboDamageText.text = result.Type == ComboType.None
-                ? "NaN"
-                : $"{Mathf.RoundToInt(result.TotalDamage)}";
+        _comboDamageText.text = result.Type == ComboType.None
+            ? "0"
+            : $"{Mathf.RoundToInt(result.BaseDamage)}";
+        _comboNominalText.text = result.Type == ComboType.None
+            ? "0"
+            : $"{Mathf.RoundToInt(result.NominalSum)}";
     }
 
     private void UpdateButtonStates()
@@ -116,6 +121,8 @@ public class BattleView : MonoBehaviour
         _enemyHpText.text = $"{Mathf.Max(0, battleState.enemyHp)}/{battleState.enemyData?.MaxHp}";
         _enemyDamageText.text = $"{battleState.ctx?.EnemyDamage}";
         _playerHpText.text = $"{Mathf.Max(0, battleState.playerHp)}/{_battleConfig.PlayerMaxHp}";
+
+        _enemyHpSlider.value = Mathf.Max(0.0f, battleState.enemyHp) / battleState.enemyData.MaxHp;
     }
 
     private void RefreshEnemyUI()

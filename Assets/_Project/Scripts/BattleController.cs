@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VectorGraphics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BattleController : MonoBehaviour
 {
     public event Action OnAnimationStarted;
     public event Action OnAnimationStopped;
+    public event Action<bool> OnBattleEnd;
+    public event Action OnEnemyHit;
     public event Action OnRefreshAll;
     public event Action OnRefresh;
 
@@ -19,6 +23,7 @@ public class BattleController : MonoBehaviour
     private EnemyEffect _enemyEffect;
     private BattleContext _ctx;
     private List<Sigil> _sigils;
+    private List<Coroutine> _animationsWait = new ();
 
     private int _attackCoins;
     private int _discardsLeft;
@@ -153,7 +158,7 @@ public class BattleController : MonoBehaviour
         foreach (var s in _sigils)
             s.OnPlayerAttack(_ctx, result);
 
-        yield return _hand.AnimateAttack(_enemy.position);
+        yield return _hand.AnimateAttack(_enemy.position, OnEnemyHit);
 
         _attackCoins--;
         _hand.DiscardSelected();
@@ -214,6 +219,17 @@ public class BattleController : MonoBehaviour
         OnAnimationStopped?.Invoke();
     }
 
+    public void AddAnimationToWait(Coroutine animation)
+    {
+        _animationsWait.Add(animation);
+    }
+
+    private IEnumerator WaitForAnimations()
+    {
+        yield return CoroutineUtils.WhenAll(this, _animationsWait);
+        _animationsWait.Clear();
+    }
+
     private void EnemyTakeTurn()
     {
         _ctx.PlayerHp -= _ctx.EnemyDamage;
@@ -230,12 +246,20 @@ public class BattleController : MonoBehaviour
 
     private void EndBattle(bool playerWon)
     {
-        if (_battleOver) return;
+        StartCoroutine(EndBattleSequence(playerWon));
+    }
+
+    private IEnumerator EndBattleSequence(bool playerWon)
+    {
+        if (_battleOver) yield break;
         _battleOver = true;
 
         _enemyEffect.OnBattleEnd(_ctx);
         foreach (var s in _sigils)
             s.OnBattleEnd(_ctx);
+
+        OnBattleEnd?.Invoke(playerWon);
+        yield return WaitForAnimations();
 
         if (playerWon)
         {
