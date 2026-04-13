@@ -1,4 +1,4 @@
-using UnityEngine;
+п»їusing UnityEngine;
 
 public class BattleAudio : MonoBehaviour
 {
@@ -22,31 +22,31 @@ public class BattleAudio : MonoBehaviour
         string sound = "";
         switch (state.enemyData.EnemyName)
         {
-            case "Альфа волк":
+            case "РђР»СЊС„Р° РІРѕР»Рє":
                 sound = "hit_alpha_wolf";
                 break;
-            case "Волк":
+            case "Р’РѕР»Рє":
                 sound = "hit_wolf";
                 break;
-            case "Ворон":
+            case "Р’РѕСЂРѕРЅ":
                 sound = "hit_raven";
                 break;
-            case "Лис":
+            case "Р›РёСЃ":
                 sound = "hit_fox";
                 break;
-            case "Василиск":
+            case "Р’Р°СЃРёР»РёСЃРє":
                 sound = "hit_basilisk";
                 break;
-            case "Скарабей":
+            case "РЎРєР°СЂР°Р±РµР№":
                 sound = "hit_scarab";
                 break;
-            case "Минотавр":
+            case "РњРёРЅРѕС‚Р°РІСЂ":
                 sound = "hit_minotaur";
                 break;
-            case "Паук":
+            case "РџР°СѓРє":
                 sound = "hit_spider";
                 break;
-            case "Амальгам":
+            case "РђРјР°Р»СЊРіР°Рј":
                 sound = "hit_amalgam";
                 break;
             default:
