@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 public enum EnemyTier { Regular, Elite, Boss }
 
@@ -14,7 +15,7 @@ public enum EnemyEffectType
     LargeHandPenalty,       // Scarab
     EscalateDamage,         // Minotaur (Boss)
     NoRepeatCombo,          // Spider (Boss)
-    CyclingPenalty,         // Leviathan (Boss)
+    CyclingPenalty,         // Amalgam (Boss)
 }
 
 public class EnemyData
@@ -27,6 +28,7 @@ public class EnemyData
     public int GoldReward;
     public float CritChanceReward;
     public EnemyEffectType EffectType;
+    public Sprite Sprite;
 
     public EnemyEffect CreateEffect() => EffectType switch
     {
@@ -139,9 +141,9 @@ public static class EnemyDatabase
         EffectType = EnemyEffectType.NoRepeatCombo,
     };
 
-    public static EnemyData Leviathan => new EnemyData
+    public static EnemyData Amalgam => new EnemyData
     {
-        EnemyName = "Левиафан",
+        EnemyName = "Амальгам",
         Tier = EnemyTier.Boss,
         MaxHp = 300,
         AttackDamage = 25,
@@ -152,5 +154,5 @@ public static class EnemyDatabase
 
     public static List<EnemyData> AllRegular => new List<EnemyData> { Wolf, Raven, Fox };
     public static List<EnemyData> AllElite => new List<EnemyData> { AlphaWolf, Basilisk, Scarab };
-    public static List<EnemyData> AllBosses => new List<EnemyData> { Minotaur, Spider, Leviathan };
+    public static List<EnemyData> AllBosses => new List<EnemyData> { Minotaur, Spider, Amalgam };
 }

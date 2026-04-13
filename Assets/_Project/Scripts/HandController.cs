@@ -70,10 +70,11 @@ public class HandController : MonoBehaviour
         if (needed <= 0) return;
 
         List<Card> drawn = _deck.Draw(needed);
+
         foreach (var card in drawn)
             SpawnCard(card);
 
-        LayoutHand();
+        ApplySort(); // ← sorts the full hand including new cards
     }
 
     // Returns the list of selected cards
@@ -91,7 +92,7 @@ public class HandController : MonoBehaviour
             Destroy(view.gameObject);
         }
         _selected.Clear();
-        LayoutHand();
+        ApplySort();
         OnSelectionChanged?.Invoke();
     }
 
@@ -104,7 +105,7 @@ public class HandController : MonoBehaviour
             _selected.Remove(view);
             Destroy(view.gameObject);
         }
-        LayoutHand();
+        ApplySort();
         OnSelectionChanged?.Invoke();
     }
 
@@ -215,7 +216,11 @@ public class HandController : MonoBehaviour
     private void ToggleSort()
     {
         _sortBySuit = !_sortBySuit;
+        ApplySort();
+    }
 
+    private void ApplySort()
+    {
         if (_sortBySuit)
             _hand = _hand.OrderBy(v => v.Data.Suit).ThenBy(v => v.Data.Rank).ToList();
         else
