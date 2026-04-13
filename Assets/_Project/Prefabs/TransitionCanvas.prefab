@@ -182,6 +182,7 @@ GameObject:
   - component: {fileID: 3575499940092848674}
   - component: {fileID: 5426021886679100164}
   - component: {fileID: 8264500141474707927}
+  - component: {fileID: 3772321325971122161}
   m_Layer: 5
   m_Name: TransitionCanvas
   m_TagString: Untagged
@@ -295,3 +296,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TransitionManager
   _UITransition: {fileID: 114019747921024546}
   _overlay: {fileID: 7847836646194698279}
+--- !u!114 &3772321325971122161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5866645854446539039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dfdf263cd19409449c94b60e2afcf62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TransitionAudio
+  _manager: {fileID: 8264500141474707927}
+  _transitionSound: transition_silent

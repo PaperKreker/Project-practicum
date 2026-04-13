@@ -436,6 +436,7 @@ MonoBehaviour:
   _maxSelected: 5
   _attackDelay: 0.1
   _discardDelay: 0.05
+  _sortButtonLabel: {fileID: 0}
 --- !u!1 &1447111579008311061
 GameObject:
   m_ObjectHideFlags: 0
@@ -528,7 +529,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48.95
+  m_fontSize: 48.8
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2076,6 +2077,7 @@ GameObject:
   - component: {fileID: 318170386393201152}
   - component: {fileID: 7707334605099630341}
   - component: {fileID: 5422643446900829957}
+  - component: {fileID: 8089433078138157445}
   m_Layer: 5
   m_Name: BattleController
   m_TagString: Untagged
@@ -2149,6 +2151,19 @@ MonoBehaviour:
   _enemyDamageText: {fileID: 4835948116900501027}
   _enemyEffectText: {fileID: 1784878868635108259}
   _playerHpText: {fileID: 7099992465283916154}
+--- !u!114 &8089433078138157445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6714195557661426006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46d20d7823465314da3bb4cdf5b043d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleAudio
+  _battleController: {fileID: 7707334605099630341}
 --- !u!1 &7573288942506363777
 GameObject:
   m_ObjectHideFlags: 0

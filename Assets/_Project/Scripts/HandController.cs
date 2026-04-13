@@ -18,6 +18,7 @@ Manages the player's hand:
 public class HandController : MonoBehaviour
 {
     public event Action<Deck> OnInit;
+    public event Action OnHandLayout;
 
     [Header("References")]
     [SerializeField] private GameObject _cardPrefab;   // card prefab
@@ -221,6 +222,8 @@ public class HandController : MonoBehaviour
             RectTransform rt = _hand[i].GetComponent<RectTransform>();
             rt.localEulerAngles = new Vector3(0, 0, rot);
         }
+
+        OnHandLayout?.Invoke();
     }
 
     public void ToggleSort()

@@ -6,6 +6,9 @@ using UnityEngine.UI;
 // Visual representation of a card in the player's hand
 public class CardView : MonoBehaviour
 {
+    public event System.Action OnDiscard;
+    public event System.Action OnAttackHit;
+
     [Header("UI References")]
     [SerializeField] private AnimatedButton _button;
     [SerializeField] private TextMeshProUGUI _rankTopLeft;
@@ -224,6 +227,7 @@ public class CardView : MonoBehaviour
             time -= Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
+        OnAttackHit?.Invoke();
         gameObject.SetActive(false);
     }
 
@@ -236,6 +240,8 @@ public class CardView : MonoBehaviour
         float xShift = Random.Range(-_animationConfig.DiscardXVelocity, _animationConfig.DiscardXVelocity);
         float yVelocity = _animationConfig.DiscardYVelocity;
         float time = _animationConfig.DiscardLifetime;
+
+        OnDiscard?.Invoke();
 
         while (time > 0.0f)
         {
