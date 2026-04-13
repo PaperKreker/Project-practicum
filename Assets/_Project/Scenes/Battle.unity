@@ -525,7 +525,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 1475817745, guid: b6fc5ea4003045648baac36862e6a05f, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -547,6 +547,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHitView
   _battleController: {fileID: 6423315937641050232}
   _graphics: {fileID: 793519052}
+  _spriteDatabase: {fileID: 11400000, guid: 38ef92016db38d94f873824ae41166df, type: 2}
   _animationDuration: 0.5
   _shakeAmplitude: 30
   _deathMaterial: {fileID: 2100000, guid: bcee5dbc697364b46b33cccf2667e793, type: 2}
