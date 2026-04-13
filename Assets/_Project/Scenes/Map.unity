@@ -396,6 +396,7 @@ GameObject:
   - component: {fileID: 1644199290}
   - component: {fileID: 1644199289}
   - component: {fileID: 1644199292}
+  - component: {fileID: 1644199293}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -521,6 +522,30 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &1644199293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1644199288}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.PixelPerfectCamera
+  m_ComponentVersion: 1
+  m_AssetsPPU: 100
+  m_RefResolutionX: 640
+  m_RefResolutionY: 480
+  m_CropFrame: 0
+  m_GridSnapping: 1
+  m_FilterMode: 0
+  m_UpscaleRT: 0
+  m_PixelSnapping: 0
+  m_CropFrameX: 0
+  m_CropFrameY: 0
+  m_StretchFill: 0
 --- !u!1 &1888039843
 GameObject:
   m_ObjectHideFlags: 0
@@ -639,9 +664,9 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 1644199290}
   m_PlaneDistance: 100
-  m_PixelPerfect: 0
+  m_PixelPerfect: 1
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
@@ -763,6 +788,18 @@ PrefabInstance:
     - target: {fileID: 6654120569518455334, guid: 8164b8d45e0d539419e0bba8dccc9d3f, type: 3}
       propertyPath: m_Name
       value: BackgroundCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 8365946186779696724, guid: 8164b8d45e0d539419e0bba8dccc9d3f, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1644199290}
+    - target: {fileID: 8365946186779696724, guid: 8164b8d45e0d539419e0bba8dccc9d3f, type: 3}
+      propertyPath: m_RenderMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8365946186779696724, guid: 8164b8d45e0d539419e0bba8dccc9d3f, type: 3}
+      propertyPath: m_PixelPerfect
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
