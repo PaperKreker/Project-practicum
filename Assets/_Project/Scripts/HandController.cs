@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using System.Collections;
+using UnityEngine.UI;
 
 /* 
 Manages the player's hand:
@@ -36,6 +37,9 @@ public class HandController : MonoBehaviour
     [SerializeField] private float _attackDelay = 0.1f;
     [SerializeField] private float _discardDelay = 0.05f;
 
+    [Header("UI")]
+    [SerializeField] private TMP_Text _sortButtonLabel;
+
     // State
     private List<CardView> _hand = new List<CardView>();
     private List<CardView> _selected = new List<CardView>();
@@ -55,6 +59,12 @@ public class HandController : MonoBehaviour
             ToggleSort();
     }
 
+    private void Start()
+    {
+        if (_sortButtonLabel)
+            _sortButtonLabel.text = _sortBySuit ? "Масть" : "Ранг";
+    }
+
     // Initialize with a deck and initial draw
     public void Init(Deck deck)
     {
@@ -70,10 +80,11 @@ public class HandController : MonoBehaviour
         if (needed <= 0) return;
 
         List<Card> drawn = _deck.Draw(needed);
+
         foreach (var card in drawn)
             SpawnCard(card);
 
-        LayoutHand();
+        ApplySort(); // ← sorts the full hand including new cards
     }
 
     // Returns the list of selected cards
@@ -91,7 +102,7 @@ public class HandController : MonoBehaviour
             Destroy(view.gameObject);
         }
         _selected.Clear();
-        LayoutHand();
+        ApplySort();
         OnSelectionChanged?.Invoke();
     }
 
@@ -104,7 +115,7 @@ public class HandController : MonoBehaviour
             _selected.Remove(view);
             Destroy(view.gameObject);
         }
-        LayoutHand();
+        ApplySort();
         OnSelectionChanged?.Invoke();
     }
 
@@ -212,10 +223,16 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private void ToggleSort()
+    public void ToggleSort()
     {
         _sortBySuit = !_sortBySuit;
+        ApplySort();
+        if (_sortButtonLabel)
+            _sortButtonLabel.text = _sortBySuit ? "Масть" : "Ранг";
+    }
 
+    private void ApplySort()
+    {
         if (_sortBySuit)
             _hand = _hand.OrderBy(v => v.Data.Suit).ThenBy(v => v.Data.Rank).ToList();
         else
@@ -225,5 +242,10 @@ public class HandController : MonoBehaviour
             _hand[i].transform.SetSiblingIndex(i);
 
         LayoutHand();
+    }
+
+    public List<CardView> GetSelectedCardViews()
+    {
+        return new List<CardView>(_selected);
     }
 }

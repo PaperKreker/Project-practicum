@@ -8,6 +8,7 @@ public class ShopController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform _sigilContainer;
     [SerializeField] private GameObject _sigilSlotPrefab;
+    [SerializeField] private SigilInventoryBar _inventoryBar;
 
     [Header("HUD")]
     [SerializeField] private TMP_Text _goldText;
@@ -102,6 +103,8 @@ public class ShopController : MonoBehaviour
 
         RefreshHUD();
         RefreshSlots();
+
+        _inventoryBar?.Refresh();
     }
 
     private void RefreshHUD()

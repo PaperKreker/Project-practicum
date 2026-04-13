@@ -6,6 +6,7 @@ public class EnemyView : MonoBehaviour
 {
     [SerializeField] private BattleController _battleController;
     [SerializeField] private Image _graphics;
+    [SerializeField] private EnemySpriteDatabase _spriteDatabase;
 
     [Header("Hit animation")]
     [SerializeField] private float _animationDuration = 0.5f;
@@ -33,11 +34,26 @@ public class EnemyView : MonoBehaviour
     {
         _battleController.OnEnemyHit += Hit;
         _battleController.OnBattleEnd += EndBattle;
+        _battleController.OnRefreshAll += ApplyEnemySprite;
     }
     private void OnDisable()
     {
         _battleController.OnEnemyHit -= Hit;
         _battleController.OnBattleEnd -= EndBattle;
+        _battleController.OnRefreshAll -= ApplyEnemySprite;
+    }
+
+    private void ApplyEnemySprite()
+    {
+        if (_spriteDatabase == null) return;
+        var state = _battleController.GetCurrentState();
+        if (state.enemyData == null) return;
+
+        Sprite sprite = _spriteDatabase.GetSprite(state.enemyData.EnemyName);
+        if (sprite != null)
+            _graphics.sprite = sprite;
+
+        _battleController.OnRefreshAll -= ApplyEnemySprite;
     }
 
     private void Hit()
