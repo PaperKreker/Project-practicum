@@ -231,4 +231,9 @@ public class HandController : MonoBehaviour
 
         LayoutHand();
     }
+
+    public List<CardView> GetSelectedCardViews()
+    {
+        return new List<CardView>(_selected);
+    }
 }

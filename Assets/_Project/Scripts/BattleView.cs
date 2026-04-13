@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -61,9 +62,9 @@ public class BattleView : MonoBehaviour
 
     private void UpdateComboPreview()
     {
-        List<Card> selected = _hand.GetSelectedCards();
+        List<CardView> selectedViews = _hand.GetSelectedCardViews();
 
-        if (selected.Count == 0)
+        if (selectedViews.Count == 0)
         {
             _comboNameText.text = "";
             _comboDamageText.text = "0";
@@ -71,17 +72,28 @@ public class BattleView : MonoBehaviour
             return;
         }
 
-        ComboResult result = ComboEvaluator.Evaluate(selected);
+        bool hasHidden = selectedViews.Any(v => v.IsFaceDown);
+        List<Card> visibleCards = selectedViews.Where(v => !v.IsFaceDown).Select(v => v.Data).ToList();
+
+        // Evaluate only visible cards (or all if none hidden)
+        ComboResult result = visibleCards.Count > 0
+            ? ComboEvaluator.Evaluate(visibleCards)
+            : new ComboResult { Type = ComboType.None };
+
+        string suffix = hasHidden ? "???" : "";
 
         if (_comboNameText)
-            _comboNameText.text = ComboDisplayName(result.Type);
+            _comboNameText.text = result.Type == ComboType.None
+                ? (hasHidden ? "???" : "")
+                : ComboDisplayName(result.Type) + suffix;
 
         _comboDamageText.text = result.Type == ComboType.None
             ? "0"
-            : $"{Mathf.RoundToInt(result.BaseDamage)}";
+            : $"{Mathf.RoundToInt(result.BaseDamage)}{suffix}";
+
         _comboNominalText.text = result.Type == ComboType.None
             ? "0"
-            : $"{Mathf.RoundToInt(result.NominalSum)}";
+            : $"{Mathf.RoundToInt(result.NominalSum)}{suffix}";
     }
 
     private void UpdateButtonStates()
