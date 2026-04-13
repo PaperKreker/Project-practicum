@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using System.Collections;
+using UnityEngine.UI;
 
 /* 
 Manages the player's hand:
@@ -36,6 +37,9 @@ public class HandController : MonoBehaviour
     [SerializeField] private float _attackDelay = 0.1f;
     [SerializeField] private float _discardDelay = 0.05f;
 
+    [Header("UI")]
+    [SerializeField] private TMP_Text _sortButtonLabel;
+
     // State
     private List<CardView> _hand = new List<CardView>();
     private List<CardView> _selected = new List<CardView>();
@@ -53,6 +57,12 @@ public class HandController : MonoBehaviour
     {
         if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
             ToggleSort();
+    }
+
+    private void Start()
+    {
+        if (_sortButtonLabel)
+            _sortButtonLabel.text = _sortBySuit ? "Масть" : "Ранг";
     }
 
     // Initialize with a deck and initial draw
@@ -213,10 +223,12 @@ public class HandController : MonoBehaviour
         }
     }
 
-    private void ToggleSort()
+    public void ToggleSort()
     {
         _sortBySuit = !_sortBySuit;
         ApplySort();
+        if (_sortButtonLabel)
+            _sortButtonLabel.text = _sortBySuit ? "Масть" : "Ранг";
     }
 
     private void ApplySort()
