@@ -43,7 +43,7 @@ public abstract class Sigil
 public class SigilTheMoon : Sigil
 {
     public override string Name => "Луна";
-    public override string Description => "Каждая карта пик наносит +15 урона.";
+    public override string Description => "Каждая карта луны наносит +15 урона.";
     public override int Cost => 6;
     public override SigilType Type => SigilType.Damage;
 
@@ -51,7 +51,7 @@ public class SigilTheMoon : Sigil
     {
         int count = 0;
         foreach (var c in result.ScoringCards)
-            if (c.Suit == Suit.Spades) count++;
+            if (c.Suit == Suit.Moon) count++;
         return count * 15;
     }
 }
@@ -59,7 +59,7 @@ public class SigilTheMoon : Sigil
 public class SigilTheSun : Sigil
 {
     public override string Name => "Солнце";
-    public override string Description => "Каждая карта червей наносит +15 урона.";
+    public override string Description => "Каждая карта солнца наносит +15 урона.";
     public override int Cost => 6;
     public override SigilType Type => SigilType.Damage;
 
@@ -67,7 +67,7 @@ public class SigilTheSun : Sigil
     {
         int count = 0;
         foreach (var c in result.ScoringCards)
-            if (c.Suit == Suit.Hearts) count++;
+            if (c.Suit == Suit.Sun) count++;
         return count * 15;
     }
 }

@@ -3,10 +3,10 @@ using UnityEngine;
 // Card suit
 public enum Suit
 {
-    Spades,
-    Hearts,
-    Diamonds,
-    Clubs
+    Stone,
+    Fire,
+    Sun,
+    Moon
 }
 
 // Card rank

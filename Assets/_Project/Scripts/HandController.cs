@@ -27,7 +27,6 @@ public class HandController : MonoBehaviour
 
     [Header("Layout")]
     [SerializeField] private float _cardSpacing = 110f;
-    [SerializeField] private float _cardWidth = 100f;
     [SerializeField] private float _fanAngle = 5f;
 
     [Header("Rules")]
