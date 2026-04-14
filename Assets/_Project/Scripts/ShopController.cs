@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class ShopController : MonoBehaviour
 {
+    public event Action OnReroll;
+    public event Action OnBuy;
+
     [Header("References")]
     [SerializeField] private Transform _sigilContainer;
     [SerializeField] private GameObject _sigilSlotPrefab;
@@ -33,6 +38,7 @@ public class ShopController : MonoBehaviour
 
         run.Gold -= _rerollCost;
         _rerollCost++;
+        OnReroll?.Invoke();
         RollOffers();
         RefreshHUD();
     }
@@ -104,6 +110,7 @@ public class ShopController : MonoBehaviour
         RefreshHUD();
         RefreshSlots();
 
+        OnBuy?.Invoke();
         _inventoryBar?.Refresh();
     }
 

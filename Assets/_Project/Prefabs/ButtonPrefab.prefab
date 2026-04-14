@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2525001129697249912}
   - component: {fileID: 5497831961139666827}
   - component: {fileID: 4728957549303738576}
+  - component: {fileID: 8693624310218847947}
   m_Layer: 5
   m_Name: ButtonPrefab
   m_TagString: Untagged
@@ -144,6 +145,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8693624310218847947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4312291734071543736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fe1f27b1d593d64d922098c1fdb8b09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonAudio
 --- !u!1 &6819912269157263686
 GameObject:
   m_ObjectHideFlags: 0

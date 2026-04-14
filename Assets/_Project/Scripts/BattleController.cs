@@ -11,6 +11,7 @@ public class BattleController : MonoBehaviour
     public event Action OnAnimationStopped;
     public event Action<bool> OnBattleEnd;
     public event Action OnEnemyHit;
+    public event Action OnEnemyLastHit;
     public event Action OnRefreshAll;
     public event Action OnRefresh;
 
@@ -164,6 +165,8 @@ public class BattleController : MonoBehaviour
         _hand.DiscardSelected();
         _hand.DrawUpToMax();
         _hand.SetCardsInteractable(true);
+
+        OnEnemyLastHit?.Invoke();
 
         // Check victory before enemy gets a turn — dead enemies don't attack
         if (VictoryChecker.IsBattleWon(_enemyHp))

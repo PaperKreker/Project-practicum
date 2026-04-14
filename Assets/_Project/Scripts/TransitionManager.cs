@@ -1,11 +1,12 @@
+using System;
 using System.Collections;
-using Unity.VectorGraphics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class TransitionManager : MonoBehaviour
 {
+    public event Action OnTransitionStart;
     public static TransitionManager Instance { get; private set; }
 
     [SerializeField] private UITransition _UITransition;
@@ -29,6 +30,7 @@ public class TransitionManager : MonoBehaviour
 
     IEnumerator AnimateTransition(string sceneName)
     {
+        OnTransitionStart?.Invoke();
         yield return _UITransition.AnimateTransition(UITransition.TransitionType.Hide);
         _overlay.enabled = true;
         yield return SceneManager.LoadSceneAsync(sceneName);
