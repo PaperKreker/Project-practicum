@@ -44,7 +44,6 @@ public class HandController : MonoBehaviour
     private List<CardView> _hand = new List<CardView>();
     private List<CardView> _selected = new List<CardView>();
     private Deck _deck;
-    private bool _sortBySuit = true;
 
     // Fired when the selection changes
     public event Action OnSelectionChanged;
@@ -61,8 +60,7 @@ public class HandController : MonoBehaviour
 
     private void Start()
     {
-        if (_sortButtonLabel)
-            _sortButtonLabel.text = _sortBySuit ? "Масть" : "Ранг";
+        _sortButtonLabel.text = GameSettings.HandSortMode.ToRussianString();
     }
 
     // Initialize with a deck and initial draw
@@ -227,15 +225,14 @@ public class HandController : MonoBehaviour
 
     public void ToggleSort()
     {
-        _sortBySuit = !_sortBySuit;
+        GameSettings.HandSortMode = GameSettings.HandSortMode.Cycle();
+        _sortButtonLabel.text = GameSettings.HandSortMode.ToRussianString();
         ApplySort();
-        if (_sortButtonLabel)
-            _sortButtonLabel.text = _sortBySuit ? "Масть" : "Ранг";
     }
 
     private void ApplySort()
     {
-        if (_sortBySuit)
+        if (GameSettings.HandSortMode == HandSortMode.SUIT)
             _hand = _hand.OrderBy(v => v.Data.Suit).ThenBy(v => v.Data.Rank).ToList();
         else
             _hand = _hand.OrderBy(v => v.Data.Rank).ThenBy(v => v.Data.Suit).ToList();
