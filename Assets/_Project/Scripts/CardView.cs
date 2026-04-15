@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,19 +12,19 @@ public class CardView : MonoBehaviour
 
     [Header("UI References")]
     [SerializeField] private AnimatedButton _button;
-    [SerializeField] private TextMeshProUGUI _rankTopLeft;
-    [SerializeField] private TextMeshProUGUI _rankBottomRight;
-    [SerializeField] private TextMeshProUGUI _suitCenter;
     [SerializeField] private Image _background;
-    [SerializeField] private Image _critGlow;
 
     [Header("Colors")]
-    [SerializeField] private Color _colorRed = new Color(0.85f, 0.1f, 0.1f);
-    [SerializeField] private Color _colorBlack = new Color(0.1f, 0.1f, 0.1f);
+    [SerializeField] private Color _critColor = new Color(0.85f, 0.1f, 0.1f, 0.5f);
 
-    [Header("Face Down")]
+    [Header("Sprites")]
     [SerializeField] private Sprite _cardBackSprite;
+    [SerializeField] private List<Sprite> _stoneSprites;
+    [SerializeField] private List<Sprite> _moonSprites;
+    [SerializeField] private List<Sprite> _fireSprites;
+    [SerializeField] private List<Sprite> _sunSprites;
 
+    [Header("Animations")]
     [SerializeField] private CardAnimationConfig _animationConfig;
 
     // Card fields
@@ -41,12 +42,13 @@ public class CardView : MonoBehaviour
     private Vector2 _basePosition;
     private Vector2 _targetPosition;
     private bool _isInDeck = true;
-    private Sprite _originalSprite;
+
+    private Color _initialBackgroudColor;
 
     private void Awake()
     {
         _rect = GetComponent<RectTransform>();
-        _originalSprite = _background.sprite;
+        _initialBackgroudColor = _background.color;
     }
 
     private void OnEnable()
@@ -158,29 +160,34 @@ public class CardView : MonoBehaviour
     {
         if (IsFaceDown)
         {
-            _rankTopLeft.text = "";
-            _rankBottomRight.text = "";
-            _suitCenter.text = "";
-            _background.sprite = _cardBackSprite != null ? _cardBackSprite : _originalSprite;
-            if (_critGlow) _critGlow.gameObject.SetActive(false);
+            _background.sprite = _cardBackSprite;
+            _background.color = _initialBackgroudColor;
+
             return;
         }
 
-        string rankStr = RankToString(Data.Rank);
-        string suitStr = SuitToSymbol(Data.Suit);
-        Color textColor = IsRedSuit(Data.Suit) ? _colorRed : _colorBlack;
+        Sprite newSprite = _background.sprite;
+        int index = (int)Data.Rank - 2;
 
-        _background.sprite = _originalSprite;
+        if (Data.Suit == Suit.Stone)
+        {
+            newSprite = _stoneSprites[index];
+        }
+        else if (Data.Suit == Suit.Moon)
+        {
+            newSprite = _moonSprites[index];
+        }
+        else if (Data.Suit == Suit.Fire)
+        {
+            newSprite = _fireSprites[index];
+        }
+        else if (Data.Suit == Suit.Sun)
+        {
+            newSprite = _sunSprites[index];
+        }
 
-        _rankTopLeft.text = rankStr;
-        _rankTopLeft.color = textColor;
-        _rankBottomRight.text = rankStr;
-        _rankBottomRight.color = textColor;
-        _suitCenter.text = suitStr;
-        _suitCenter.color = textColor;
-
-        if (_critGlow != null)
-            _critGlow.gameObject.SetActive(Data.IsCritical && !IsPetrified);
+        _background.sprite = newSprite;
+        _background.color = Data.IsCritical && !IsPetrified ? _critColor : _initialBackgroudColor;
     }
 
     // Coroutine animations
@@ -253,33 +260,4 @@ public class CardView : MonoBehaviour
         }
         Destroy(gameObject);
     }
-
-    // Helpers
-    // String Helpers
-    private static string RankToString(Rank r)
-    {
-        return r switch
-        {
-            Rank.Ace => "A",
-            Rank.King => "K",
-            Rank.Queen => "Q",
-            Rank.Jack => "J",
-            _ => ((int)r).ToString()
-        };
-    }
-
-    private static string SuitToSymbol(Suit s)
-    {
-        return s switch
-        {
-            Suit.Spades => "♠",
-            Suit.Hearts => "♥",
-            Suit.Diamonds => "♦",
-            Suit.Clubs => "♣",
-            _ => "?"
-        };
-    }
-
-    private static bool IsRedSuit(Suit s) =>
-        s == Suit.Hearts || s == Suit.Diamonds;
 }

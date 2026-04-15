@@ -29,5 +29,5 @@ MonoBehaviour:
     Sprite: {fileID: -7744424781442014258, guid: 36781bdfb4dd3474582b2d2756c991c4, type: 3}
   - EnemyName: "\u041F\u0430\u0443\u043A"
     Sprite: {fileID: -3438905571476058607, guid: 73999a2c7bf81384b99b5e7b3eabdee2, type: 3}
-  - EnemyName: Amalgam
+  - EnemyName: "\u0410\u043C\u0430\u043B\u044C\u0433\u0430\u043C"
     Sprite: {fileID: -4668436313784537202, guid: 73cff01ce3adf444ea30dfa700793c0d, type: 3}
