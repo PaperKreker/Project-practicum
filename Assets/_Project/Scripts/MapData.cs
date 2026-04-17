@@ -1,31 +1,42 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 public enum NodeType
 {
+    Start,
     Battle,
     Shop,
     Rest,
 }
 
-// A single stop on the map.
 public class MapNode
 {
     public int Index;
+    public int Row;
+    public float NormalizedX;
     public NodeType Type;
-
-    // Only filled for NodeType.Battle
     public EnemyData Enemy;
-
-    // Indices of nodes the player can travel to next
     public List<int> NextNodeIndices = new List<int>();
 }
 
-// Describes one map (= one of the three acts).
-// Generated procedurally or built by hand via MapGenerator.cs
 public class MapData
 {
     public List<MapNode> Nodes = new List<MapNode>();
     public int StartNodeIndex = 0;
+
+    public int MaxRow
+    {
+        get
+        {
+            int max = 0;
+            foreach (MapNode node in Nodes)
+            {
+                if (node.Row > max)
+                    max = node.Row;
+            }
+
+            return max;
+        }
+    }
 
     public MapNode GetNode(int index) => Nodes[index];
 }
