@@ -14,6 +14,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimationConfig
   <AnimationDuration>k__BackingField: 0.5
   <ShakeAmplitude>k__BackingField: 30
+  <AttackDuration>k__BackingField: 0.6
+  <AttackDelay>k__BackingField: 0.5
+  <AttackSlashDelay>k__BackingField: 0.3
+  <AttackCurve>k__BackingField:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: -0.05590542
+      outSlope: -0.05590542
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.71090496
+    - serializedVersion: 3
+      time: 0.6217902
+      value: -0.092638135
+      inSlope: -0.019100236
+      outSlope: 0.039329488
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0.9496691
+      outWeight: 0.7582349
+    - serializedVersion: 3
+      time: 1
+      value: 1.0017776
+      inSlope: 30.318207
+      outSlope: 30.318207
+      tangentMode: 0
+      weightedMode: 1
+      inWeight: 0.046060648
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   <DeathMaterial>k__BackingField: {fileID: 2100000, guid: bcee5dbc697364b46b33cccf2667e793, type: 2}
   <DeathScale>k__BackingField: 0.8
   <DeathDuration>k__BackingField: 1.5

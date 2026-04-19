@@ -8,10 +8,13 @@ public class EnemyView : MonoBehaviour
     [SerializeField] private Image _graphics;
     [SerializeField] private EnemySpriteDatabase _spriteDatabase;
     [SerializeField] private EnemyAnimationConfig _animationConfig;
+    [SerializeField] private SlashAnimation _slashAnimation;
+    [SerializeField] private string _slashSound;
 
     private RectTransform _rectTransform;
     private Material _material;
     private Vector3 _initialPosition;
+    private bool _isMoving = false;
 
     private void Start()
     {
@@ -27,17 +30,22 @@ public class EnemyView : MonoBehaviour
         _battleController.OnEnemyHit += Hit;
         _battleController.OnBattleEnd += EndBattle;
         _battleController.OnRefreshAll += ApplyEnemySprite;
+        _battleController.OnEnemyAttack += Attack;
     }
     private void OnDisable()
     {
         _battleController.OnEnemyHit -= Hit;
         _battleController.OnBattleEnd -= EndBattle;
         _battleController.OnRefreshAll -= ApplyEnemySprite;
+        _battleController.OnEnemyAttack -= Attack;
     }
 
     private void Update()
     {
-        PlayIdleAnimation();
+        if (!_isMoving)
+        {
+            PlayIdleAnimation();
+        }
     }
 
     private void PlayIdleAnimation()
@@ -72,6 +80,12 @@ public class EnemyView : MonoBehaviour
         _battleController.OnRefreshAll -= ApplyEnemySprite;
     }
 
+    private void Attack()
+    {
+        _battleController.AddAnimationToWait(
+            StartCoroutine(AnimateAttack()));
+    }
+
     private void Hit()
     {
         StartCoroutine(AnimateHit());
@@ -86,8 +100,9 @@ public class EnemyView : MonoBehaviour
         }
     }
 
-    IEnumerator AnimateHit()
+    private IEnumerator AnimateHit()
     {
+        _isMoving = true;
         float startTime = Time.time;
         while (Time.time < startTime + _animationConfig.AnimationDuration)
         {
@@ -102,10 +117,42 @@ public class EnemyView : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
+        _isMoving = false;
+    }
+
+    private IEnumerator AnimateAttack()
+    {
+        yield return new WaitForSeconds(_animationConfig.AttackDelay);
+
+        _isMoving = true;
+        float time = _animationConfig.AttackDuration;
+        Vector3 initialPosition = _rectTransform.position;
+        Vector3 targetPosition = _slashAnimation.transform.position;
+        StartCoroutine(SlashDelayed(_animationConfig.AttackSlashDelay));
+        while (time > 0.0f)
+        {
+            float t = 1 - time / _animationConfig.AttackDuration;
+            float eval = _animationConfig.AttackCurve.Evaluate(t);
+            _rectTransform.position = Vector2.LerpUnclamped(
+                initialPosition,
+                targetPosition,
+                eval);
+            time -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        _isMoving = false;
+    }
+
+    private IEnumerator SlashDelayed(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        AudioManager.Instance.Play(_slashSound, Random.Range(0.8f, 1.2f));
+        _slashAnimation.PlayAnimation();
     }
 
     IEnumerator AnimateDeath()
     {
+        _isMoving = true;
         _material = Instantiate(_animationConfig.DeathMaterial);
         _graphics.material = _material;
 
@@ -119,6 +166,7 @@ public class EnemyView : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
+        _isMoving = false;
 
         gameObject.SetActive(false);
     }
