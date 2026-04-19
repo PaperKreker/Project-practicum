@@ -48,7 +48,7 @@ public class BattleView : MonoBehaviour
         _battleController.OnRefreshAll += RefreshAll;
         _battleController.OnAnimationStarted += DisableGameplayButtons;
         _battleController.OnAnimationStopped += EnableGameplayButtons;
-        _battleController.OnEnemyAttackFinish += ShakeHpText;
+        _battleController.OnEnemyAttackFinish += HitScreen;
     }
 
     private void OnDisable()
@@ -63,7 +63,7 @@ public class BattleView : MonoBehaviour
         _battleController.OnRefreshAll -= RefreshAll;
         _battleController.OnAnimationStarted -= DisableGameplayButtons;
         _battleController.OnAnimationStopped -= EnableGameplayButtons;
-        _battleController.OnEnemyAttackFinish -= ShakeHpText;
+        _battleController.OnEnemyAttackFinish -= HitScreen;
     }
 
     private void UpdateComboPreview()
@@ -154,10 +154,10 @@ public class BattleView : MonoBehaviour
         _enemyEffectText.text = battleState.enemyEffect?.Description;
     }
 
-    private void ShakeHpText(int hp)
+    private void HitScreen(int hp)
     {
         FloatingTextController.Instance.ShowText($"-{hp}", _playerHpText.transform.position);
-        StartCoroutine(AnimateShake((RectTransform)_playerHpText.transform));
+        StartCoroutine(AnimateShake((RectTransform)transform));
     }
 
     private IEnumerator AnimateShake(RectTransform target)
