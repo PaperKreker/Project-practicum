@@ -154,8 +154,9 @@ public class BattleView : MonoBehaviour
         _enemyEffectText.text = battleState.enemyEffect?.Description;
     }
 
-    private void ShakeHpText()
+    private void ShakeHpText(int hp)
     {
+        FloatingTextController.Instance.ShowText($"-{hp}", _playerHpText.transform.position);
         StartCoroutine(AnimateShake((RectTransform)_playerHpText.transform));
     }
 

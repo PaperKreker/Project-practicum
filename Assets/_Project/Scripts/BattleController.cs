@@ -13,7 +13,7 @@ public class BattleController : MonoBehaviour
     public event Action OnEnemyHit;
     public event Action OnEnemyLastHit;
     public event Action OnEnemyAttack;
-    public event Action OnEnemyAttackFinish;
+    public event Action<int> OnEnemyAttackFinish;
     public event Action OnRefreshAll;
     public event Action OnRefresh;
 
@@ -163,6 +163,8 @@ public class BattleController : MonoBehaviour
 
         yield return _hand.AnimateAttack(_enemy.position, OnEnemyHit);
 
+        FloatingTextController.Instance.ShowText($"-{damage}", _enemy.position);
+
         _attackCoins--;
         _hand.DiscardSelected();
         _hand.DrawUpToMax();
@@ -247,7 +249,7 @@ public class BattleController : MonoBehaviour
 
         OnEnemyAttack?.Invoke();
         yield return WaitForAnimations();
-        OnEnemyAttackFinish?.Invoke();
+        OnEnemyAttackFinish?.Invoke(_ctx.EnemyDamage);
 
         if (VictoryChecker.IsGameOver(_ctx.PlayerHp))
             EndBattle(playerWon: false);
