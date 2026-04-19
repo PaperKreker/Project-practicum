@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimationConfig
   <AnimationDuration>k__BackingField: 0.5
   <ShakeAmplitude>k__BackingField: 30
-  <AttackDuration>k__BackingField: 0.6
+  <AttackDuration>k__BackingField: 0.3
   <AttackDelay>k__BackingField: 0.5
-  <AttackSlashDelay>k__BackingField: 0.3
+  <AttackSlashDelay>k__BackingField: 0.18
   <AttackCurve>k__BackingField:
     serializedVersion: 2
     m_Curve:
@@ -55,7 +55,7 @@ MonoBehaviour:
   <DeathDuration>k__BackingField: 1.5
   <IdleAmplitude>k__BackingField: {x: 0, y: 10}
   <IdleAnimationSpeed>k__BackingField: 0.2
-  <IdleAnimationSmooth>k__BackingField: 1
+  <IdleAnimationSmooth>k__BackingField: 0.1
   <IdleCurve>k__BackingField:
     serializedVersion: 2
     m_Curve:
