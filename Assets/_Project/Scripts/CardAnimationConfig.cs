@@ -16,4 +16,8 @@ public class CardAnimationConfig : ScriptableObject
     [field: SerializeField] public float DiscardYVelocity { get; private set; } = 4.0f;
     [field: SerializeField] public float DiscardGravitation { get; private set; } = -4.0f;
     [field: SerializeField] public float DiscardRotation { get; private set; } = 45.0f;
+    [Header("Idle")]
+    [field: SerializeField] public Vector2 IdleAmplitude { get; private set; } = Vector2.one;
+    [field: SerializeField] public float IdleAnimationSpeed { get; private set; } = 1.0f;
+    [field: SerializeField] public AnimationCurve IdleCurve { get; private set; }
 }

@@ -7,15 +7,7 @@ public class EnemyView : MonoBehaviour
     [SerializeField] private BattleController _battleController;
     [SerializeField] private Image _graphics;
     [SerializeField] private EnemySpriteDatabase _spriteDatabase;
-
-    [Header("Hit animation")]
-    [SerializeField] private float _animationDuration = 0.5f;
-    [SerializeField] private float _shakeAmplitude = 2.0f;
-
-    [Header("Death animation")]
-    [SerializeField] private Material _deathMaterial;
-    [SerializeField] private float _deathScale = 0.6f;
-    [SerializeField] private float _deathDuration = 1.0f;
+    [SerializeField] private EnemyAnimationConfig _animationConfig;
 
     private RectTransform _rectTransform;
     private Material _material;
@@ -41,6 +33,30 @@ public class EnemyView : MonoBehaviour
         _battleController.OnEnemyHit -= Hit;
         _battleController.OnBattleEnd -= EndBattle;
         _battleController.OnRefreshAll -= ApplyEnemySprite;
+    }
+
+    private void Update()
+    {
+        PlayIdleAnimation();
+    }
+
+    private void PlayIdleAnimation()
+    {
+        _rectTransform.anchoredPosition = Vector2.Lerp(
+               _rectTransform.anchoredPosition,
+               GetIdlePosition(),
+               Time.deltaTime / _animationConfig.IdleAnimationSmooth);
+    }
+
+    private Vector3 GetIdlePosition()
+    {
+        float siblingAddition = (float)transform.GetSiblingIndex() / transform.parent.childCount;
+        float t = (Time.time * _animationConfig.IdleAnimationSpeed + siblingAddition) % 1.0f;
+        Vector3 shift = Vector2.Lerp(
+            -_animationConfig.IdleAmplitude,
+            _animationConfig.IdleAmplitude,
+            _animationConfig.IdleCurve.Evaluate(t));
+        return _initialPosition + shift;
     }
 
     private void ApplyEnemySprite()
@@ -73,11 +89,11 @@ public class EnemyView : MonoBehaviour
     IEnumerator AnimateHit()
     {
         float startTime = Time.time;
-        while (Time.time < startTime + _animationDuration)
+        while (Time.time < startTime + _animationConfig.AnimationDuration)
         {
-            float t = 1.0f - (Time.time - startTime) / _animationDuration;
+            float t = 1.0f - (Time.time - startTime) / _animationConfig.AnimationDuration;
 
-            float amplitude = _shakeAmplitude * t;
+            float amplitude = _animationConfig.ShakeAmplitude * t;
             _rectTransform.anchoredPosition = _initialPosition + new Vector3(
                 Random.Range(-amplitude, amplitude),
                 Random.Range(-amplitude, amplitude));
@@ -90,16 +106,16 @@ public class EnemyView : MonoBehaviour
 
     IEnumerator AnimateDeath()
     {
-        _material = Instantiate(_deathMaterial);
+        _material = Instantiate(_animationConfig.DeathMaterial);
         _graphics.material = _material;
 
         float startTime = Time.time;
-        while (Time.time < startTime + _deathDuration)
+        while (Time.time < startTime + _animationConfig.DeathDuration)
         {
-            float t = 1.0f - (Time.time - startTime) / _deathDuration;
+            float t = 1.0f - (Time.time - startTime) / _animationConfig.DeathDuration;
 
             _material.SetFloat("_Transition", t);
-            _graphics.transform.localScale = Vector3.one * Mathf.Lerp(_deathScale, 1.0f, t);
+            _graphics.transform.localScale = Vector3.one * Mathf.Lerp(_animationConfig.DeathScale, 1.0f, t);
 
             yield return new WaitForEndOfFrame();
         }

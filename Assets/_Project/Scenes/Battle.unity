@@ -548,11 +548,7 @@ MonoBehaviour:
   _battleController: {fileID: 6423315937641050232}
   _graphics: {fileID: 793519052}
   _spriteDatabase: {fileID: 11400000, guid: 38ef92016db38d94f873824ae41166df, type: 2}
-  _animationDuration: 0.5
-  _shakeAmplitude: 30
-  _deathMaterial: {fileID: 2100000, guid: bcee5dbc697364b46b33cccf2667e793, type: 2}
-  _deathScale: 0.8
-  _deathDuration: 1.5
+  _animationConfig: {fileID: 11400000, guid: d82d7a20bc8052e40aac6e87e2715b24, type: 2}
 --- !u!1 &1224705017
 GameObject:
   m_ObjectHideFlags: 0
