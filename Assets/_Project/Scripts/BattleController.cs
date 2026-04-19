@@ -12,6 +12,8 @@ public class BattleController : MonoBehaviour
     public event Action<bool> OnBattleEnd;
     public event Action OnEnemyHit;
     public event Action OnEnemyLastHit;
+    public event Action OnEnemyAttack;
+    public event Action<int> OnEnemyAttackFinish;
     public event Action OnRefreshAll;
     public event Action OnRefresh;
 
@@ -161,6 +163,8 @@ public class BattleController : MonoBehaviour
 
         yield return _hand.AnimateAttack(_enemy.position, OnEnemyHit);
 
+        FloatingTextController.Instance.ShowText($"-{damage}", _enemy.position);
+
         _attackCoins--;
         _hand.DiscardSelected();
         _hand.DrawUpToMax();
@@ -178,7 +182,7 @@ public class BattleController : MonoBehaviour
         }
 
         if (_attackCoins <= 0)
-            EnemyTakeTurn();
+            yield return EnemyTakeTurn();
 
         OnRefreshAll?.Invoke();
         OnAnimationStopped?.Invoke();
@@ -233,7 +237,7 @@ public class BattleController : MonoBehaviour
         _animationsWait.Clear();
     }
 
-    private void EnemyTakeTurn()
+    private IEnumerator EnemyTakeTurn()
     {
         _ctx.PlayerHp -= _ctx.EnemyDamage;
 
@@ -242,6 +246,10 @@ public class BattleController : MonoBehaviour
             s.OnEnemyAttack(_ctx);
 
         _attackCoins = _enemyData.AttackCoinsPerRound;
+
+        OnEnemyAttack?.Invoke();
+        yield return WaitForAnimations();
+        OnEnemyAttackFinish?.Invoke(_ctx.EnemyDamage);
 
         if (VictoryChecker.IsGameOver(_ctx.PlayerHp))
             EndBattle(playerWon: false);

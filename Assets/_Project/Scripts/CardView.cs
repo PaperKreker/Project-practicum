@@ -41,6 +41,8 @@ public class CardView : MonoBehaviour
     private RectTransform _rect;
     private Vector2 _basePosition;
     private Vector2 _targetPosition;
+
+    private bool _isIdle { get => _isInDeck && !IsSelected; }
     private bool _isInDeck = true;
 
     private Color _initialBackgroudColor;
@@ -58,6 +60,14 @@ public class CardView : MonoBehaviour
     private void OnDisable()
     {
         _button.OnClick.RemoveListener(HandleClick);
+    }
+
+    private void Update()
+    {
+        if (_isInDeck)
+        {
+            PlayIdleAnimation();
+        }
     }
 
     // Initialize the card view with card data and position
@@ -99,6 +109,28 @@ public class CardView : MonoBehaviour
         // Selected card lifts slightly
         _targetPosition = GetTargetPosition();
         PlayMoveToTarget();
+    }
+
+    private void PlayIdleAnimation()
+    {
+        if (_currentAnimation != null)
+            return;
+
+        _rect.anchoredPosition = Vector2.Lerp(
+               _rect.anchoredPosition,
+               GetIdlePosition(),
+               Time.deltaTime);
+    }
+
+    private Vector3 GetIdlePosition()
+    {
+        float siblingAddition = (float)transform.GetSiblingIndex() / transform.parent.childCount;
+        float t = (Time.time * _animationConfig.IdleAnimationSpeed + siblingAddition) % 1.0f;
+        Vector3 shift = Vector2.Lerp(
+            -_animationConfig.IdleAmplitude, 
+            _animationConfig.IdleAmplitude, 
+            _animationConfig.IdleCurve.Evaluate(t));
+        return GetTargetPosition() + shift;
     }
 
     private Vector3 GetTargetPosition()
@@ -206,6 +238,7 @@ public class CardView : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
         _rect.anchoredPosition = _targetPosition;
+        _currentAnimation = null;
     }
 
     private IEnumerator AnimateAttackTarget()

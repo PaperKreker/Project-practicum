@@ -7,19 +7,14 @@ public class EnemyView : MonoBehaviour
     [SerializeField] private BattleController _battleController;
     [SerializeField] private Image _graphics;
     [SerializeField] private EnemySpriteDatabase _spriteDatabase;
-
-    [Header("Hit animation")]
-    [SerializeField] private float _animationDuration = 0.5f;
-    [SerializeField] private float _shakeAmplitude = 2.0f;
-
-    [Header("Death animation")]
-    [SerializeField] private Material _deathMaterial;
-    [SerializeField] private float _deathScale = 0.6f;
-    [SerializeField] private float _deathDuration = 1.0f;
+    [SerializeField] private EnemyAnimationConfig _animationConfig;
+    [SerializeField] private SlashAnimation _slashAnimation;
+    [SerializeField] private string _slashSound;
 
     private RectTransform _rectTransform;
     private Material _material;
     private Vector3 _initialPosition;
+    private bool _isMoving = false;
 
     private void Start()
     {
@@ -35,12 +30,41 @@ public class EnemyView : MonoBehaviour
         _battleController.OnEnemyHit += Hit;
         _battleController.OnBattleEnd += EndBattle;
         _battleController.OnRefreshAll += ApplyEnemySprite;
+        _battleController.OnEnemyAttack += Attack;
     }
     private void OnDisable()
     {
         _battleController.OnEnemyHit -= Hit;
         _battleController.OnBattleEnd -= EndBattle;
         _battleController.OnRefreshAll -= ApplyEnemySprite;
+        _battleController.OnEnemyAttack -= Attack;
+    }
+
+    private void Update()
+    {
+        if (!_isMoving)
+        {
+            PlayIdleAnimation();
+        }
+    }
+
+    private void PlayIdleAnimation()
+    {
+        _rectTransform.anchoredPosition = Vector2.Lerp(
+               _rectTransform.anchoredPosition,
+               GetIdlePosition(),
+               Time.deltaTime / _animationConfig.IdleAnimationSmooth);
+    }
+
+    private Vector3 GetIdlePosition()
+    {
+        float siblingAddition = (float)transform.GetSiblingIndex() / transform.parent.childCount;
+        float t = (Time.time * _animationConfig.IdleAnimationSpeed + siblingAddition) % 1.0f;
+        Vector3 shift = Vector2.Lerp(
+            -_animationConfig.IdleAmplitude,
+            _animationConfig.IdleAmplitude,
+            _animationConfig.IdleCurve.Evaluate(t));
+        return _initialPosition + shift;
     }
 
     private void ApplyEnemySprite()
@@ -54,6 +78,12 @@ public class EnemyView : MonoBehaviour
             _graphics.sprite = sprite;
 
         _battleController.OnRefreshAll -= ApplyEnemySprite;
+    }
+
+    private void Attack()
+    {
+        _battleController.AddAnimationToWait(
+            StartCoroutine(AnimateAttack()));
     }
 
     private void Hit()
@@ -70,14 +100,15 @@ public class EnemyView : MonoBehaviour
         }
     }
 
-    IEnumerator AnimateHit()
+    private IEnumerator AnimateHit()
     {
+        _isMoving = true;
         float startTime = Time.time;
-        while (Time.time < startTime + _animationDuration)
+        while (Time.time < startTime + _animationConfig.AnimationDuration)
         {
-            float t = 1.0f - (Time.time - startTime) / _animationDuration;
+            float t = 1.0f - (Time.time - startTime) / _animationConfig.AnimationDuration;
 
-            float amplitude = _shakeAmplitude * t;
+            float amplitude = _animationConfig.ShakeAmplitude * t;
             _rectTransform.anchoredPosition = _initialPosition + new Vector3(
                 Random.Range(-amplitude, amplitude),
                 Random.Range(-amplitude, amplitude));
@@ -86,23 +117,56 @@ public class EnemyView : MonoBehaviour
 
             yield return new WaitForEndOfFrame();
         }
+        _isMoving = false;
+    }
+
+    private IEnumerator AnimateAttack()
+    {
+        yield return new WaitForSeconds(_animationConfig.AttackDelay);
+
+        _isMoving = true;
+        float time = _animationConfig.AttackDuration;
+        Vector3 initialPosition = _rectTransform.position;
+        Vector3 targetPosition = _slashAnimation.transform.position;
+        StartCoroutine(SlashDelayed(_animationConfig.AttackSlashDelay));
+        while (time > 0.0f)
+        {
+            float t = 1 - time / _animationConfig.AttackDuration;
+            float eval = _animationConfig.AttackCurve.Evaluate(t);
+            _rectTransform.position = Vector2.LerpUnclamped(
+                initialPosition,
+                targetPosition,
+                eval);
+            time -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+        _isMoving = false;
+    }
+
+    private IEnumerator SlashDelayed(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        AudioManager.Instance.Play(_slashSound, Random.Range(0.8f, 1.2f));
+        _slashAnimation.PlayAnimation();
     }
 
     IEnumerator AnimateDeath()
     {
-        _material = Instantiate(_deathMaterial);
+        _isMoving = true;
+        _material = Instantiate(_animationConfig.DeathMaterial);
         _graphics.material = _material;
 
         float startTime = Time.time;
-        while (Time.time < startTime + _deathDuration)
+        while (Time.time < startTime + _animationConfig.DeathDuration)
         {
-            float t = 1.0f - (Time.time - startTime) / _deathDuration;
+            float t = 1.0f - (Time.time - startTime) / _animationConfig.DeathDuration;
 
             _material.SetFloat("_Transition", t);
-            _graphics.transform.localScale = Vector3.one * Mathf.Lerp(_deathScale, 1.0f, t);
+            _graphics.transform.localScale = Vector3.one * Mathf.Lerp(_animationConfig.DeathScale, 1.0f, t);
 
             yield return new WaitForEndOfFrame();
         }
+        _isMoving = false;
 
         gameObject.SetActive(false);
     }

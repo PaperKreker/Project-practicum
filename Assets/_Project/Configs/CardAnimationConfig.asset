@@ -72,8 +72,43 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   <AttackTime>k__BackingField: 1
-  <DiscardLifetime>k__BackingField: 0.5
+  <DiscardLifetime>k__BackingField: 1
   <DiscardXVelocity>k__BackingField: 200
   <DiscardYVelocity>k__BackingField: 600
   <DiscardGravitation>k__BackingField: -6000
   <DiscardRotation>k__BackingField: 45
+  <IdleAmplitude>k__BackingField: {x: 2, y: 10}
+  <IdleAnimationSpeed>k__BackingField: 0.2
+  <IdleCurve>k__BackingField:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.002029137
+      outSlope: 0.002029137
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0.0020233626
+      outSlope: 0.0020233626
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 1
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

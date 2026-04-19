@@ -49,3 +49,5 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: e937bd80bd3bfad47aa43d7547122e40, type: 3}
   - key: button_click
     clip: {fileID: 8300000, guid: 33c6092973793824db5be92d0aaaa955, type: 3}
+  - key: enemy_attack
+    clip: {fileID: 8300000, guid: 46b96ed2704a73341ae12c245753466d, type: 3}

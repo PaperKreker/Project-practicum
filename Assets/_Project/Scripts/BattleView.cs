@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -29,6 +30,9 @@ public class BattleView : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _enemyDamageText;
     [SerializeField] private TextMeshProUGUI _enemyEffectText;
 
+    [SerializeField] private float _shakeDuration;
+    [SerializeField] private float _shakeAmplitude;
+
     [Header("UI Player")]
     [SerializeField] private TextMeshProUGUI _playerHpText;
 
@@ -44,6 +48,7 @@ public class BattleView : MonoBehaviour
         _battleController.OnRefreshAll += RefreshAll;
         _battleController.OnAnimationStarted += DisableGameplayButtons;
         _battleController.OnAnimationStopped += EnableGameplayButtons;
+        _battleController.OnEnemyAttackFinish += HitScreen;
     }
 
     private void OnDisable()
@@ -58,6 +63,7 @@ public class BattleView : MonoBehaviour
         _battleController.OnRefreshAll -= RefreshAll;
         _battleController.OnAnimationStarted -= DisableGameplayButtons;
         _battleController.OnAnimationStopped -= EnableGameplayButtons;
+        _battleController.OnEnemyAttackFinish -= HitScreen;
     }
 
     private void UpdateComboPreview()
@@ -146,6 +152,30 @@ public class BattleView : MonoBehaviour
 
         _enemyNameText.text = battleState.enemyData.EnemyName;
         _enemyEffectText.text = battleState.enemyEffect?.Description;
+    }
+
+    private void HitScreen(int hp)
+    {
+        FloatingTextController.Instance.ShowText($"-{hp}", _playerHpText.transform.position);
+        StartCoroutine(AnimateShake((RectTransform)transform));
+    }
+
+    private IEnumerator AnimateShake(RectTransform target)
+    {
+        float startTime = Time.time;
+        Vector3 initialPosition = target.anchoredPosition;
+        while (Time.time < startTime + _shakeDuration)
+        {
+            float t = 1.0f - (Time.time - startTime) / _shakeDuration;
+
+            float amplitude = _shakeAmplitude * t;
+            target.anchoredPosition = initialPosition + new Vector3(
+                Random.Range(-amplitude, amplitude),
+                Random.Range(-amplitude, amplitude));
+
+            yield return new WaitForEndOfFrame();
+        }
+        target.anchoredPosition = initialPosition;
     }
 
     // Display name for combo types

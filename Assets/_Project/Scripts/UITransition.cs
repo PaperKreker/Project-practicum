@@ -14,18 +14,23 @@ public class UITransition : MonoBehaviour
     private GameObject _ignoreCanvas;
     private GameObject _targetCanvas;
     private Material _material;
+    private Material _overlayMaterial;
     private bool _isLerping = false;
 
     void Start()
     {
         _material = Instantiate(_image.material);
         _image.material = _material;
+
+        _overlayMaterial = Instantiate(_overlay.material);
+        _overlay.material = _overlayMaterial;
         _image.enabled = false;
     }
 
     private void OnDestroy()
     {
         Destroy(_material);
+        Destroy(_overlayMaterial);
     }
 
     [EasyButtons.Button]
@@ -135,14 +140,14 @@ public class UITransition : MonoBehaviour
         string transitionKey = "_Transition";
         float ticker = 0;
         _overlay.enabled = true;
-        _overlay.material.SetFloat(transitionKey, 0);
+        _overlayMaterial.SetFloat(transitionKey, 0);
         yield return new WaitForFixedUpdate();
         while (ticker < _animationTime && _isLerping)
         {
             yield return new WaitForEndOfFrame();
 
             float t = ticker / _animationTime;
-            _overlay.material.SetFloat(transitionKey, t);
+            _overlayMaterial.SetFloat(transitionKey, t);
 
             ticker += Time.unscaledDeltaTime;
         }

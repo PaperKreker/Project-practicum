@@ -430,7 +430,6 @@ MonoBehaviour:
   _handArea: {fileID: 8193352719680446255}
   _deckTransform: {fileID: 6786161947354552562}
   _cardSpacing: 110
-  _cardWidth: 100
   _fanAngle: 5
   _maxHandSize: 8
   _maxSelected: 5
@@ -2244,6 +2243,8 @@ MonoBehaviour:
   _enemyHpText: {fileID: 2815639038569030244}
   _enemyDamageText: {fileID: 4835948116900501027}
   _enemyEffectText: {fileID: 1784878868635108259}
+  _shakeDuration: 0.5
+  _shakeAmplitude: 10
   _playerHpText: {fileID: 7099992465283916154}
 --- !u!114 &8089433078138157445
 MonoBehaviour:
