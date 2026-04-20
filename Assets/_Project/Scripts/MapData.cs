@@ -13,6 +13,7 @@ public class MapNode
     public int Index;
     public int Row;
     public float NormalizedX;
+    public float NormalizedY;
     public NodeType Type;
     public EnemyData Enemy;
     public List<int> NextNodeIndices = new List<int>();
