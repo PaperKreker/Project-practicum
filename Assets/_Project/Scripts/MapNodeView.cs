@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class MapNodeView : MonoBehaviour
 {
-    private const float DiamondOffsetY = 22f;
+    public const float DiamondOffsetY = 22f;
 
     public struct Style
     {
@@ -13,6 +13,7 @@ public class MapNodeView : MonoBehaviour
         public string Title;
         public string Subtitle;
         public Vector2 Size;
+        public Vector2 LabelOffset;
         public Color GlowColor;
         public Color FrameColor;
         public Color FillColor;
@@ -53,6 +54,7 @@ public class MapNodeView : MonoBehaviour
         ConfigureDiamond(_frame.rectTransform, diamondSize + 10f, DiamondOffsetY, style.FrameColor);
         ConfigureDiamond(_fill.rectTransform, diamondSize, DiamondOffsetY, style.FillColor);
         ConfigureLabelPlate(style);
+        ConfigureLabelText(style.LabelOffset);
 
         _glow.enabled = style.ShowGlow;
 
@@ -61,13 +63,18 @@ public class MapNodeView : MonoBehaviour
         _iconText.fontSize = diamondSize * 0.44f;
         _iconText.rectTransform.anchoredPosition = new Vector2(0f, DiamondOffsetY);
 
+        bool hasTitle = !string.IsNullOrWhiteSpace(style.Title);
+        bool hasSubtitle = !string.IsNullOrWhiteSpace(style.Subtitle);
+        bool hasLabel = hasTitle || hasSubtitle;
+
         _titleText.text = style.Title;
         _titleText.color = style.TitleColor;
-        _titleText.gameObject.SetActive(!string.IsNullOrWhiteSpace(style.Title));
+        _titleText.gameObject.SetActive(hasTitle);
 
         _subtitleText.text = style.Subtitle;
         _subtitleText.color = style.SubtitleColor;
-        _subtitleText.gameObject.SetActive(!string.IsNullOrWhiteSpace(style.Subtitle));
+        _subtitleText.gameObject.SetActive(hasSubtitle);
+        _labelPlate.gameObject.SetActive(hasLabel);
 
         _glow.transform.SetSiblingIndex(0);
         _frame.transform.SetSiblingIndex(1);
@@ -114,8 +121,7 @@ public class MapNodeView : MonoBehaviour
         _titleText.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         _titleText.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         _titleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-        _titleText.rectTransform.sizeDelta = new Vector2(206f, 34f);
-        _titleText.rectTransform.anchoredPosition = new Vector2(0f, -42f);
+        _titleText.rectTransform.sizeDelta = new Vector2(150f, 32f);
 
         _subtitleText = CreateText("Subtitle", _iconText, 16f);
         _subtitleText.enableAutoSizing = true;
@@ -125,8 +131,7 @@ public class MapNodeView : MonoBehaviour
         _subtitleText.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         _subtitleText.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         _subtitleText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-        _subtitleText.rectTransform.sizeDelta = new Vector2(220f, 32f);
-        _subtitleText.rectTransform.anchoredPosition = new Vector2(0f, -68f);
+        _subtitleText.rectTransform.sizeDelta = new Vector2(150f, 30f);
     }
 
     private Image CreateImage(string name)
@@ -146,8 +151,8 @@ public class MapNodeView : MonoBehaviour
         rect.anchorMin = new Vector2(0.5f, 0.5f);
         rect.anchorMax = new Vector2(0.5f, 0.5f);
         rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.sizeDelta = new Vector2(style.Size.x + 18f, 84f);
-        rect.anchoredPosition = new Vector2(0f, -56f);
+        rect.sizeDelta = new Vector2(style.Size.x, 84f);
+        rect.anchoredPosition = style.LabelOffset;
         rect.localRotation = Quaternion.identity;
 
         Color plateColor = style.Interactable || style.ShowGlow
@@ -155,6 +160,12 @@ public class MapNodeView : MonoBehaviour
             : new Color(0.07f, 0.07f, 0.09f, 0.82f);
 
         _labelPlate.color = plateColor;
+    }
+
+    private void ConfigureLabelText(Vector2 labelOffset)
+    {
+        _titleText.rectTransform.anchoredPosition = labelOffset + new Vector2(0f, 14f);
+        _subtitleText.rectTransform.anchoredPosition = labelOffset + new Vector2(0f, -12f);
     }
 
     private TMP_Text CreateText(string name, TMP_Text template, float fontSize)
@@ -192,7 +203,7 @@ public class MapNodeView : MonoBehaviour
         iconText.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         iconText.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         iconText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-        iconText.rectTransform.sizeDelta = new Vector2(120f, 60f);
+        iconText.rectTransform.sizeDelta = new Vector2(84f, 46f);
         iconText.alignment = TextAlignmentOptions.Center;
         iconText.fontStyle = FontStyles.Bold;
         iconText.enableAutoSizing = false;

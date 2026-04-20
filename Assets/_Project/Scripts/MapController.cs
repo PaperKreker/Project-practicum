@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public class MapController : MonoBehaviour
 {
-    private const float MapWidth = 1180f;
-    private const float RowSpacing = 220f;
+    private const float MapWidth = 1320f;
+    private const float MinMapHeight = 1360f;
+    private const float DepthHeight = 180f;
     private const float BottomPadding = 150f;
     private const float TopPadding = 150f;
-    private const float SidePadding = 190f;
-
+    private const float SidePadding = 140f;
     [Header("References")]
     [SerializeField] private Transform _nodeContainer;
     [SerializeField] private GameObject _nodeButtonPrefab;
@@ -24,7 +24,6 @@ public class MapController : MonoBehaviour
     private RectTransform _paperInner;
     private RectTransform _viewport;
     private RectTransform _content;
-    private RectTransform _decorationLayer;
     private RectTransform _connectionLayer;
     private RectTransform _runtimeNodeLayer;
     private ScrollRect _scrollRect;
@@ -89,10 +88,9 @@ public class MapController : MonoBehaviour
 
     private void BuildMapUI()
     {
-        if (_content == null || _runtimeNodeLayer == null)
+        if (_content == null || _runtimeNodeLayer == null || _connectionLayer == null)
             return;
 
-        ClearChildren(_decorationLayer);
         ClearChildren(_connectionLayer);
         ClearChildren(_runtimeNodeLayer);
 
@@ -107,10 +105,9 @@ public class MapController : MonoBehaviour
         HashSet<int> visitedNodes = new HashSet<int>(run.VisitedNodeIndices);
         HashSet<long> traversedEdges = BuildTraversedEdges(run.VisitedNodeIndices);
 
-        ResizeMapLayers(BottomPadding + TopPadding + map.MaxRow * RowSpacing);
-        Dictionary<int, Vector2> positions = BuildNodePositions(map);
+        ResizeMapLayers(GetContentHeight(map));
 
-        BuildRowGuides(map);
+        Dictionary<int, Vector2> positions = BuildNodePositions(map);
 
         foreach (MapNode node in map.Nodes)
         {
@@ -135,7 +132,7 @@ public class MapController : MonoBehaviour
         UpdateHint(currentNode, reachable.Count);
 
         Canvas.ForceUpdateCanvases();
-        FocusOnRow(currentNode.Row);
+        FocusOnNode(currentNode);
     }
 
     private void CreateNode(MapNode node, Vector2 position, MapNodeView.Style style, bool isReachable)
@@ -172,11 +169,13 @@ public class MapController : MonoBehaviour
         else if (isVisited)
             subtitle = $"{kind} / пройдено";
 
+        subtitle = string.Empty;
         Color titleColor = Color.white;
         Color subtitleColor = new Color(0.98f, 0.97f, 0.9f, 1f);
         Color iconColor = Color.white;
         Color glowColor = new Color(0.98f, 0.84f, 0.45f, 0.42f);
         bool showGlow = isReachable || isCurrent;
+        Vector2 size = GetNodeSize(node);
 
         if (!isReachable && !isCurrent && !isVisited)
         {
@@ -200,18 +199,13 @@ public class MapController : MonoBehaviour
             frame = Color.Lerp(frame, Color.white, 0.18f);
         }
 
-        Vector2 size = new Vector2(180f, 160f);
-        if (node.Type == NodeType.Start)
-            size = new Vector2(172f, 152f);
-        else if (node.Enemy != null && node.Enemy.Tier == EnemyTier.Boss)
-            size = new Vector2(194f, 172f);
-
         return new MapNodeView.Style
         {
             Icon = GetNodeIcon(node),
-            Title = GetNodeLabel(node),
+            Title = string.Empty,
             Subtitle = subtitle,
             Size = size,
+            LabelOffset = Vector2.zero,
             GlowColor = glowColor,
             FrameColor = frame,
             FillColor = fill,
@@ -225,27 +219,31 @@ public class MapController : MonoBehaviour
 
     private void DrawConnection(Vector2 from, Vector2 to, bool isTraversed, bool isReachable)
     {
+        Vector2 nodeOffset = new Vector2(0f, MapNodeView.DiamondOffsetY);
+        from += nodeOffset;
+        to += nodeOffset;
+
         Color mainColor;
         float thickness;
 
         if (isTraversed)
         {
             mainColor = new Color(1f, 0.84f, 0.35f, 0.98f);
-            thickness = 8f;
+            thickness = 5.5f;
         }
         else if (isReachable)
         {
             mainColor = new Color(0.98f, 0.94f, 0.78f, 0.95f);
-            thickness = 7f;
+            thickness = 5f;
         }
         else
         {
-            mainColor = new Color(0.23f, 0.18f, 0.13f, 0.45f);
-            thickness = 4.5f;
+            mainColor = new Color(0.2f, 0.18f, 0.14f, 0.42f);
+            thickness = 3.2f;
         }
 
         Color shadowColor = new Color(0f, 0f, 0f, isTraversed || isReachable ? 0.18f : 0.1f);
-        CreateConnectionSegment(from, to, thickness + 6f, shadowColor);
+        CreateConnectionSegment(from, to, thickness + 3.5f, shadowColor);
         CreateConnectionSegment(from, to, thickness, mainColor);
     }
 
@@ -271,31 +269,6 @@ public class MapController : MonoBehaviour
         image.raycastTarget = false;
     }
 
-    private void BuildRowGuides(MapData map)
-    {
-        for (int row = 0; row <= map.MaxRow; row++)
-        {
-            float y = BottomPadding + row * RowSpacing;
-
-            GameObject line = new GameObject($"RowGuide_{row}", typeof(RectTransform), typeof(Image));
-            line.transform.SetParent(_decorationLayer, false);
-            line.layer = _decorationLayer.gameObject.layer;
-
-            RectTransform lineRect = line.GetComponent<RectTransform>();
-            lineRect.anchorMin = Vector2.zero;
-            lineRect.anchorMax = Vector2.zero;
-            lineRect.pivot = new Vector2(0.5f, 0.5f);
-            lineRect.anchoredPosition = new Vector2(MapWidth * 0.5f, y);
-            lineRect.sizeDelta = new Vector2(MapWidth - 260f, row == 0 ? 4f : 2.5f);
-
-            Image lineImage = line.GetComponent<Image>();
-            lineImage.color = row == 0
-                ? new Color(0.24f, 0.22f, 0.18f, 0.28f)
-                : new Color(0.18f, 0.16f, 0.14f, 0.12f);
-            lineImage.raycastTarget = false;
-        }
-    }
-
     private void UpdateHint(MapNode currentNode, int reachableCount)
     {
         if (_hintText == null)
@@ -303,22 +276,22 @@ public class MapController : MonoBehaviour
 
         if (currentNode.Type == NodeType.Start)
         {
-            _hintText.text = "Выберите первый узел. Подсвеченные ветви показывают доступные пути.";
+            _hintText.text = "Выберите первый узел. Подсвеченные пути показывают доступные переходы.";
             return;
         }
 
         if (reachableCount > 0)
         {
             _hintText.text = reachableCount == 1
-                ? "Доступен один следующий узел. Продолжайте по подсвеченной ветви."
-                : "Доступно несколько путей. Сравните типы узлов и выберите следующий маршрут.";
+                ? "Отсюда открыт только один путь."
+                : "Доступно несколько путей. Сравните узлы и выберите маршрут.";
             return;
         }
 
-        _hintText.text = "Путь завершен.";
+        _hintText.text = "Путь завершён.";
     }
 
-    private void FocusOnRow(int row)
+    private void FocusOnNode(MapNode node)
     {
         if (_scrollRect == null || _viewport == null || _content == null)
             return;
@@ -332,15 +305,17 @@ public class MapController : MonoBehaviour
             return;
         }
 
-        float focusY = BottomPadding + row * RowSpacing;
-        float targetOffset = Mathf.Clamp(focusY - viewHeight * 0.35f, 0f, maxScroll);
+        float usableHeight = contentHeight - BottomPadding - TopPadding;
+        float focusY = BottomPadding + node.NormalizedY * usableHeight;
+        float targetOffset = Mathf.Clamp(focusY - viewHeight * 0.45f, 0f, maxScroll);
         _scrollRect.verticalNormalizedPosition = targetOffset / maxScroll;
     }
 
     private Vector2 GetNodePosition(MapNode node)
     {
         float x = Mathf.Lerp(SidePadding, MapWidth - SidePadding, node.NormalizedX);
-        float y = BottomPadding + node.Row * RowSpacing;
+        float usableHeight = _content.sizeDelta.y - BottomPadding - TopPadding;
+        float y = BottomPadding + node.NormalizedY * usableHeight;
         return new Vector2(x, y);
     }
 
@@ -374,7 +349,7 @@ public class MapController : MonoBehaviour
     private static string GetNodeKind(MapNode node)
     {
         if (node.Type == NodeType.Start)
-            return "Начало";
+            return "Старт";
 
         if (node.Type == NodeType.Shop)
             return "Магазин";
@@ -537,7 +512,7 @@ public class MapController : MonoBehaviour
     private void BuildPaperArea()
     {
         RectTransform paper = CreatePanel("PaperPanel", _screenRoot, new Color(0.84f, 0.79f, 0.69f, 0.98f), true);
-        Stretch(paper, new Vector2(0.06f, 0.08f), new Vector2(0.78f, 0.88f), Vector2.zero, Vector2.zero);
+        Stretch(paper, new Vector2(0.06f, 0.08f), new Vector2(0.82f, 0.88f), Vector2.zero, Vector2.zero);
 
         _paperInner = CreatePanel("PaperInner", paper, new Color(0.93f, 0.89f, 0.79f, 0.98f), false);
         Stretch(_paperInner, Vector2.zero, Vector2.one, new Vector2(18f, 18f), new Vector2(-18f, -18f));
@@ -545,8 +520,8 @@ public class MapController : MonoBehaviour
         TMP_Text paperTitle = CreateText("PaperTitle", _paperInner, "Тропа восхождения", 36, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.08f, 0.07f, 0.06f));
         Stretch(paperTitle.rectTransform, new Vector2(0.04f, 0.91f), new Vector2(0.62f, 0.985f), Vector2.zero, Vector2.zero);
 
-        TMP_Text paperSubtitle = CreateText("PaperSubtitle", _paperInner, "Выбирайте подсвеченные узлы и стройте свой маршрут до босса.", 20, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.14f, 0.12f, 0.1f));
-        Stretch(paperSubtitle.rectTransform, new Vector2(0.04f, 0.865f), new Vector2(0.72f, 0.93f), Vector2.zero, Vector2.zero);
+        TMP_Text paperSubtitle = CreateText("PaperSubtitle", _paperInner, "Выбирайте подсвеченные узлы и прокладывайте свой путь до босса.", 20, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.14f, 0.12f, 0.1f));
+        Stretch(paperSubtitle.rectTransform, new Vector2(0.04f, 0.865f), new Vector2(0.76f, 0.93f), Vector2.zero, Vector2.zero);
 
         _hintText = CreateText("HintText", _paperInner, string.Empty, 22, FontStyles.Bold, TextAlignmentOptions.Left, new Color(0.09f, 0.08f, 0.07f));
         Stretch(_hintText.rectTransform, new Vector2(0.04f, 0.01f), new Vector2(0.96f, 0.08f), Vector2.zero, Vector2.zero);
@@ -574,7 +549,6 @@ public class MapController : MonoBehaviour
         _scrollRect.viewport = _viewport;
         _scrollRect.content = _content;
 
-        _decorationLayer = CreateMapLayer("DecorationLayer");
         _connectionLayer = CreateMapLayer("ConnectionLayer");
         _runtimeNodeLayer = CreateMapLayer("NodeLayer");
     }
@@ -582,7 +556,7 @@ public class MapController : MonoBehaviour
     private void BuildLegendPanel()
     {
         RectTransform legend = CreatePanel("LegendPanel", _screenRoot, new Color(0.78f, 0.84f, 0.88f, 0.95f), true);
-        Stretch(legend, new Vector2(0.805f, 0.24f), new Vector2(0.955f, 0.76f), Vector2.zero, Vector2.zero);
+        Stretch(legend, new Vector2(0.835f, 0.24f), new Vector2(0.955f, 0.76f), Vector2.zero, Vector2.zero);
         BuildLegend(legend);
     }
 
@@ -640,9 +614,14 @@ public class MapController : MonoBehaviour
     {
         Vector2 contentSize = new Vector2(MapWidth, contentHeight);
         _content.sizeDelta = contentSize;
-        _decorationLayer.sizeDelta = contentSize;
         _connectionLayer.sizeDelta = contentSize;
         _runtimeNodeLayer.sizeDelta = contentSize;
+    }
+
+    private float GetContentHeight(MapData map)
+    {
+        float depthHeight = Mathf.Max(MinMapHeight, map.MaxRow * DepthHeight);
+        return BottomPadding + TopPadding + depthHeight;
     }
 
     private Dictionary<int, Vector2> BuildNodePositions(MapData map)
@@ -653,6 +632,17 @@ public class MapController : MonoBehaviour
             positions[node.Index] = GetNodePosition(node);
 
         return positions;
+    }
+
+    private static Vector2 GetNodeSize(MapNode node)
+    {
+        if (node.Type == NodeType.Start)
+            return new Vector2(124f, 116f);
+
+        if (node.Enemy != null && node.Enemy.Tier == EnemyTier.Boss)
+            return new Vector2(136f, 128f);
+
+        return new Vector2(118f, 110f);
     }
 
     private static void ClearChildren(Transform parent)
