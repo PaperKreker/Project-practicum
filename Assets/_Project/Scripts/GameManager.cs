@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -31,7 +32,6 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // seed = -1 means random
     public void StartNewRun(int playerMaxHp = 100, int seed = -1)
     {
         CurrentActIndex = 0;
@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
             Gold = 0,
             CurrentNodeIndex = 0,
             CurrentNodeCompleted = false,
+            VisitedNodeIndices = new List<int>(),
             Seed = resolvedSeed,
             Rng = new System.Random(resolvedSeed),
         };
@@ -57,13 +58,27 @@ public class GameManager : MonoBehaviour
     {
         Run.CurrentNodeIndex = nodeIndex;
         Run.CurrentNodeCompleted = false;
+
+        if (Run.VisitedNodeIndices.Count == 0 || Run.VisitedNodeIndices[^1] != nodeIndex)
+            Run.VisitedNodeIndices.Add(nodeIndex);
+
         MapNode node = CurrentMap.GetNode(nodeIndex);
 
         switch (node.Type)
         {
-            case NodeType.Battle: TransitionTo(RunState.Battle, SCENE_BATTLE); break;
-            case NodeType.Shop: TransitionTo(RunState.Shop, SCENE_SHOP); break;
-            case NodeType.Rest: ApplyRest(); break;
+            case NodeType.Start:
+                Run.CurrentNodeCompleted = true;
+                TransitionTo(RunState.Map, SCENE_MAP);
+                break;
+            case NodeType.Battle:
+                TransitionTo(RunState.Battle, SCENE_BATTLE);
+                break;
+            case NodeType.Shop:
+                TransitionTo(RunState.Shop, SCENE_SHOP);
+                break;
+            case NodeType.Rest:
+                ApplyRest();
+                break;
         }
     }
 
@@ -110,7 +125,8 @@ public class GameManager : MonoBehaviour
     {
         CurrentMap = MapGenerator.BuildAct(actIndex, Run.Rng);
         Run.CurrentNodeIndex = CurrentMap.StartNodeIndex;
-        Run.CurrentNodeCompleted = false;
+        Run.CurrentNodeCompleted = true;
+        Run.VisitedNodeIndices = new List<int> { CurrentMap.StartNodeIndex };
         TransitionTo(RunState.Map, SCENE_MAP);
     }
 

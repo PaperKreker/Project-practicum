@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 public enum RunState
@@ -12,7 +12,6 @@ public enum RunState
     GameOver,
 }
 
-// All mutable run-level state
 public class RunData
 {
     public int PlayerHp;
@@ -21,9 +20,10 @@ public class RunData
     public int CurrentNodeIndex;
     public bool CurrentNodeCompleted = false;
     public List<Sigil> ActiveSigils = new List<Sigil>();
+    public List<int> VisitedNodeIndices = new List<int>();
 
     public const int MaxSigils = 6;
 
     public int Seed;
-    public Random Rng; // use this everywhere instead of UnityEngine.Random
+    public Random Rng;
 }
