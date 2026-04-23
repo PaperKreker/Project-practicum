@@ -138,7 +138,7 @@ public class BattleView : MonoBehaviour
         _discardsLeftText.text = $"{battleState.discardsLeft}/{_battleConfig.MaxDiscards}";
         _enemyHpText.text = $"{Mathf.Max(0, battleState.enemyHp)}/{battleState.enemyData?.MaxHp}";
         _enemyDamageText.text = $"{battleState.ctx?.EnemyDamage}";
-        _playerHpText.text = $"{Mathf.Max(0, battleState.playerHp)}/{_battleConfig.PlayerMaxHp}";
+        _playerHpText.text = $"{Mathf.Max(0, battleState.playerHp)}/{battleState.ctx?.PlayerMaxHp}";
 
         _enemyHpSlider.value = Mathf.Max(0.0f, battleState.enemyHp) / battleState.enemyData.MaxHp;
     }
