@@ -1,4 +1,6 @@
-﻿// Mutable battle state passed into every EnemyEffect hook.
+using System.Collections.Generic;
+
+// Mutable battle state passed into every EnemyEffect hook.
 // Effects read and write this rather than talking to BattleController directly.
 public class BattleContext
 {
@@ -8,8 +10,8 @@ public class BattleContext
     public int EnemyDamage;
     public int Discards;
 
-    // Set by SuitNoDamage (Fox); null means no suit is blocked
-    public Suit? BlockedDamageSuit;
+    // Set by SuitNoDamage (Fox); empty means no suits are blocked
+    public List<Suit> BlockedDamageSuits;
 
     // Effects can call this to trigger a UI refresh
     public System.Action RequestUIRefresh;

@@ -15,14 +15,14 @@ public class SigilSlot : MonoBehaviour
     public Sigil Sigil { get; private set; }
     private ShopController _shop;
 
-    public void Setup(Sigil sigil, ShopController shop)
+    public void Setup(Sigil sigil, ShopController shop, int displayedCost)
     {
         Sigil = sigil;
         _shop = shop;
 
         if (_nameText) _nameText.text = sigil.Name;
         if (_descText) _descText.text = sigil.Description;
-        if (_costText) _costText.text = $"{sigil.Cost}g";
+        if (_costText) _costText.text = $"{displayedCost}g";
         if (_typeText) _typeText.text = sigil.Type.ToFriendlyString();
 
         if (_buyButton)

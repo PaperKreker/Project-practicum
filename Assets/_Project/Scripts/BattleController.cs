@@ -27,6 +27,7 @@ public class BattleController : MonoBehaviour
     private BattleContext _ctx;
     private List<Sigil> _sigils;
     private List<Coroutine> _animationsWait = new ();
+    private DifficultyModifiers _difficultyModifiers;
 
     private int _attackCoins;
     private int _discardsLeft;
@@ -88,6 +89,7 @@ public class BattleController : MonoBehaviour
         _attackCoins = enemy.AttackCoinsPerRound;
         _discardsLeft = _battleConfig != null ? _battleConfig.MaxDiscards : 3;
         _sigils = GameManager.Instance?.Run.ActiveSigils ?? new List<Sigil>();
+        _difficultyModifiers = GameBalance.GetDifficulty(GameManager.Instance?.Run?.Difficulty ?? enemy.DifficultyLevel);
 
         int resolvedMaxHp = maxHp > 0 ? maxHp
             : _battleConfig != null ? _battleConfig.PlayerMaxHp : 100;
@@ -100,6 +102,7 @@ public class BattleController : MonoBehaviour
             PlayerMaxHp = resolvedMaxHp,
             EnemyDamage = enemy.AttackDamage,
             Discards = _discardsLeft,
+            BlockedDamageSuits = new List<Suit>(),
             RequestUIRefresh = () => OnRefresh?.Invoke(),
         };
 
@@ -139,8 +142,8 @@ public class BattleController : MonoBehaviour
         ComboResult result = ComboEvaluator.Evaluate(selected);
         int damage = Mathf.RoundToInt(result.TotalDamage);
 
-        if (_ctx.BlockedDamageSuit.HasValue)
-            damage = ApplyBlockedSuit(selected, damage);
+        if (_ctx.BlockedDamageSuits != null && _ctx.BlockedDamageSuits.Count > 0)
+            damage = ApplyBlockedSuits(selected, damage);
 
         // Enemy modifies damage first
         damage = Mathf.Max(0, _enemyEffect.ModifyPlayerDamage(_ctx, result, damage));
@@ -153,7 +156,7 @@ public class BattleController : MonoBehaviour
             bonus += s.BonusDamage(_ctx, result);
             mult += s.BonusMultiplier(_ctx, result);
         }
-        damage = Mathf.RoundToInt((damage + bonus) * mult);
+        damage = Mathf.RoundToInt((damage + bonus) * mult * _difficultyModifiers.PlayerDamageMultiplier);
 
         _enemyHp -= damage;
 
@@ -284,11 +287,11 @@ public class BattleController : MonoBehaviour
         }
     }
 
-    private int ApplyBlockedSuit(List<Card> cards, int damage)
+    private int ApplyBlockedSuits(List<Card> cards, int damage)
     {
         int removed = 0;
         foreach (var c in cards)
-            if (c.Suit == _ctx.BlockedDamageSuit.Value)
+            if (_ctx.BlockedDamageSuits.Contains(c.Suit))
                 removed += (int)c.Rank;
         return Mathf.Max(0, damage - removed);
     }

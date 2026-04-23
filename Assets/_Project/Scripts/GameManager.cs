@@ -13,8 +13,10 @@ public class GameManager : MonoBehaviour
     public RunData Run { get; private set; }
     public MapData CurrentMap { get; private set; }
     public int CurrentActIndex { get; private set; }
+    public int PendingSeed { get; private set; } = -1;
 
     private const string SCENE_MAIN_MENU = "MainMenu";
+    private const string SCENE_DIFFICULTY_SELECT = "DifficultySelect";
     private const string SCENE_MAP = "Map";
     private const string SCENE_BATTLE = "Battle";
     private const string SCENE_SHOP = "Shop";
@@ -32,14 +34,29 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void StartNewRun(int playerMaxHp = 100, int seed = -1)
+    public void OpenDifficultySelection(int seed = -1)
+    {
+        PendingSeed = seed;
+        TransitionTo(RunState.DifficultySelect, SCENE_DIFFICULTY_SELECT);
+    }
+
+    public void ReturnToMainMenu()
+    {
+        PendingSeed = -1;
+        TransitionTo(RunState.MainMenu, SCENE_MAIN_MENU);
+    }
+
+    public void StartNewRun(DifficultyLevel difficulty = DifficultyLevel.Normal, int seed = -1)
     {
         CurrentActIndex = 0;
 
-        int resolvedSeed = seed >= 0 ? seed : UnityEngine.Random.Range(0, int.MaxValue);
+        int selectedSeed = seed >= 0 ? seed : PendingSeed;
+        int resolvedSeed = selectedSeed >= 0 ? selectedSeed : UnityEngine.Random.Range(0, int.MaxValue);
+        int playerMaxHp = GameBalance.GetPlayerMaxHp(difficulty);
 
         Run = new RunData
         {
+            Difficulty = difficulty,
             PlayerMaxHp = playerMaxHp,
             PlayerHp = playerMaxHp,
             Gold = 0,
@@ -49,6 +66,8 @@ public class GameManager : MonoBehaviour
             Seed = resolvedSeed,
             Rng = new System.Random(resolvedSeed),
         };
+
+        PendingSeed = -1;
 
         Debug.Log($"[GameManager] New run. Seed={resolvedSeed}");
         LoadAct(0);
@@ -118,12 +137,15 @@ public class GameManager : MonoBehaviour
         TransitionTo(RunState.Map, SCENE_MAP);
     }
 
-    public EnemyData GetCurrentEnemy() =>
-        CurrentMap.GetNode(Run.CurrentNodeIndex).Enemy;
+    public EnemyData GetCurrentEnemy()
+    {
+        EnemyData enemy = CurrentMap.GetNode(Run.CurrentNodeIndex).Enemy;
+        return enemy == null ? null : GameBalance.ApplyDifficulty(enemy, Run.Difficulty, CurrentActIndex);
+    }
 
     private void LoadAct(int actIndex)
     {
-        CurrentMap = MapGenerator.BuildAct(actIndex, Run.Rng);
+        CurrentMap = MapGenerator.BuildAct(actIndex, Run.Rng, Run.Difficulty);
         Run.CurrentNodeIndex = CurrentMap.StartNodeIndex;
         Run.CurrentNodeCompleted = true;
         Run.VisitedNodeIndices = new List<int> { CurrentMap.StartNodeIndex };
@@ -132,8 +154,7 @@ public class GameManager : MonoBehaviour
 
     private void ApplyRest()
     {
-        int missing = Run.PlayerMaxHp - Run.PlayerHp;
-        int healed = Mathf.CeilToInt(missing * 0.40f);
+        int healed = GameBalance.GetRestHealAmount(Run);
         Run.PlayerHp = Mathf.Min(Run.PlayerHp + healed, Run.PlayerMaxHp);
         Run.CurrentNodeCompleted = true;
         TransitionTo(RunState.Map, SCENE_MAP);

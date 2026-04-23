@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum EnemyTier { Regular, Elite, Boss }
@@ -24,40 +24,83 @@ public class EnemyData
     public EnemyTier Tier;
     public int MaxHp;
     public int AttackDamage;
-    public int AttackCoinsPerRound = 3;
+    public int AttackCoinsPerRound = 2;
     public int GoldReward;
     public float CritChanceReward;
     public EnemyEffectType EffectType;
     public Sprite Sprite;
+    public DifficultyLevel DifficultyLevel = DifficultyLevel.Normal;
 
-    public EnemyEffect CreateEffect() => EffectType switch
+    public EnemyEffect CreateEffect()
     {
-        EnemyEffectType.None => new NoEffect(),
-        EnemyEffectType.ReducedDiscards => new ReducedDiscards(1),
-        EnemyEffectType.HeavyReducedDiscards => new ReducedDiscards(2),
-        EnemyEffectType.FaceDownCards => new FaceDownCards(4),
-        EnemyEffectType.SuitNoDamage => new SuitNoDamage(),
-        EnemyEffectType.DamageOnDiscard => new DamageOnDiscard(2),
-        EnemyEffectType.PetrifyCard => new PetrifyCard(),
-        EnemyEffectType.LargeHandPenalty => new LargeHandPenalty(4, 0.5f),
-        EnemyEffectType.EscalateDamage => new EscalateDamage(8),
-        EnemyEffectType.NoRepeatCombo => new NoRepeatCombo(),
-        EnemyEffectType.CyclingPenalty => new CyclingPenalty(),
-        _ => new NoEffect(),
-    };
+        return EffectType switch
+        {
+            EnemyEffectType.None => new NoEffect(),
+            EnemyEffectType.ReducedDiscards => DifficultyLevel switch
+            {
+                DifficultyLevel.Hard => new ReducedDiscards(2),
+                DifficultyLevel.Demon => new ReducedDiscards(2),
+                _ => new ReducedDiscards(1),
+            },
+            EnemyEffectType.HeavyReducedDiscards => new ReducedDiscards(2),
+            EnemyEffectType.FaceDownCards => DifficultyLevel switch
+            {
+                DifficultyLevel.Hard => new FaceDownCards(3),
+                DifficultyLevel.Demon => new FaceDownCards(2),
+                _ => new FaceDownCards(4),
+            },
+            EnemyEffectType.SuitNoDamage => DifficultyLevel switch
+            {
+                DifficultyLevel.Hard => new SuitNoDamage(2),
+                DifficultyLevel.Demon => new SuitNoDamage(3),
+                _ => new SuitNoDamage(1),
+            },
+            EnemyEffectType.DamageOnDiscard => DifficultyLevel switch
+            {
+                DifficultyLevel.Hard => new DamageOnDiscard(4),
+                DifficultyLevel.Demon => new DamageOnDiscard(5),
+                _ => new DamageOnDiscard(3),
+            },
+            EnemyEffectType.PetrifyCard => DifficultyLevel switch
+            {
+                DifficultyLevel.Hard => new PetrifyCard(2),
+                DifficultyLevel.Demon => new PetrifyCard(3),
+                _ => new PetrifyCard(1),
+            },
+            EnemyEffectType.LargeHandPenalty => DifficultyLevel switch
+            {
+                DifficultyLevel.Hard => new LargeHandPenalty(4, 0.5f),
+                DifficultyLevel.Demon => new LargeHandPenalty(3, 0.4f),
+                _ => new LargeHandPenalty(4, 0.6f),
+            },
+            EnemyEffectType.EscalateDamage => DifficultyLevel switch
+            {
+                DifficultyLevel.Hard => new EscalateDamage(5),
+                DifficultyLevel.Demon => new EscalateDamage(6),
+                _ => new EscalateDamage(4),
+            },
+            EnemyEffectType.NoRepeatCombo => DifficultyLevel switch
+            {
+                DifficultyLevel.Hard => new NoRepeatCombo(2),
+                DifficultyLevel.Demon => new NoRepeatCombo(3),
+                _ => new NoRepeatCombo(1),
+            },
+            EnemyEffectType.CyclingPenalty => new CyclingPenalty(DifficultyLevel),
+            _ => new NoEffect(),
+        };
+    }
 }
 
 public static class EnemyDatabase
 {
-
     public static EnemyData Wolf => new EnemyData
     {
         EnemyName = "Волк",
         Tier = EnemyTier.Regular,
-        MaxHp = 80,
-        AttackDamage = 12,
-        AttackCoinsPerRound = 3,
-        GoldReward = 6,
+        MaxHp = 140,
+        AttackDamage = 6,
+        AttackCoinsPerRound = 2,
+        GoldReward = 5,
         EffectType = EnemyEffectType.ReducedDiscards,
     };
 
@@ -65,10 +108,10 @@ public static class EnemyDatabase
     {
         EnemyName = "Ворон",
         Tier = EnemyTier.Regular,
-        MaxHp = 70,
-        AttackDamage = 10,
-        AttackCoinsPerRound = 3,
-        GoldReward = 6,
+        MaxHp = 130,
+        AttackDamage = 5,
+        AttackCoinsPerRound = 2,
+        GoldReward = 5,
         EffectType = EnemyEffectType.FaceDownCards,
     };
 
@@ -76,10 +119,10 @@ public static class EnemyDatabase
     {
         EnemyName = "Лис",
         Tier = EnemyTier.Regular,
-        MaxHp = 75,
-        AttackDamage = 11,
-        AttackCoinsPerRound = 3,
-        GoldReward = 6,
+        MaxHp = 133,
+        AttackDamage = 6,
+        AttackCoinsPerRound = 2,
+        GoldReward = 5,
         EffectType = EnemyEffectType.SuitNoDamage,
     };
 
@@ -87,10 +130,10 @@ public static class EnemyDatabase
     {
         EnemyName = "Альфа волк",
         Tier = EnemyTier.Elite,
-        MaxHp = 120,
-        AttackDamage = 18,
-        AttackCoinsPerRound = 3,
-        GoldReward = 10,
+        MaxHp = 207,
+        AttackDamage = 16,
+        AttackCoinsPerRound = 2,
+        GoldReward = 9,
         CritChanceReward = 0.02f,
         EffectType = EnemyEffectType.DamageOnDiscard,
     };
@@ -99,10 +142,10 @@ public static class EnemyDatabase
     {
         EnemyName = "Василиск",
         Tier = EnemyTier.Elite,
-        MaxHp = 130,
-        AttackDamage = 16,
-        AttackCoinsPerRound = 3,
-        GoldReward = 10,
+        MaxHp = 223,
+        AttackDamage = 15,
+        AttackCoinsPerRound = 2,
+        GoldReward = 9,
         CritChanceReward = 0.02f,
         EffectType = EnemyEffectType.PetrifyCard,
     };
@@ -111,10 +154,10 @@ public static class EnemyDatabase
     {
         EnemyName = "Скарабей",
         Tier = EnemyTier.Elite,
-        MaxHp = 110,
+        MaxHp = 193,
         AttackDamage = 15,
-        AttackCoinsPerRound = 3,
-        GoldReward = 10,
+        AttackCoinsPerRound = 2,
+        GoldReward = 9,
         CritChanceReward = 0.02f,
         EffectType = EnemyEffectType.LargeHandPenalty,
     };
@@ -123,10 +166,10 @@ public static class EnemyDatabase
     {
         EnemyName = "Минотавр",
         Tier = EnemyTier.Boss,
-        MaxHp = 200,
-        AttackDamage = 20,
-        AttackCoinsPerRound = 3,
-        GoldReward = 15,
+        MaxHp = 347,
+        AttackDamage = 18,
+        AttackCoinsPerRound = 2,
+        GoldReward = 14,
         EffectType = EnemyEffectType.EscalateDamage,
     };
 
@@ -134,10 +177,10 @@ public static class EnemyDatabase
     {
         EnemyName = "Паук",
         Tier = EnemyTier.Boss,
-        MaxHp = 220,
-        AttackDamage = 22,
-        AttackCoinsPerRound = 3,
-        GoldReward = 15,
+        MaxHp = 367,
+        AttackDamage = 19,
+        AttackCoinsPerRound = 2,
+        GoldReward = 14,
         EffectType = EnemyEffectType.NoRepeatCombo,
     };
 
@@ -145,10 +188,10 @@ public static class EnemyDatabase
     {
         EnemyName = "Амальгам",
         Tier = EnemyTier.Boss,
-        MaxHp = 300,
-        AttackDamage = 25,
-        AttackCoinsPerRound = 3,
-        GoldReward = 20,
+        MaxHp = 433,
+        AttackDamage = 20,
+        AttackCoinsPerRound = 2,
+        GoldReward = 16,
         EffectType = EnemyEffectType.CyclingPenalty,
     };
 
