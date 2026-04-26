@@ -26,6 +26,7 @@ public class CardView : MonoBehaviour
 
     [Header("Animations")]
     [SerializeField] private CardAnimationConfig _animationConfig;
+    [SerializeField] private Material _petrifyMaterial;
 
     // Card fields
     public Card Data { get; private set; }
@@ -141,11 +142,23 @@ public class CardView : MonoBehaviour
     // Petrified cards are visible but cannot be clicked
     public void SetPetrified(bool petrified)
     {
-        IsPetrified = petrified;
-        if (petrified && IsSelected)
+        if (petrified)
         {
-            IsSelected = false;
+            if (IsPetrified != petrified)
+            {
+                _background.material = Instantiate(_petrifyMaterial);
+                StartCoroutine(AnimatePetrify());
+            }
+            if (IsSelected)
+            {
+                IsSelected = false;
+            }
         }
+        else
+        {
+            _background.material = null;
+        }
+        IsPetrified = petrified;
         RefreshVisuals();
     }
 
@@ -292,5 +305,18 @@ public class CardView : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         Destroy(gameObject);
+    }
+
+    private IEnumerator AnimatePetrify()
+    {
+        float time = _animationConfig.PetrifyDuration;
+        while (time > 0.0f)
+        {
+            _background.material.SetFloat("_Transition", 1.0f - time / _animationConfig.PetrifyDuration);
+
+            time -= Time.deltaTime;
+            yield return new WaitForFixedUpdate();
+        }
+        _background.material.SetFloat("_Transition", 1.0f);
     }
 }
