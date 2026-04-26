@@ -46,6 +46,7 @@ public class BattleView : MonoBehaviour
 
         _battleController.OnRefresh += RefreshText;
         _battleController.OnRefreshAll += RefreshAll;
+        _battleController.OnEnemyAttackFinish += RefreshEnemyHp;
         _battleController.OnAnimationStarted += DisableGameplayButtons;
         _battleController.OnAnimationStopped += EnableGameplayButtons;
         _battleController.OnEnemyAttackFinish += HitScreen;
@@ -61,6 +62,7 @@ public class BattleView : MonoBehaviour
 
         _battleController.OnRefresh -= RefreshText;
         _battleController.OnRefreshAll -= RefreshAll;
+        _battleController.OnEnemyAttackFinish -= RefreshEnemyHp;
         _battleController.OnAnimationStarted -= DisableGameplayButtons;
         _battleController.OnAnimationStopped -= EnableGameplayButtons;
         _battleController.OnEnemyAttackFinish -= HitScreen;
@@ -136,10 +138,16 @@ public class BattleView : MonoBehaviour
 
         _attackCoinText.text = $"{battleState.attackCoins}";
         _discardsLeftText.text = $"{battleState.discardsLeft}/{_battleConfig.MaxDiscards}";
-        _enemyHpText.text = $"{Mathf.Max(0, battleState.enemyHp)}/{battleState.enemyData?.MaxHp}";
         _enemyDamageText.text = $"{battleState.ctx?.EnemyDamage}";
         _playerHpText.text = $"{Mathf.Max(0, battleState.playerHp)}/{_battleConfig.PlayerMaxHp}";
 
+        RefreshEnemyHp();
+    }
+
+    private void RefreshEnemyHp(int _ = 0)
+    {
+        BattleController.State battleState = _battleController.GetCurrentState();
+        _enemyHpText.text = $"{Mathf.Max(0, battleState.enemyHp)}/{battleState.enemyData?.MaxHp}";
         _enemyHpSlider.value = Mathf.Max(0.0f, battleState.enemyHp) / battleState.enemyData.MaxHp;
     }
 

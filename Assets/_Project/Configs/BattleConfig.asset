@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: BattleConfig
   m_EditorClassIdentifier: Assembly-CSharp::BattleConfig
   <AttackCoinsPerRound>k__BackingField: 3
-  <MaxDiscards>k__BackingField: 3
+  <MaxDiscards>k__BackingField: 100
   <MaxDiscardCards>k__BackingField: 5
   <PlayerMaxHp>k__BackingField: 100

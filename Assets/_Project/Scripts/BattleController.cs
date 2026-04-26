@@ -181,8 +181,14 @@ public class BattleController : MonoBehaviour
             yield break;
         }
 
-        if (_attackCoins <= 0)
+        if (!_hand.CanAttack())
+        {
+            yield return AttackPlayerWithoutCards();
+        }
+        else if (_attackCoins <= 0)
+        {
             yield return EnemyTakeTurn();
+        }    
 
         OnRefreshAll?.Invoke();
         OnAnimationStopped?.Invoke();
@@ -222,8 +228,23 @@ public class BattleController : MonoBehaviour
         _discardsLeft--;
         _ctx.Discards = _discardsLeft;
 
+        if (!_hand.CanAttack())
+        {
+            yield return AttackPlayerWithoutCards();
+        }
+
         OnRefreshAll?.Invoke();
         OnAnimationStopped?.Invoke();
+    }
+
+    // No cards attack
+    private IEnumerator AttackPlayerWithoutCards()
+    {
+        while (!VictoryChecker.IsGameOver(_ctx.PlayerHp))
+        {
+            yield return EnemyTakeTurn();
+            OnRefreshAll?.Invoke();
+        }
     }
 
     public void AddAnimationToWait(Coroutine animation)

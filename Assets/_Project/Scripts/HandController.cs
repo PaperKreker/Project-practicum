@@ -133,6 +133,11 @@ public class HandController : MonoBehaviour
         available[UnityEngine.Random.Range(0, available.Count)].SetPetrified(true);
     }
 
+    public bool CanAttack()
+    {
+        return _hand.Count > 0;
+    }
+
     public void SetCardsInteractable(bool interactable)
     {
         foreach (CardView card in _hand)
