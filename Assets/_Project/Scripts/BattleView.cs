@@ -79,12 +79,25 @@ public class BattleView : MonoBehaviour
         }
 
         bool hasHidden = selectedViews.Any(v => v.IsFaceDown);
+
+        // Apply fox debuff temporarily for preview
+        BattleController.State battleState = _battleController.GetCurrentState();
         List<Card> visibleCards = selectedViews.Where(v => !v.IsFaceDown).Select(v => v.Data).ToList();
 
-        // Evaluate only visible cards (or all if none hidden)
+        if (battleState.ctx?.BlockedDamageSuit.HasValue == true)
+        {
+            foreach (var c in visibleCards)
+                c.IsDebuffed = c.Suit == battleState.ctx.BlockedDamageSuit.Value;
+        }
+
+        // Evaluate with debuff applied
         ComboResult result = visibleCards.Count > 0
             ? ComboEvaluator.Evaluate(visibleCards)
             : new ComboResult { Type = ComboType.None };
+
+        // Clear preview debuff flags
+        foreach (var c in visibleCards)
+            c.IsDebuffed = false;
 
         string suffix = hasHidden ? "???" : "";
 
@@ -147,7 +160,7 @@ public class BattleView : MonoBehaviour
     {
         BattleController.State battleState = _battleController.GetCurrentState();
 
-        if (battleState.enemyData == null) 
+        if (battleState.enemyData == null)
             return;
 
         _enemyNameText.text = battleState.enemyData.EnemyName;
