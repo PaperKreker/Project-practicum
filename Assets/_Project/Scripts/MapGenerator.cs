@@ -29,7 +29,7 @@ public static class MapGenerator
         Rest,
     }
 
-    public static MapData BuildAct(int actIndex, Random rng)
+    public static MapData BuildAct(int actIndex, Random rng, DifficultyLevel difficulty)
     {
         int spineLength = Mathf.Max(MinMainPathLength, ApproxPathLength);
         int branchCount = Mathf.Max(0, ApproxPathWidth - 1);
@@ -39,7 +39,7 @@ public static class MapGenerator
         List<MapNode> spine = BuildMainSpine(map, spineLength, boss, rng);
 
         AddBranches(map, branchCount, rng);
-        PopulateNodes(map, rng);
+        PopulateNodes(map, rng, difficulty);
 
         map.StartNodeIndex = spine[0].Index;
         return map;
@@ -436,7 +436,7 @@ public static class MapGenerator
         return Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(minRow, maxRow, t)), minRow, maxRow);
     }
 
-    private static void PopulateNodes(MapData map, Random rng)
+    private static void PopulateNodes(MapData map, Random rng, DifficultyLevel difficulty)
     {
         FillBattles(map, rng);
 
@@ -453,7 +453,7 @@ public static class MapGenerator
         if (candidates.Count == 0)
             return;
 
-        List<SpecialNodeType> plan = BuildSpecialPlan(candidates.Count, rng);
+        List<SpecialNodeType> plan = BuildSpecialPlan(candidates.Count, rng, difficulty);
         Dictionary<int, SpecialNodeType> assignments = BuildSpecialAssignments(map, candidates, plan, rng);
 
         foreach (KeyValuePair<int, SpecialNodeType> assignment in assignments)
@@ -474,7 +474,7 @@ public static class MapGenerator
         }
     }
 
-    private static List<SpecialNodeType> BuildSpecialPlan(int candidateCount, Random rng)
+    private static List<SpecialNodeType> BuildSpecialPlan(int candidateCount, Random rng, DifficultyLevel difficulty)
     {
         List<SpecialNodeType> plan = new List<SpecialNodeType>();
 
@@ -485,20 +485,34 @@ public static class MapGenerator
         if (candidateCount >= 3)
             plan.Add(SpecialNodeType.Elite);
 
-        int extraCount = Mathf.Min(Mathf.Max(0, (candidateCount - 3) / 3), candidateCount - plan.Count);
+        int extraCount = GetExtraSpecialCount(candidateCount, difficulty, plan.Count);
         for (int i = 0; i < extraCount; i++)
-            plan.Add(PickExtraSpecialType(rng));
+            plan.Add(PickExtraSpecialType(rng, difficulty));
 
         Shuffle(plan, rng);
         return plan;
     }
 
-    private static SpecialNodeType PickExtraSpecialType(Random rng)
+    private static int GetExtraSpecialCount(int candidateCount, DifficultyLevel difficulty, int assignedCount)
     {
+        int remaining = Mathf.Max(0, candidateCount - assignedCount);
+        if (remaining == 0)
+            return 0;
+
+        if (difficulty == DifficultyLevel.Demon)
+            return Mathf.Min(remaining, Mathf.Max(1, (candidateCount - 3) / 2 + 1));
+
+        return Mathf.Min(remaining, Mathf.Max(0, (candidateCount - 3) / 3));
+    }
+
+    private static SpecialNodeType PickExtraSpecialType(Random rng, DifficultyLevel difficulty)
+    {
+        DifficultyModifiers modifiers = GameBalance.GetDifficulty(difficulty);
         double roll = rng.NextDouble();
-        if (roll < 0.42d)
+
+        if (roll < modifiers.ShopNodeWeight)
             return SpecialNodeType.Shop;
-        if (roll < 0.78d)
+        if (roll < modifiers.ShopNodeWeight + modifiers.RestNodeWeight)
             return SpecialNodeType.Rest;
         return SpecialNodeType.Elite;
     }

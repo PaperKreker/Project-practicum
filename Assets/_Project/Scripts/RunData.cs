@@ -4,6 +4,7 @@ using System.Collections.Generic;
 public enum RunState
 {
     MainMenu,
+    DifficultySelect,
     Map,
     Battle,
     Shop,
@@ -14,6 +15,7 @@ public enum RunState
 
 public class RunData
 {
+    public DifficultyLevel Difficulty = DifficultyLevel.Normal;
     public int PlayerHp;
     public int PlayerMaxHp;
     public int Gold;

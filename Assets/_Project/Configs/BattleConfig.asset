@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 836984cdcdb088d4eb56821c985c84a7, type: 3}
   m_Name: BattleConfig
   m_EditorClassIdentifier: Assembly-CSharp::BattleConfig
-  <AttackCoinsPerRound>k__BackingField: 3
-  <MaxDiscards>k__BackingField: 3
+  <AttackCoinsPerRound>k__BackingField: 2
+  <MaxDiscards>k__BackingField: 2
   <MaxDiscardCards>k__BackingField: 5
-  <PlayerMaxHp>k__BackingField: 100
+  <PlayerMaxHp>k__BackingField: 150

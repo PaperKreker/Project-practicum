@@ -7,17 +7,17 @@ public class MainMenuController : MonoBehaviour
 
     public void OnNewGameClicked()
     {
-        GameManager.Instance.StartNewRun(playerMaxHp: 100, seed: ParseSeed());
+        OpenDifficultySelection();
     }
 
     public void OnNewGameHard()
     {
-        GameManager.Instance.StartNewRun(playerMaxHp: 95, seed: ParseSeed());
+        OpenDifficultySelection();
     }
 
     public void OnNewGameDemon()
     {
-        GameManager.Instance.StartNewRun(playerMaxHp: 90, seed: ParseSeed());
+        OpenDifficultySelection();
     }
 
     // -1 = random seed
@@ -27,5 +27,10 @@ public class MainMenuController : MonoBehaviour
         string text = _seedInput.text.Trim();
         if (string.IsNullOrEmpty(text)) return -1;
         return int.TryParse(text, out int seed) ? Mathf.Abs(seed) : Mathf.Abs(text.GetHashCode());
+    }
+
+    private void OpenDifficultySelection()
+    {
+        GameManager.Instance.OpenDifficultySelection(ParseSeed());
     }
 }
