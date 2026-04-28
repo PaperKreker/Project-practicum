@@ -24,7 +24,7 @@ public class BattleController : MonoBehaviour
     private EnemyEffect _enemyEffect;
     private BattleContext _ctx;
     private List<Sigil> _sigils;
-    private List<Coroutine> _animationsWait = new ();
+    private List<Coroutine> _animationsWait = new();
 
     private int _attackCoins;
     private int _discardsLeft;
@@ -134,24 +134,35 @@ public class BattleController : MonoBehaviour
             yield break;
         }
 
+        // Apply debuffs before evaluating combo
+        if (_ctx.BlockedDamageSuit.HasValue)
+        {
+            foreach (var c in selected)
+                c.IsDebuffed = c.Suit == _ctx.BlockedDamageSuit.Value;
+        }
+
         ComboResult result = ComboEvaluator.Evaluate(selected);
         int damage = Mathf.RoundToInt(result.TotalDamage);
-
-        if (_ctx.BlockedDamageSuit.HasValue)
-            damage = ApplyBlockedSuit(selected, damage);
 
         // Enemy modifies damage first
         damage = Mathf.Max(0, _enemyEffect.ModifyPlayerDamage(_ctx, result, damage));
 
-        // Sigils: flat bonus then multiplier
-        int bonus = 0;
-        float mult = 1f;
-        foreach (var s in _sigils)
+        // If spider blocks the combo, skip all damage including sigils
+        bool attackBlocked = damage == 0 && result.Type != ComboType.None
+            && _enemyEffect is NoRepeatCombo spider && spider.IsRepeatBlocked(result);
+
+        if (!attackBlocked)
         {
-            bonus += s.BonusDamage(_ctx, result);
-            mult += s.BonusMultiplier(_ctx, result);
+            // Sigils: flat bonus then multiplier
+            int bonus = 0;
+            float mult = 1f;
+            foreach (var s in _sigils)
+            {
+                bonus += s.BonusDamage(_ctx, result);
+                mult += s.BonusMultiplier(_ctx, result);
+            }
+            damage = Mathf.RoundToInt((damage + bonus) * mult);
         }
-        damage = Mathf.RoundToInt((damage + bonus) * mult);
 
         _enemyHp -= damage;
 
@@ -274,14 +285,5 @@ public class BattleController : MonoBehaviour
             Debug.Log("[BattleController] Defeat.");
             GameManager.Instance?.OnBattleEnded(false, 0, 0);
         }
-    }
-
-    private int ApplyBlockedSuit(List<Card> cards, int damage)
-    {
-        int removed = 0;
-        foreach (var c in cards)
-            if (c.Suit == _ctx.BlockedDamageSuit.Value)
-                removed += (int)c.Rank;
-        return Mathf.Max(0, damage - removed);
     }
 }
