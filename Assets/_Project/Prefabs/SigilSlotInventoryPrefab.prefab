@@ -422,6 +422,7 @@ GameObject:
   - component: {fileID: 9154966069260521603}
   - component: {fileID: 2398164007467801539}
   - component: {fileID: 7702273909119352728}
+  - component: {fileID: 507447496820999706}
   m_Layer: 5
   m_Name: Tooltip
   m_TagString: Untagged
@@ -489,6 +490,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 0.2
+--- !u!114 &507447496820999706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6399057352463399062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e438a38d94a36d14f8371741a34fcc17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIElementFitter
 --- !u!1 &7252277133496005869
 GameObject:
   m_ObjectHideFlags: 0
@@ -574,7 +587,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7252277133496005869}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 89055afbfb1ae824d97c8ed4be8def94, type: 3}
   m_Name: 
@@ -605,6 +618,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SigilInventorySlot
   _nameText: {fileID: 0}
   _tooltip: {fileID: 6399057352463399062}
+  _tooltipFitter: {fileID: 507447496820999706}
   _tooltipName: {fileID: 3294693535401269817}
   _tooltipType: {fileID: 8745083546990274033}
   _tooltipDesc: {fileID: 1200251048637500161}
