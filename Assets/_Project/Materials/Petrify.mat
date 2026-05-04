@@ -42,8 +42,8 @@ Material:
     m_Ints: []
     m_Floats:
     - _ColorMask: 15
-    - _Pixelate: 0
-    - _Scale: 30
+    - _Pixelate: 50
+    - _Scale: 100
     - _Shift: 0.05
     - _Speed: 0.01
     - _Stencil: 0
@@ -51,6 +51,7 @@ Material:
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
+    - _Transition: 0
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
     m_Colors:
