@@ -21,6 +21,6 @@ public class GameBootstrap : MonoBehaviour
         }
 
         var deck = new Deck();
-        _battleController.StartBattle(deck, EnemyDatabase.Raven);
+        _battleController.StartBattle(deck, EnemyDatabase.Basilisk);
     }
 }

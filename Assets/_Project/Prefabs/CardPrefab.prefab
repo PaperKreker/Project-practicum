@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 917889360, guid: b61931f6848f02c4987044ede898bab9, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -137,8 +137,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CardView
   _button: {fileID: 3158843349089973805}
   _background: {fileID: 7375097961064308521}
-  _colorRed: {r: 0.85, g: 0.1, b: 0.1, a: 1}
-  _colorBlack: {r: 0.1, g: 0.1, b: 0.1, a: 1}
   _critColor: {r: 0.85, g: 0.1, b: 0.1, a: 0.5}
   _cardBackSprite: {fileID: -1443537659, guid: b61931f6848f02c4987044ede898bab9, type: 3}
   _stoneSprites:
@@ -198,6 +196,7 @@ MonoBehaviour:
   - {fileID: -146453006, guid: b61931f6848f02c4987044ede898bab9, type: 3}
   - {fileID: 1118497106, guid: b61931f6848f02c4987044ede898bab9, type: 3}
   _animationConfig: {fileID: 11400000, guid: 45aea17b1eb3ca445bee5cec6eb14f8e, type: 2}
+  _petrifyMaterial: {fileID: 2100000, guid: 8fd3a8953c91b3c498e64f3db9f05ce3, type: 2}
 --- !u!114 &3158843349089973805
 MonoBehaviour:
   m_ObjectHideFlags: 0

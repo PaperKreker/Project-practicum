@@ -20,4 +20,6 @@ public class CardAnimationConfig : ScriptableObject
     [field: SerializeField] public Vector2 IdleAmplitude { get; private set; } = Vector2.one;
     [field: SerializeField] public float IdleAnimationSpeed { get; private set; } = 1.0f;
     [field: SerializeField] public AnimationCurve IdleCurve { get; private set; }
+    [Header("Petrify")]
+    [field: SerializeField] public float PetrifyDuration { get; private set; } = 0.5f;
 }
