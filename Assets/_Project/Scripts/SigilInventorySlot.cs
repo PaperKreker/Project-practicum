@@ -6,6 +6,7 @@ public class SigilInventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerE
 {
     [SerializeField] private TMP_Text _nameText;
     [SerializeField] private GameObject _tooltip;
+    [SerializeField] private UIElementFitter _tooltipFitter;
     [SerializeField] private TMP_Text _tooltipName;
     [SerializeField] private TMP_Text _tooltipType;
     [SerializeField] private TMP_Text _tooltipDesc;
@@ -23,6 +24,7 @@ public class SigilInventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (_tooltip == null) return;
         _tooltip.SetActive(true);
+        _tooltipFitter.SetPosition(_tooltip.transform.position);
         if (_tooltipName) _tooltipName.text = _sigil.Name;
         if (_tooltipType) _tooltipType.text = _sigil.Type.ToFriendlyString();
         if (_tooltipDesc) _tooltipDesc.text = _sigil.Description;
