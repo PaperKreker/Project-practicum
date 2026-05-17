@@ -78,17 +78,28 @@ public class FaceDownCards : EnemyEffect
     public override string Description => $"Каждая {_interval}-я карта вытягивается рубашкой вверх";
 }
 
-// Fox: one random suit contributes no chip damage
+// Fox: one random suit contributes no damage, no points, no combo value
 public class SuitNoDamage : EnemyEffect
 {
+    public Suit BlockedSuit { get; private set; }
     public override void OnBattleStart(BattleContext ctx)
     {
-        ctx.BlockedDamageSuit = (Suit)Random.Range(0, 4);
+        BlockedSuit = (Suit)Random.Range(0, 4);
+        ctx.BlockedDamageSuit = BlockedSuit;
         Debug.Log($"[Fox] Blocked suit: {ctx.BlockedDamageSuit}");
     }
+    private string GetSuitName(Suit suit) => suit switch
+    {
+        Suit.Stone => "камней",
+        Suit.Fire => "огня",
+        Suit.Sun => "солнца",
+        Suit.Moon => "луны",
+        _ => "какой-то масти"
+    };
+
 
     public override string Description
-        => "Карты одной из мастей не наносят урона (будет раскрыто в битве)";
+        => $"Карты {GetSuitName(BlockedSuit)} не наносят урона";
 }
 
 // Alpha Wolf: lose HP per card discarded
@@ -158,19 +169,26 @@ public class EscalateDamage : EnemyEffect
         => $"После каждой атаки врага, его урон увеличивается на {_increasePerAttack}";
 }
 
-// Spider (Boss): consecutive attacks of the same combo type deal 0 damage
+// Spider (Boss): consecutive attacks of the same combo type deal 0 damage (including sigil bonuses)
 public class NoRepeatCombo : EnemyEffect
 {
     private ComboType _lastCombo = ComboType.None;
 
+    public bool IsRepeatBlocked(ComboResult result)
+        => result.Type != ComboType.None && result.Type == _lastCombo;
+
+    public override void OnPlayerAttack(BattleContext ctx, ComboResult result)
+    {
+        _lastCombo = result.Type;
+    }
+
     public override int ModifyPlayerDamage(BattleContext ctx, ComboResult result, int damage)
     {
-        if (result.Type != ComboType.None && result.Type == _lastCombo)
+        if (IsRepeatBlocked(result))
         {
             Debug.Log("[Spider] Repeated combo — 0 damage!");
             return 0;
         }
-        _lastCombo = result.Type;
         return damage;
     }
 
