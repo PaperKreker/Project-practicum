@@ -61,7 +61,7 @@ public class BattleController : MonoBehaviour
         if (GameManager.Instance == null)
         {
             Debug.LogWarning("[BattleController] No GameManager — using test defaults.");
-            StartBattle(new Deck(), EnemyDatabase.Raven);
+            StartBattle(new Deck(), EnemyDatabase.Basilisk);
             return;
         }
 
