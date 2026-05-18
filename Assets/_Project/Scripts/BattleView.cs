@@ -46,6 +46,7 @@ public class BattleView : MonoBehaviour
 
         _battleController.OnRefresh += RefreshText;
         _battleController.OnRefreshAll += RefreshAll;
+        _battleController.OnEnemyAttackFinish += RefreshEnemyHp;
         _battleController.OnAnimationStarted += DisableGameplayButtons;
         _battleController.OnAnimationStopped += EnableGameplayButtons;
         _battleController.OnEnemyAttackFinish += HitScreen;
@@ -61,6 +62,7 @@ public class BattleView : MonoBehaviour
 
         _battleController.OnRefresh -= RefreshText;
         _battleController.OnRefreshAll -= RefreshAll;
+        _battleController.OnEnemyAttackFinish -= RefreshEnemyHp;
         _battleController.OnAnimationStarted -= DisableGameplayButtons;
         _battleController.OnAnimationStopped -= EnableGameplayButtons;
         _battleController.OnEnemyAttackFinish -= HitScreen;
@@ -79,12 +81,25 @@ public class BattleView : MonoBehaviour
         }
 
         bool hasHidden = selectedViews.Any(v => v.IsFaceDown);
+
+        // Apply fox debuff temporarily for preview
+        BattleController.State battleState = _battleController.GetCurrentState();
         List<Card> visibleCards = selectedViews.Where(v => !v.IsFaceDown).Select(v => v.Data).ToList();
 
-        // Evaluate only visible cards (or all if none hidden)
+        if (battleState.ctx?.BlockedDamageSuit.HasValue == true)
+        {
+            foreach (var c in visibleCards)
+                c.IsDebuffed = c.Suit == battleState.ctx.BlockedDamageSuit.Value;
+        }
+
+        // Evaluate with debuff applied
         ComboResult result = visibleCards.Count > 0
             ? ComboEvaluator.Evaluate(visibleCards)
             : new ComboResult { Type = ComboType.None };
+
+        // Clear preview debuff flags
+        foreach (var c in visibleCards)
+            c.IsDebuffed = false;
 
         string suffix = hasHidden ? "???" : "";
 
@@ -136,10 +151,16 @@ public class BattleView : MonoBehaviour
 
         _attackCoinText.text = $"{battleState.attackCoins}";
         _discardsLeftText.text = $"{battleState.discardsLeft}/{_battleConfig.MaxDiscards}";
-        _enemyHpText.text = $"{Mathf.Max(0, battleState.enemyHp)}/{battleState.enemyData?.MaxHp}";
         _enemyDamageText.text = $"{battleState.ctx?.EnemyDamage}";
         _playerHpText.text = $"{Mathf.Max(0, battleState.playerHp)}/{battleState.ctx?.PlayerMaxHp}";
 
+        RefreshEnemyHp();
+    }
+
+    private void RefreshEnemyHp(int _ = 0)
+    {
+        BattleController.State battleState = _battleController.GetCurrentState();
+        _enemyHpText.text = $"{Mathf.Max(0, battleState.enemyHp)}/{battleState.enemyData?.MaxHp}";
         _enemyHpSlider.value = Mathf.Max(0.0f, battleState.enemyHp) / battleState.enemyData.MaxHp;
     }
 
@@ -147,7 +168,7 @@ public class BattleView : MonoBehaviour
     {
         BattleController.State battleState = _battleController.GetCurrentState();
 
-        if (battleState.enemyData == null) 
+        if (battleState.enemyData == null)
             return;
 
         _enemyNameText.text = battleState.enemyData.EnemyName;

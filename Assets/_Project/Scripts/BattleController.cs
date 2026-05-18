@@ -26,7 +26,7 @@ public class BattleController : MonoBehaviour
     private EnemyEffect _enemyEffect;
     private BattleContext _ctx;
     private List<Sigil> _sigils;
-    private List<Coroutine> _animationsWait = new ();
+    private List<Coroutine> _animationsWait = new();
     private DifficultyModifiers _difficultyModifiers;
 
     private int _attackCoins;
@@ -62,7 +62,7 @@ public class BattleController : MonoBehaviour
         if (GameManager.Instance == null)
         {
             Debug.LogWarning("[BattleController] No GameManager — using test defaults.");
-            StartBattle(new Deck(), EnemyDatabase.Raven);
+            StartBattle(new Deck(), EnemyDatabase.Basilisk);
             return;
         }
 
@@ -139,24 +139,35 @@ public class BattleController : MonoBehaviour
             yield break;
         }
 
+        // Apply debuffs before evaluating combo
+        if (_ctx.BlockedDamageSuit.HasValue)
+        {
+            foreach (var c in selected)
+                c.IsDebuffed = c.Suit == _ctx.BlockedDamageSuit.Value;
+        }
+
         ComboResult result = ComboEvaluator.Evaluate(selected);
         int damage = Mathf.RoundToInt(result.TotalDamage);
-
-        if (_ctx.BlockedDamageSuits != null && _ctx.BlockedDamageSuits.Count > 0)
-            damage = ApplyBlockedSuits(selected, damage);
 
         // Enemy modifies damage first
         damage = Mathf.Max(0, _enemyEffect.ModifyPlayerDamage(_ctx, result, damage));
 
-        // Sigils: flat bonus then multiplier
-        int bonus = 0;
-        float mult = 1f;
-        foreach (var s in _sigils)
+        // If spider blocks the combo, skip all damage including sigils
+        bool attackBlocked = damage == 0 && result.Type != ComboType.None
+            && _enemyEffect is NoRepeatCombo spider && spider.IsRepeatBlocked(result);
+
+        if (!attackBlocked)
         {
-            bonus += s.BonusDamage(_ctx, result);
-            mult += s.BonusMultiplier(_ctx, result);
+            // Sigils: flat bonus then multiplier
+            int bonus = 0;
+            float mult = 1f;
+            foreach (var s in _sigils)
+            {
+                bonus += s.BonusDamage(_ctx, result);
+                mult += s.BonusMultiplier(_ctx, result);
+            }
+            damage = Mathf.RoundToInt((damage + bonus) * mult * _difficultyModifiers.PlayerDamageMultiplier);
         }
-        damage = Mathf.RoundToInt((damage + bonus) * mult * _difficultyModifiers.PlayerDamageMultiplier);
 
         _enemyHp -= damage;
 
@@ -184,8 +195,14 @@ public class BattleController : MonoBehaviour
             yield break;
         }
 
-        if (_attackCoins <= 0)
+        if (!_hand.CanAttack())
+        {
+            yield return AttackPlayerWithoutCards();
+        }
+        else if (_attackCoins <= 0)
+        {
             yield return EnemyTakeTurn();
+        }    
 
         OnRefreshAll?.Invoke();
         OnAnimationStopped?.Invoke();
@@ -225,8 +242,23 @@ public class BattleController : MonoBehaviour
         _discardsLeft--;
         _ctx.Discards = _discardsLeft;
 
+        if (!_hand.CanAttack())
+        {
+            yield return AttackPlayerWithoutCards();
+        }
+
         OnRefreshAll?.Invoke();
         OnAnimationStopped?.Invoke();
+    }
+
+    // No cards attack
+    private IEnumerator AttackPlayerWithoutCards()
+    {
+        while (!VictoryChecker.IsGameOver(_ctx.PlayerHp))
+        {
+            yield return EnemyTakeTurn();
+            OnRefreshAll?.Invoke();
+        }
     }
 
     public void AddAnimationToWait(Coroutine animation)
@@ -285,14 +317,5 @@ public class BattleController : MonoBehaviour
             Debug.Log("[BattleController] Defeat.");
             GameManager.Instance?.OnBattleEnded(false, 0, 0);
         }
-    }
-
-    private int ApplyBlockedSuits(List<Card> cards, int damage)
-    {
-        int removed = 0;
-        foreach (var c in cards)
-            if (_ctx.BlockedDamageSuits.Contains(c.Suit))
-                removed += (int)c.Rank;
-        return Mathf.Max(0, damage - removed);
     }
 }

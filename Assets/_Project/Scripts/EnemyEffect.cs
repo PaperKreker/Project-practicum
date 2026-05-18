@@ -99,37 +99,28 @@ public class FaceDownCards : EnemyEffect
     }
 }
 
+// Fox: one random suit contributes no damage, no points, no combo value
 public class SuitNoDamage : EnemyEffect
 {
-    private readonly int _blockedSuitCount;
-
-    public SuitNoDamage(int blockedSuitCount = 1)
-    {
-        _blockedSuitCount = Mathf.Clamp(blockedSuitCount, 1, 4);
-    }
-
+    public Suit BlockedSuit { get; private set; }
     public override void OnBattleStart(BattleContext ctx)
     {
-        List<Suit> suits = new List<Suit> { Suit.Stone, Suit.Fire, Suit.Sun, Suit.Moon };
-        Shuffle(suits);
-
-        ctx.BlockedDamageSuits = suits.GetRange(0, _blockedSuitCount);
-        Debug.Log($"[Fox] Blocked suits: {string.Join(", ", ctx.BlockedDamageSuits)}");
+        BlockedSuit = (Suit)Random.Range(0, 4);
+        ctx.BlockedDamageSuit = BlockedSuit;
+        Debug.Log($"[Fox] Blocked suit: {ctx.BlockedDamageSuit}");
     }
+    private string GetSuitName(Suit suit) => suit switch
+    {
+        Suit.Stone => "камней",
+        Suit.Fire => "огня",
+        Suit.Sun => "солнца",
+        Suit.Moon => "луны",
+        _ => "какой-то масти"
+    };
+
 
     public override string Description
-        => _blockedSuitCount == 1
-            ? "Карты одной случайной масти не наносят урона"
-            : $"Карты {_blockedSuitCount} случайных мастей не наносят урона";
-
-    private static void Shuffle(List<Suit> suits)
-    {
-        for (int i = suits.Count - 1; i > 0; i--)
-        {
-            int swapIndex = Random.Range(0, i + 1);
-            (suits[i], suits[swapIndex]) = (suits[swapIndex], suits[i]);
-        }
-    }
+        => $"Карты {GetSuitName(BlockedSuit)} не наносят урона";
 }
 
 public class DamageOnDiscard : EnemyEffect
@@ -211,6 +202,7 @@ public class EscalateDamage : EnemyEffect
         => $"После каждой атаки врага, его урон увеличивается на {_increasePerAttack}";
 }
 
+// Spider (Boss): consecutive attacks of the same combo type deal 0 damage (including sigil bonuses)
 public class NoRepeatCombo : EnemyEffect
 {
     private readonly int _memoryLength;
@@ -223,21 +215,21 @@ public class NoRepeatCombo : EnemyEffect
 
     public override void OnBattleStart(BattleContext ctx) => _recentCombos.Clear();
 
+    public bool IsRepeatBlocked(ComboResult result)
+        => result.Type != ComboType.None && result.Type == _lastCombo;
+
+    public override void OnPlayerAttack(BattleContext ctx, ComboResult result)
+    {
+        _lastCombo = result.Type;
+    }
+
     public override int ModifyPlayerDamage(BattleContext ctx, ComboResult result, int damage)
     {
-        if (result.Type != ComboType.None && _recentCombos.Contains(result.Type))
+        if (IsRepeatBlocked(result))
         {
             Debug.Log("[Spider] Blocked repeated combo.");
             return 0;
         }
-
-        if (result.Type != ComboType.None)
-        {
-            _recentCombos.Enqueue(result.Type);
-            while (_recentCombos.Count > _memoryLength)
-                _recentCombos.Dequeue();
-        }
-
         return damage;
     }
 

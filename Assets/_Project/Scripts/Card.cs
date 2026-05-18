@@ -34,12 +34,13 @@ public class Card
     public Suit Suit;
     public Rank Rank;
     public bool IsCritical;
+    public bool IsDebuffed;
 
-    // Card value
     public int NominalValue
     {
         get
         {
+            if (IsDebuffed) return 0;
             if (Rank == Rank.Ace) return 11;
             if (Rank >= Rank.Jack) return 10;
             return (int)Rank;
@@ -55,6 +56,6 @@ public class Card
 
     public override string ToString()
     {
-        return $"{Rank} of {Suit}{(IsCritical ? " [CRIT]" : "")}";
+        return $"{Rank} of {Suit}{(IsCritical ? " [CRIT]" : "")}{(IsDebuffed ? " [DEBUFF]" : "")}";
     }
 }

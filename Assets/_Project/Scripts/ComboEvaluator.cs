@@ -78,15 +78,19 @@ public static class ComboEvaluator
         if (cards == null || cards.Count == 0)
             return new ComboResult { Type = ComboType.None };
 
+        // Debuffed cards are excluded from combo evaluation
+        List<Card> activeCards = cards.Where(c => !c.IsDebuffed).ToList();
+
         List<Card> scoring;
-        ComboType type = cards.Count switch
+        ComboType type = activeCards.Count switch
         {
-            1 => EvaluateOne(cards, out scoring),
-            2 => EvaluateTwo(cards, out scoring),
-            3 => EvaluateThree(cards, out scoring),
-            4 => EvaluateFour(cards, out scoring),
-            5 => EvaluateFive(cards, out scoring),
-            _ => Fallback(cards, out scoring),
+            0 => NoneResult(out scoring),
+            1 => EvaluateOne(activeCards, out scoring),
+            2 => EvaluateTwo(activeCards, out scoring),
+            3 => EvaluateThree(activeCards, out scoring),
+            4 => EvaluateFour(activeCards, out scoring),
+            5 => EvaluateFive(activeCards, out scoring),
+            _ => Fallback(activeCards, out scoring),
         };
 
         int nominalSum = scoring.Sum(c => c.NominalValue);
@@ -101,6 +105,12 @@ public static class ComboEvaluator
             Cards = cards,
             ScoringCards = scoring,
         };
+    }
+
+    private static ComboType NoneResult(out List<Card> scoring)
+    {
+        scoring = new List<Card>();
+        return ComboType.None;
     }
 
     // 1 card — the card itself scores
