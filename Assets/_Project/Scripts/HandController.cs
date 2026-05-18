@@ -44,6 +44,7 @@ public class HandController : MonoBehaviour
     private List<CardView> _hand = new List<CardView>();
     private List<CardView> _selected = new List<CardView>();
     private Deck _deck;
+    private int _runtimeMaxHandSize;
 
     // Fired when the selection changes
     public event Action OnSelectionChanged;
@@ -60,6 +61,7 @@ public class HandController : MonoBehaviour
 
     private void Start()
     {
+        _runtimeMaxHandSize = _maxHandSize;
         _sortButtonLabel.text = GameSettings.HandSortMode.ToRussianString();
     }
 
@@ -67,6 +69,7 @@ public class HandController : MonoBehaviour
     public void Init(Deck deck)
     {
         _deck = deck;
+        _runtimeMaxHandSize = ResolveMaxHandSize();
         DrawUpToMax();
         OnInit?.Invoke(deck);
     }
@@ -74,7 +77,7 @@ public class HandController : MonoBehaviour
     // Draws cards up to the maximum hand size
     public void DrawUpToMax()
     {
-        int needed = _maxHandSize - _hand.Count;
+        int needed = _runtimeMaxHandSize - _hand.Count;
         if (needed <= 0) return;
 
         List<Card> drawn = _deck.Draw(needed);
@@ -251,5 +254,13 @@ public class HandController : MonoBehaviour
     public List<CardView> GetSelectedCardViews()
     {
         return new List<CardView>(_selected);
+    }
+
+    private int ResolveMaxHandSize()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.Run == null)
+            return _maxHandSize;
+
+        return GameBalance.GetPlayerHandSize(_maxHandSize, GameManager.Instance.Run.Difficulty);
     }
 }

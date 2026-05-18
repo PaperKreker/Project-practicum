@@ -16,11 +16,18 @@ public class GameOverController : MonoBehaviour
 
     public void OnRetryClicked()
     {
-        GameManager.Instance.StartNewRun();
+        DifficultyLevel difficulty = GameManager.Instance?.Run?.Difficulty ?? DifficultyLevel.Normal;
+        GameManager.Instance.StartNewRun(difficulty);
     }
 
     public void OnMainMenuClicked()
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ReturnToMainMenu();
+            return;
+        }
+
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
     }
 }

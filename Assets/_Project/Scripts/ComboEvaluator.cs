@@ -61,16 +61,16 @@ public static class ComboEvaluator
 {
     private static readonly Dictionary<ComboType, int> BaseDamageTable = new()
     {
-        { ComboType.High,          10   },
-        { ComboType.Pair,          20   },
-        { ComboType.TwoPair,       40   },
-        { ComboType.Set,           80   },
-        { ComboType.FOK,           400  },
-        { ComboType.Straight,      100  },
-        { ComboType.Flush,         125  },
-        { ComboType.FullHouse,     175  },
-        { ComboType.StraightFlush, 600  },
-        { ComboType.RoyalFlush,    2000 },
+        { ComboType.High,          4   },
+        { ComboType.Pair,          12  },
+        { ComboType.TwoPair,       24  },
+        { ComboType.Set,           48  },
+        { ComboType.FOK,           150 },
+        { ComboType.Straight,      60  },
+        { ComboType.Flush,         72  },
+        { ComboType.FullHouse,     96  },
+        { ComboType.StraightFlush, 210 },
+        { ComboType.RoyalFlush,    320 },
     };
 
     public static ComboResult Evaluate(List<Card> cards)

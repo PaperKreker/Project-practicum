@@ -15,7 +15,7 @@ public class SigilSlot : MonoBehaviour
     public Sigil Sigil { get; private set; }
     private ShopController _shop;
 
-    public void Setup(Sigil sigil, ShopController shop)
+    public void Setup(Sigil sigil, ShopController shop, int displayedCost)
     {
         Sigil = sigil;
         _shop = shop;

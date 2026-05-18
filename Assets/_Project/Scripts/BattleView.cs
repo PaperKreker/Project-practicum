@@ -86,10 +86,10 @@ public class BattleView : MonoBehaviour
         BattleController.State battleState = _battleController.GetCurrentState();
         List<Card> visibleCards = selectedViews.Where(v => !v.IsFaceDown).Select(v => v.Data).ToList();
 
-        if (battleState.ctx?.BlockedDamageSuit.HasValue == true)
+        if (battleState.ctx.BlockedDamageSuits != null && battleState.ctx.BlockedDamageSuits.Count > 0)
         {
             foreach (var c in visibleCards)
-                c.IsDebuffed = c.Suit == battleState.ctx.BlockedDamageSuit.Value;
+                c.IsDebuffed = battleState.ctx.BlockedDamageSuits.Contains(c.Suit);
         }
 
         // Evaluate with debuff applied
@@ -157,7 +157,7 @@ public class BattleView : MonoBehaviour
         _attackCoinText.text = $"{battleState.attackCoins}";
         _discardsLeftText.text = $"{battleState.discardsLeft}/{_battleConfig.MaxDiscards}";
         _enemyDamageText.text = $"{battleState.ctx?.EnemyDamage}";
-        _playerHpText.text = $"{Mathf.Max(0, battleState.playerHp)}/{_battleConfig.PlayerMaxHp}";
+        _playerHpText.text = $"{Mathf.Max(0, battleState.playerHp)}/{battleState.ctx?.PlayerMaxHp}";
 
         RefreshEnemyHp();
     }

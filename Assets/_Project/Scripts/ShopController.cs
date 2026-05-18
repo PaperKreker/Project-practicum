@@ -21,12 +21,14 @@ public class ShopController : MonoBehaviour
     [SerializeField] private Button _rerollButton;
 
     private List<Sigil> _offered = new List<Sigil>();
-    private int _rerollCost = 1;
-    private const int OfferedCount = 3;
+    private int _rerollCost = GameBalance.BaseShopRerollCost;
+    private int _rerollsSpent;
+    private const int DefaultOfferedCount = 3;
 
     private void Start()
     {
         if (GameManager.Instance == null) return;
+        RefreshRerollCost();
         RollOffers();
         RefreshHUD();
     }
@@ -37,7 +39,8 @@ public class ShopController : MonoBehaviour
         if (run.Gold < _rerollCost) return;
 
         run.Gold -= _rerollCost;
-        _rerollCost++;
+        _rerollsSpent++;
+        RefreshRerollCost();
         OnReroll?.Invoke();
         RollOffers();
         RefreshHUD();
@@ -66,7 +69,8 @@ public class ShopController : MonoBehaviour
         var pool = all.FindAll(s => !owned.Contains(s.Name));
 
         // Use run's Rng for reproducibility
-        for (int i = 0; i < OfferedCount && pool.Count > 0; i++)
+        int offeredCount = GetOfferedCount();
+        for (int i = 0; i < offeredCount && pool.Count > 0; i++)
         {
             int idx = run.Rng.Next(pool.Count);
             _offered.Add(pool[idx]);
@@ -84,16 +88,17 @@ public class ShopController : MonoBehaviour
         var go = Instantiate(_sigilSlotPrefab, _sigilContainer);
         var slot = go.GetComponent<SigilSlot>();
         if (slot == null) slot = go.AddComponent<SigilSlot>();
-        slot.Setup(sigil, this);
+        slot.Setup(sigil, this, GetSigilCost(sigil));
     }
 
     public void OnSigilPurchased(Sigil sigil)
     {
         var run = GameManager.Instance.Run;
-        if (run.Gold < sigil.Cost) return;
+        int price = GetSigilCost(sigil);
+        if (run.Gold < price) return;
         if (run.ActiveSigils.Count >= RunData.MaxSigils) return;
 
-        run.Gold -= sigil.Cost;
+        run.Gold -= price;
         run.ActiveSigils.Add(sigil);
         _offered.Remove(sigil);
 
@@ -132,7 +137,28 @@ public class ShopController : MonoBehaviour
         {
             var slot = child.GetComponent<SigilSlot>();
             if (slot == null) continue;
-            slot.SetBuyable(!full && run.Gold >= slot.Sigil.Cost);
+            slot.SetBuyable(!full && run.Gold >= GetSigilCost(slot.Sigil));
         }
+    }
+
+    private int GetSigilCost(Sigil sigil)
+    {
+        return GameBalance.GetSigilCost(sigil, GameManager.Instance.Run.Difficulty);
+    }
+
+    private void RefreshRerollCost()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.Run == null)
+            return;
+
+        _rerollCost = GameBalance.GetShopRerollCost(_rerollsSpent, GameManager.Instance.Run.Difficulty);
+    }
+
+    private int GetOfferedCount()
+    {
+        if (GameManager.Instance == null || GameManager.Instance.Run == null)
+            return DefaultOfferedCount;
+
+        return GameBalance.GetShopOfferCount(GameManager.Instance.Run.Difficulty);
     }
 }
