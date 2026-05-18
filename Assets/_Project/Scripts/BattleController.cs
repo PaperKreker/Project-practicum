@@ -92,8 +92,9 @@ public class BattleController : MonoBehaviour
         _enemyHp = enemy.MaxHp;
         _attackCoins = enemy.AttackCoinsPerRound;
         _discardsLeft = _battleConfig != null ? _battleConfig.MaxDiscards : 3;
-        _sigils = GameManager.Instance?.Run.ActiveSigils ?? new List<Sigil>();
-        _difficultyModifiers = GameBalance.GetDifficulty(GameManager.Instance?.Run?.Difficulty ?? enemy.DifficultyLevel);
+        _sigils = GameManager.Instance?.Run?.ActiveSigils ?? new List<Sigil>();
+        var difficulty = GameManager.Instance?.Run != null ? GameManager.Instance.Run.Difficulty : enemy.DifficultyLevel;
+        _difficultyModifiers = GameBalance.GetDifficulty(difficulty);
 
         int resolvedMaxHp = maxHp > 0 ? maxHp
             : _battleConfig != null ? _battleConfig.PlayerMaxHp : 100;

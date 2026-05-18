@@ -27,5 +27,30 @@ public class RunData
     public const int MaxSigils = 6;
 
     public int Seed;
+    public Random MapRng(int actIndex) => MakeRng(Seed, 0x1000 + actIndex);
+
+    public Random ShopRng;
+
     public Random Rng;
+
+    public void InitRngs()
+    {
+        Rng = MakeRng(Seed, 0x0001);
+        ShopRng = MakeRng(Seed, 0x0002);
+    }
+
+    private static Random MakeRng(int seed, int salt)
+    {
+        unchecked
+        {
+            int h = seed ^ (salt * (int)0x9e3779b9);
+            h ^= h >> 16;
+            h *= unchecked((int)0x85ebca6b);
+            h ^= h >> 13;
+            h *= unchecked((int)0xc2b2ae35);
+            h ^= h >> 16;
+            return new Random(h);
+        }
+    }
 }
+

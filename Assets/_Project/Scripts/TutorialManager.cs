@@ -17,6 +17,7 @@ public class TutorialManager : MonoBehaviour
 
     private TutorialTrigger _waitingForTrigger = TutorialTrigger.None;
     private int _stepIndex = 0;
+    private Action _onNextDismiss;
 
     private bool _cardsDealt;
     private bool _firstSelectDone;
@@ -33,6 +34,7 @@ public class TutorialManager : MonoBehaviour
         GoldReward = 0,
         EffectType = EnemyEffectType.None,
     };
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -50,14 +52,14 @@ public class TutorialManager : MonoBehaviour
             SceneManager.LoadScene("Battle");
     }
 
-    public void EndTutorial()
+    public void EndTutorialAndStartRun()
     {
         IsTutorialActive = false;
         _popup = null;
         _battleController = null;
         _battleView = null;
         OnTutorialEnded?.Invoke();
-        SceneManager.LoadScene("MainMenu");
+        GameManager.Instance.StartRunFromTutorial(playerMaxHp: 100);
     }
 
     public void RegisterBattleScene(BattleController bc, BattleView bv, TutorialPopup popup)
@@ -76,15 +78,21 @@ public class TutorialManager : MonoBehaviour
         ShowStep(0);
     }
 
-    public void OnPopupDismissed()
+    public void OnPopupDismissedInternal()
     {
         IsWaitingForDismiss = false;
         SetGameplayBlocked(false);
 
-        if (_waitingForTrigger == TutorialTrigger.None)
+        if (_onNextDismiss != null)
         {
-            ShowStep(_stepIndex);
+            var cb = _onNextDismiss;
+            _onNextDismiss = null;
+            cb.Invoke();
+            return;
         }
+
+        if (_waitingForTrigger == TutorialTrigger.None)
+            ShowStep(_stepIndex);
     }
 
     public void NotifyAttackExecuted()
@@ -123,11 +131,11 @@ public class TutorialManager : MonoBehaviour
             StartCoroutine(RestartAfterLoss());
         }
     }
+
     private void TryFireTrigger(TutorialTrigger trigger)
     {
         if (IsWaitingForDismiss) return;
         if (_waitingForTrigger != trigger) return;
-
         _waitingForTrigger = TutorialTrigger.None;
         ShowStep(_stepIndex);
     }
@@ -145,7 +153,7 @@ public class TutorialManager : MonoBehaviour
                     "Ваша цель — победить всех врагов на карте.\n" +
                     "Если здоровье упадёт до нуля — забег заканчивается.",
                     "Далее",
-                    afterDismiss: TutorialTrigger.None
+                    TutorialTrigger.None
                 );
                 break;
 
@@ -156,7 +164,7 @@ public class TutorialManager : MonoBehaviour
                     "Каждая карта имеет <b>масть</b> (Камень, Огонь, Солнце, Луна) и <b>ранг</b> (2–Туз).\n\n" +
                     "Нажмите на карты чтобы выбрать их.",
                     "Понятно",
-                    afterDismiss: TutorialTrigger.FirstSelection
+                    TutorialTrigger.FirstSelection
                 );
                 break;
 
@@ -167,7 +175,7 @@ public class TutorialManager : MonoBehaviour
                     "Пара, стрит, флеш — чем сильнее комбинация, тем больше урона.\n\n" +
                     "Теперь нажмите <b>«Атаковать»</b>!",
                     "Понятно",
-                    afterDismiss: TutorialTrigger.AfterFirstAttack
+                    TutorialTrigger.AfterFirstAttack
                 );
                 break;
 
@@ -178,7 +186,7 @@ public class TutorialManager : MonoBehaviour
                     "После каждой атаки вы добираете карты из колоды.\n" +
                     "Когда все атаки израсходованы — враг бьёт в ответ.",
                     "Понятно",
-                    afterDismiss: TutorialTrigger.None
+                    TutorialTrigger.None
                 );
                 break;
 
@@ -189,7 +197,7 @@ public class TutorialManager : MonoBehaviour
                     "По умолчанию у вас <b>3 сброса за бой</b>.\n" +
                     "Используйте сброс чтобы улучшить руку перед атакой.",
                     "Понятно",
-                    afterDismiss: TutorialTrigger.None
+                    TutorialTrigger.None
                 );
                 break;
 
@@ -200,30 +208,25 @@ public class TutorialManager : MonoBehaviour
                     "Описание эффекта отображается рядом с врагом.\n\n" +
                     "В этом бою враг без эффектов — тренируйтесь спокойно!",
                     "Понятно",
-                    afterDismiss: TutorialTrigger.BattleWon
+                    TutorialTrigger.BattleWon
                 );
                 break;
 
             case 6:
+                _onNextDismiss = EndTutorialAndStartRun;
                 Show(
-                    "Карта и магазин",
-                    "Вы победили!\n\n" +
+                    "Обучение завершено!",
+                    "Отлично! Вы освоили основы.\n\n" +
                     "На <b>карте акта</b> выбирайте следующий узел: бой, магазин или отдых.\n\n" +
                     "<b>Магазин</b> позволяет тратить золото на <b>Сигилы</b> — " +
-                    "мощные пассивные улучшения на весь забег.",
-                    "Завершить обучение",
-                    afterDismiss: TutorialTrigger.None
+                    "мощные пассивные улучшения на весь забег.\n\n" +
+                    "Удачи!",
+                    "Начать забег",
+                    TutorialTrigger.None
                 );
-                _onNextDismiss = EndTutorial;
-                break;
-
-            default:
                 break;
         }
     }
-
-
-    private Action _onNextDismiss;
 
     private void Show(string title, string body, string btn, TutorialTrigger afterDismiss)
     {
@@ -231,25 +234,6 @@ public class TutorialManager : MonoBehaviour
         IsWaitingForDismiss = true;
         SetGameplayBlocked(true);
         _popup.Show(title, body, btn);
-    }
-
-    public void OnPopupDismissedInternal()
-    {
-        IsWaitingForDismiss = false;
-        SetGameplayBlocked(false);
-
-        if (_onNextDismiss != null)
-        {
-            var cb = _onNextDismiss;
-            _onNextDismiss = null;
-            cb.Invoke();
-            return;
-        }
-
-        if (_waitingForTrigger == TutorialTrigger.None)
-        {
-            ShowStep(_stepIndex);
-        }
     }
 
     private void SetGameplayBlocked(bool blocked)
@@ -282,7 +266,6 @@ public class TutorialManager : MonoBehaviour
         StartTutorial();
     }
 }
-
 
 public enum TutorialTrigger
 {

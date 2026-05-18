@@ -50,8 +50,7 @@ public class GameManager : MonoBehaviour
     {
         CurrentActIndex = 0;
 
-        int selectedSeed = seed >= 0 ? seed : PendingSeed;
-        int resolvedSeed = selectedSeed >= 0 ? selectedSeed : UnityEngine.Random.Range(0, int.MaxValue);
+        int resolvedSeed = seed >= 0 ? seed : UnityEngine.Random.Range(0, int.MaxValue);
         int playerMaxHp = GameBalance.GetPlayerMaxHp(difficulty);
 
         Run = new RunData
@@ -64,14 +63,36 @@ public class GameManager : MonoBehaviour
             CurrentNodeCompleted = false,
             VisitedNodeIndices = new List<int>(),
             Seed = resolvedSeed,
-            Rng = new System.Random(resolvedSeed),
         };
 
-        PendingSeed = -1;
+        Run.InitRngs();
 
         Debug.Log($"[GameManager] New run. Seed={resolvedSeed}");
         LoadAct(0);
     }
+
+    public void StartRunFromTutorial(DifficultyLevel difficulty = DifficultyLevel.Normal, int playerMaxHp = 100, int seed = -1)
+    {
+        CurrentActIndex = 0;
+        int resolvedSeed = seed >= 0 ? seed : UnityEngine.Random.Range(0, int.MaxValue);
+
+        Run = new RunData
+        {
+            Difficulty = difficulty,
+            PlayerMaxHp = playerMaxHp,
+            PlayerHp = playerMaxHp,
+            Gold = 0,
+            CurrentNodeIndex = 0,
+            CurrentNodeCompleted = false,
+            VisitedNodeIndices = new List<int>(),
+            Seed = resolvedSeed,
+        };
+        Run.InitRngs();
+
+        Debug.Log($"[GameManager] Tutorial -> Run. Seed={resolvedSeed}");
+        LoadAct(0);
+    }
+
 
     public void EnterNode(int nodeIndex)
     {
@@ -146,7 +167,7 @@ public class GameManager : MonoBehaviour
 
     private void LoadAct(int actIndex)
     {
-        CurrentMap = MapGenerator.BuildAct(actIndex, Run.Rng, Run.Difficulty);
+        CurrentMap = MapGenerator.BuildAct(actIndex, Run.MapRng(actIndex), Run.Difficulty);
         Run.CurrentNodeIndex = CurrentMap.StartNodeIndex;
         Run.CurrentNodeCompleted = true;
         Run.VisitedNodeIndices = new List<int> { CurrentMap.StartNodeIndex };
