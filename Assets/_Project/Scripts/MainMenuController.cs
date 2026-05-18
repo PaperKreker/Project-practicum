@@ -5,6 +5,8 @@ public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private TMP_InputField _seedInput;
 
+    // ── Existing game modes ───────────────────────────────────────────
+
     public void OnNewGameClicked()
     {
         GameManager.Instance.StartNewRun(playerMaxHp: 100, seed: ParseSeed());
@@ -19,6 +21,26 @@ public class MainMenuController : MonoBehaviour
     {
         GameManager.Instance.StartNewRun(playerMaxHp: 90, seed: ParseSeed());
     }
+
+    // ── Tutorial ──────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Вызывается кнопкой «Обучение» в главном меню.
+    /// </summary>
+    public void OnTutorialClicked()
+    {
+        // Ensure TutorialManager exists (it's DontDestroyOnLoad,
+        // but might not be in the scene if the player launched directly).
+        if (TutorialManager.Instance == null)
+        {
+            GameObject go = new GameObject("TutorialManager");
+            go.AddComponent<TutorialManager>();
+        }
+
+        TutorialManager.Instance.StartTutorial();
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────
 
     // -1 = random seed
     private int ParseSeed()

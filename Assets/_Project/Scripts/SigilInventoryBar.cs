@@ -16,7 +16,7 @@ public class SigilInventoryBar : MonoBehaviour
         foreach (Transform child in _slotContainer)
             Destroy(child.gameObject);
 
-        var sigils = GameManager.Instance?.Run.ActiveSigils ?? new List<Sigil>();
+        var sigils = GameManager.Instance?.Run?.ActiveSigils ?? new List<Sigil>();
 
         foreach (var sigil in sigils)
         {
