@@ -136,6 +136,12 @@ public class BattleView : MonoBehaviour
         _discardButton.interactable = false;
     }
 
+    public void SetButtonsBlocked(bool blocked)
+    {
+        _attackButton.interactable = !blocked;
+        _discardButton.interactable = !blocked;
+    }
+
     private void RefreshAll()
     {
         RefreshEnemyUI();
