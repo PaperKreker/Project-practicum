@@ -140,10 +140,10 @@ public class BattleController : MonoBehaviour
         }
 
         // Apply debuffs before evaluating combo
-        if (_ctx.BlockedDamageSuit.HasValue)
+        if (_ctx.BlockedDamageSuits != null && _ctx.BlockedDamageSuits.Count > 0)
         {
             foreach (var c in selected)
-                c.IsDebuffed = c.Suit == _ctx.BlockedDamageSuit.Value;
+                c.IsDebuffed = _ctx.BlockedDamageSuits.Contains(c.Suit);
         }
 
         ComboResult result = ComboEvaluator.Evaluate(selected);

@@ -102,12 +102,20 @@ public class FaceDownCards : EnemyEffect
 // Fox: one random suit contributes no damage, no points, no combo value
 public class SuitNoDamage : EnemyEffect
 {
-    public Suit BlockedSuit { get; private set; }
+    private readonly int _blockedSuitCount;
+
+    public SuitNoDamage(int blockedSuitCount = 1)
+    {
+        _blockedSuitCount = Mathf.Clamp(blockedSuitCount, 1, 4);
+    }
+    
     public override void OnBattleStart(BattleContext ctx)
     {
-        BlockedSuit = (Suit)Random.Range(0, 4);
-        ctx.BlockedDamageSuit = BlockedSuit;
-        Debug.Log($"[Fox] Blocked suit: {ctx.BlockedDamageSuit}");
+        List<Suit> suits = new List<Suit> { Suit.Stone, Suit.Fire, Suit.Sun, Suit.Moon };
+        Shuffle(suits);
+
+        ctx.BlockedDamageSuits = suits.GetRange(0, _blockedSuitCount);
+        Debug.Log($"[Fox] Blocked suits: {string.Join(", ", ctx.BlockedDamageSuits)}");
     }
     private string GetSuitName(Suit suit) => suit switch
     {
@@ -120,7 +128,18 @@ public class SuitNoDamage : EnemyEffect
 
 
     public override string Description
-        => $"Карты {GetSuitName(BlockedSuit)} не наносят урона";
+        => _blockedSuitCount == 1
+            ? "Карты одной случайной масти не наносят урона"
+            : $"Карты {_blockedSuitCount} случайных мастей не наносят урона";
+
+    private static void Shuffle(List<Suit> suits)
+    {
+        for (int i = suits.Count - 1; i > 0; i--)
+        {
+            int swapIndex = Random.Range(0, i + 1);
+            (suits[i], suits[swapIndex]) = (suits[swapIndex], suits[i]);
+        }
+    }
 }
 
 public class DamageOnDiscard : EnemyEffect
@@ -207,6 +226,7 @@ public class NoRepeatCombo : EnemyEffect
 {
     private readonly int _memoryLength;
     private readonly Queue<ComboType> _recentCombos = new Queue<ComboType>();
+    private ComboType _lastCombo;
 
     public NoRepeatCombo(int memoryLength = 1)
     {
