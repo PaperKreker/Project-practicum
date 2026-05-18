@@ -9,10 +9,9 @@ public class VictoryController : MonoBehaviour
     {
         if (GameManager.Instance == null) return;
         var run = GameManager.Instance.Run;
-        if (_summaryText)
-            _summaryText.text = $"Забег завершён!\n"
-                              + $"Здоровье: {run.PlayerHp} / {run.PlayerMaxHp}\n"
-                              + $"Золото: {run.Gold}";
+        _summaryText.text = $"Забег завершён!\n"
+                            + $"Здоровье: {run.PlayerHp} / {run.PlayerMaxHp}\n"
+                            + $"Золото: {run.Gold}";
     }
 
     public void OnMainMenuClicked()

@@ -103,10 +103,9 @@ public class BattleView : MonoBehaviour
 
         string suffix = hasHidden ? "???" : "";
 
-        if (_comboNameText)
-            _comboNameText.text = result.Type == ComboType.None
-                ? (hasHidden ? "???" : "")
-                : ComboDisplayName(result.Type) + suffix;
+        _comboNameText.text = result.Type == ComboType.None
+            ? (hasHidden ? "???" : "")
+            : ComboDisplayName(result.Type) + suffix;
 
         _comboDamageText.text = result.Type == ComboType.None
             ? "0"
