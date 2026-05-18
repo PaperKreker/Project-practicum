@@ -9,9 +9,9 @@ public class GameOverController : MonoBehaviour
     {
         if (GameManager.Instance == null) return;
         var run = GameManager.Instance.Run;
-        if (_summaryText)
-            _summaryText.text = $"Вы умерли на акте {GameManager.Instance.CurrentActIndex + 1}\n"
-                              + $"Золота собрано: {run.Gold}";
+
+        _summaryText.text = $"Вы умерли на акте {GameManager.Instance.CurrentActIndex + 1}\n"
+                            + $"Золота собрано: {run.Gold}";
     }
 
     public void OnRetryClicked()

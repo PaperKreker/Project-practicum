@@ -103,6 +103,7 @@ public class GameManager : MonoBehaviour
 
     public void OnBattleEnded(bool playerWon, int finalPlayerHp, int goldEarned)
     {
+        if (Run == null) return;
         if (!playerWon)
         {
             TransitionTo(RunState.GameOver, SCENE_GAME_OVER);

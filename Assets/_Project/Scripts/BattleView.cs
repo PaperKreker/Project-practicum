@@ -103,10 +103,9 @@ public class BattleView : MonoBehaviour
 
         string suffix = hasHidden ? "???" : "";
 
-        if (_comboNameText)
-            _comboNameText.text = result.Type == ComboType.None
-                ? (hasHidden ? "???" : "")
-                : ComboDisplayName(result.Type) + suffix;
+        _comboNameText.text = result.Type == ComboType.None
+            ? (hasHidden ? "???" : "")
+            : ComboDisplayName(result.Type) + suffix;
 
         _comboDamageText.text = result.Type == ComboType.None
             ? "0"
@@ -135,6 +134,12 @@ public class BattleView : MonoBehaviour
     {
         _attackButton.interactable = false;
         _discardButton.interactable = false;
+    }
+
+    public void SetButtonsBlocked(bool blocked)
+    {
+        _attackButton.interactable = !blocked;
+        _discardButton.interactable = !blocked;
     }
 
     private void RefreshAll()

@@ -122,9 +122,9 @@ public class ShopController : MonoBehaviour
     private void RefreshHUD()
     {
         var run = GameManager.Instance.Run;
-        if (_goldText) _goldText.text = $"Золото: {run.Gold}";
-        if (_rerollCostText) _rerollCostText.text = $"Стоимость: {_rerollCost}g";
-        if (_rerollButton) _rerollButton.interactable = run.Gold >= _rerollCost;
+        _goldText.text = $"Золото: {run.Gold}";
+        _rerollCostText.text = $"Стоимость: {_rerollCost}g";
+        _rerollButton.interactable = run.Gold >= _rerollCost;
         RefreshSlots();
     }
 

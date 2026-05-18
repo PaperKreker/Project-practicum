@@ -20,18 +20,17 @@ public class SigilSlot : MonoBehaviour
         Sigil = sigil;
         _shop = shop;
 
-        if (_nameText) _nameText.text = sigil.Name;
-        if (_descText) _descText.text = sigil.Description;
-        if (_costText) _costText.text = $"{displayedCost}g";
-        if (_typeText) _typeText.text = sigil.Type.ToFriendlyString();
+        _nameText.text = sigil.Name;
+        _descText.text = sigil.Description;
+        _costText.text = $"{sigil.Cost}g";
+        _typeText.text = sigil.Type.ToFriendlyString();
 
-        if (_buyButton)
-            _buyButton.onClick.AddListener(OnBuyClicked);
+        _buyButton.onClick.AddListener(OnBuyClicked);
     }
 
     public void SetBuyable(bool canBuy)
     {
-        if (_buyButton) _buyButton.interactable = canBuy;
+        _buyButton.interactable = canBuy;
     }
 
     private void OnBuyClicked()

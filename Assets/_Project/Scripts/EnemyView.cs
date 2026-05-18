@@ -69,7 +69,6 @@ public class EnemyView : MonoBehaviour
 
     private void ApplyEnemySprite()
     {
-        if (_spriteDatabase == null) return;
         var state = _battleController.GetCurrentState();
         if (state.enemyData == null) return;
 

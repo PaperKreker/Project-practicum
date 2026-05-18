@@ -59,6 +59,10 @@ public class BattleController : MonoBehaviour
 
     private void Start()
     {
+        // В режиме обучения запуск боя берёт на себя TutorialBattleHook
+        if (TutorialManager.Instance != null && TutorialManager.Instance.IsTutorialActive)
+            return;
+
         if (GameManager.Instance == null)
         {
             Debug.LogWarning("[BattleController] No GameManager — using test defaults.");
@@ -307,7 +311,12 @@ public class BattleController : MonoBehaviour
         OnBattleEnd?.Invoke(playerWon);
         yield return WaitForAnimations();
 
-        if (playerWon)
+        if (TutorialManager.Instance != null && TutorialManager.Instance.IsTutorialActive)
+        {
+            // В туториале GameManager.OnBattleEnded не вызываем — TutorialManager сам обрабатывает
+            Debug.Log($"[BattleController] Tutorial battle ended. PlayerWon={playerWon}");
+        }
+        else if (playerWon)
         {
             Debug.Log($"[BattleController] Victory. Gold: {_enemyData.GoldReward}");
             GameManager.Instance?.OnBattleEnded(true, _ctx.PlayerHp, _enemyData.GoldReward);
