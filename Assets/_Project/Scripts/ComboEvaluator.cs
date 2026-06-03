@@ -59,7 +59,7 @@ public class ComboResult
 
 public static class ComboEvaluator
 {
-    private static readonly Dictionary<ComboType, int> BaseDamageTable = new()
+    public static readonly Dictionary<ComboType, int> BaseDamageTable = new()
     {
         { ComboType.High,          4   },
         { ComboType.Pair,          12  },
