@@ -4,8 +4,7 @@ using TMPro;
 public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private TMP_InputField _seedInput;
-
-    // ── Existing game modes ───────────────────────────────────────────
+    [SerializeField] private SettingsMenuController _settingsMenu;
 
     public void OnNewGameClicked()
     {
@@ -22,15 +21,8 @@ public class MainMenuController : MonoBehaviour
         OpenDifficultySelection();
     }
 
-    // ── Tutorial ──────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Вызывается кнопкой «Обучение» в главном меню.
-    /// </summary>
     public void OnTutorialClicked()
     {
-        // Ensure TutorialManager exists (it's DontDestroyOnLoad,
-        // but might not be in the scene if the player launched directly).
         if (TutorialManager.Instance == null)
         {
             GameObject go = new GameObject("TutorialManager");
@@ -40,9 +32,14 @@ public class MainMenuController : MonoBehaviour
         TutorialManager.Instance.StartTutorial();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────
+    public void OnSettingsClicked()
+    {
+        if (_settingsMenu != null)
+            _settingsMenu.OpenSettings();
+        else
+            Debug.LogWarning("MainMenuController: SettingsMenuController не назначен в Inspector.");
+    }
 
-    // -1 = random seed
     private int ParseSeed()
     {
         if (_seedInput == null) return -1;
