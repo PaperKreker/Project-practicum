@@ -24,6 +24,7 @@ public abstract class Sigil
     public abstract string Description { get; }
     public abstract int Cost { get; }
     public abstract SigilType Type { get; }
+    public virtual string SpriteKey => Name;
 
     // Hook points for BattleController
     public virtual void OnBattleStart(BattleContext ctx) { }
