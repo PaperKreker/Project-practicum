@@ -5,6 +5,7 @@ public class SigilInventoryBar : MonoBehaviour
 {
     [SerializeField] private Transform _slotContainer;
     [SerializeField] private GameObject _slotPrefab;
+    [SerializeField] private SigilSpriteDatabase _spriteDatabase;
 
     private void OnEnable()
     {
@@ -21,7 +22,7 @@ public class SigilInventoryBar : MonoBehaviour
         foreach (var sigil in sigils)
         {
             var go = Instantiate(_slotPrefab, _slotContainer);
-            go.GetComponent<SigilInventorySlot>().Setup(sigil);
+            go.GetComponent<SigilInventorySlot>().Setup(sigil, _spriteDatabase);
         }
     }
 }

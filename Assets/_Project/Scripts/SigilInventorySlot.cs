@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using TMPro;
 
 public class SigilInventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
+    [SerializeField] private Image _icon;
+
     [SerializeField] private GameObject _tooltip;
     [SerializeField] private UIElementFitter _tooltipFitter;
     [SerializeField] private TMP_Text _tooltipName;
@@ -12,9 +15,12 @@ public class SigilInventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     private Sigil _sigil;
 
-    public void Setup(Sigil sigil)
+    public void Setup(Sigil sigil, SigilSpriteDatabase spriteDatabase)
     {
         _sigil = sigil;
+
+        _icon.sprite = spriteDatabase.GetSprite(sigil.SpriteKey);
+
         _tooltipName.text = sigil.Name;
         _tooltip.SetActive(false);
     }

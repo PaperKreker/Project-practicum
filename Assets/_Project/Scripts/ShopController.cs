@@ -14,6 +14,7 @@ public class ShopController : MonoBehaviour
     [SerializeField] private Transform _sigilContainer;
     [SerializeField] private GameObject _sigilSlotPrefab;
     [SerializeField] private SigilInventoryBar _inventoryBar;
+    [SerializeField] private SigilSpriteDatabase _spriteDatabase;
 
     [Header("HUD")]
     [SerializeField] private TMP_Text _goldText;
@@ -88,7 +89,7 @@ public class ShopController : MonoBehaviour
         var go = Instantiate(_sigilSlotPrefab, _sigilContainer);
         var slot = go.GetComponent<SigilSlot>();
         if (slot == null) slot = go.AddComponent<SigilSlot>();
-        slot.Setup(sigil, this, GetSigilCost(sigil));
+        slot.Setup(sigil, this, GetSigilCost(sigil), _spriteDatabase);
     }
 
     public void OnSigilPurchased(Sigil sigil)
