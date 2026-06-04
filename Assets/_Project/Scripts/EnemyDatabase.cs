@@ -46,31 +46,21 @@ public class EnemyData
             EnemyEffectType.FaceDownCards => DifficultyLevel switch
             {
                 DifficultyLevel.Hard => new FaceDownCards(3),
-                DifficultyLevel.Demon => new FaceDownCards(2),
+                DifficultyLevel.Demon => new FaceDownCards(3),
                 _ => new FaceDownCards(4),
             },
-            EnemyEffectType.SuitNoDamage => DifficultyLevel switch
-            {
-                DifficultyLevel.Hard => new SuitNoDamage(2),
-                DifficultyLevel.Demon => new SuitNoDamage(3),
-                _ => new SuitNoDamage(1),
-            },
+            EnemyEffectType.SuitNoDamage => new SuitNoDamage(1),
             EnemyEffectType.DamageOnDiscard => DifficultyLevel switch
             {
                 DifficultyLevel.Hard => new DamageOnDiscard(4),
                 DifficultyLevel.Demon => new DamageOnDiscard(5),
                 _ => new DamageOnDiscard(3),
             },
-            EnemyEffectType.PetrifyCard => DifficultyLevel switch
-            {
-                DifficultyLevel.Hard => new PetrifyCard(2),
-                DifficultyLevel.Demon => new PetrifyCard(3),
-                _ => new PetrifyCard(1),
-            },
+            EnemyEffectType.PetrifyCard => new PetrifyCard(1),
             EnemyEffectType.LargeHandPenalty => DifficultyLevel switch
             {
                 DifficultyLevel.Hard => new LargeHandPenalty(4, 0.5f),
-                DifficultyLevel.Demon => new LargeHandPenalty(3, 0.4f),
+                DifficultyLevel.Demon => new LargeHandPenalty(3, 0.5f),
                 _ => new LargeHandPenalty(4, 0.6f),
             },
             EnemyEffectType.EscalateDamage => DifficultyLevel switch
@@ -81,8 +71,7 @@ public class EnemyData
             },
             EnemyEffectType.NoRepeatCombo => DifficultyLevel switch
             {
-                DifficultyLevel.Hard => new NoRepeatCombo(2),
-                DifficultyLevel.Demon => new NoRepeatCombo(3),
+                DifficultyLevel.Demon => new NoRepeatCombo(2),
                 _ => new NoRepeatCombo(1),
             },
             EnemyEffectType.CyclingPenalty => new CyclingPenalty(DifficultyLevel),

@@ -21,21 +21,21 @@ public class SigilInventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         _icon.sprite = spriteDatabase.GetSprite(sigil.SpriteKey);
 
-        _tooltipName.text = sigil.Name;
-        _tooltip.SetActive(false);
+        if (_tooltipName) _tooltipName.text = sigil.Name;
+        _tooltip?.SetActive(false);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        _tooltip.SetActive(true);
-        _tooltipFitter.SetPosition(_tooltip.transform.position);
-        _tooltipName.text = _sigil.Name;
-        _tooltipType.text = _sigil.Type.ToFriendlyString();
-        _tooltipDesc.text = _sigil.Description;
+        _tooltip?.SetActive(true);
+        _tooltipFitter?.SetPosition(_tooltip.transform.position);
+        if (_tooltipName) _tooltipName.text = _sigil.Name;
+        if (_tooltipType) _tooltipType.text = _sigil.Type.ToFriendlyString();
+        if (_tooltipDesc) _tooltipDesc.text = _sigil.Description;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        _tooltip.SetActive(false);
+        _tooltip?.SetActive(false);
     }
 }
