@@ -9,7 +9,6 @@ public class SigilSlot : MonoBehaviour
     [SerializeField] private TMP_Text _nameText;
     [SerializeField] private TMP_Text _descText;
     [SerializeField] private TMP_Text _costText;
-    [SerializeField] private TMP_Text _typeText;
     [SerializeField] private Button _buyButton;
 
     public Sigil Sigil { get; private set; }
@@ -25,7 +24,6 @@ public class SigilSlot : MonoBehaviour
         _nameText.text = sigil.Name;
         _descText.text = sigil.Description;
         _costText.text = $"{sigil.Cost}g";
-        _typeText.text = sigil.Type.ToFriendlyString();
 
         _buyButton.onClick.AddListener(OnBuyClicked);
     }

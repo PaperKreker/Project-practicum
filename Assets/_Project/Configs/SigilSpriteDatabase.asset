@@ -12,5 +12,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 787d288a9fe5dbb4da788fb18744ceba, type: 3}
   m_Name: SigilSpriteDatabase
   m_EditorClassIdentifier: Assembly-CSharp::SigilSpriteDatabase
-  Entries: []
-  Placeholder: {fileID: -3947572242648437755, guid: e64fae2acb5a316428e47c33e76de81d, type: 3}
+  Entries:
+  - SigilName: "\u041B\u0443\u043D\u0430"
+    Sprite: {fileID: -2878759944293000461, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u0421\u043E\u043B\u043D\u0446\u0435"
+    Sprite: {fileID: -3182059141424181264, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u0418\u0437\u043E\u043B\u044F\u0446\u0438\u044F"
+    Sprite: {fileID: -1349218965549752691, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u0414\u0432\u043E\u0439\u043D\u0430\u044F \u0441\u0432\u044F\u0437\u044C"
+    Sprite: {fileID: 1864014035334524250, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u0422\u0440\u0438\u0430\u0434\u0430"
+    Sprite: {fileID: -751000326031147512, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u041B\u0438\u043D\u0438\u044F"
+    Sprite: {fileID: -6273517647141662579, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u0424\u043B\u043E\u0443"
+    Sprite: {fileID: -403404121272870878, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u0417\u043B\u043E\u0439 \u0443\u043C\u044B\u0441\u0435\u043B"
+    Sprite: {fileID: -702118015661732628, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u042F\u0440\u043E\u0441\u0442\u044C"
+    Sprite: {fileID: 1715802914876930050, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u041F\u043E\u0434\u0447\u0438\u043D\u0435\u043D\u0438\u0435"
+    Sprite: {fileID: 3402887681633368279, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u0424\u043E\u0440\u0442"
+    Sprite: {fileID: 4612016922139290486, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u041F\u043E\u0441\u0440\u0435\u0434\u043D\u0438\u043A"
+    Sprite: {fileID: -811469924844123886, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u041E\u0442\u0440\u0435\u0447\u0435\u043D\u0438\u0435"
+    Sprite: {fileID: 3464646915625009995, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u041C\u043E\u0449\u044C"
+    Sprite: {fileID: 3528827816020530239, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  - SigilName: "\u041A\u043E\u043D\u0432\u0435\u0440\u0442\u0430\u0446\u0438\u044F"
+    Sprite: {fileID: 7776965916379432954, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
+  Placeholder: {fileID: -2878759944293000461, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}

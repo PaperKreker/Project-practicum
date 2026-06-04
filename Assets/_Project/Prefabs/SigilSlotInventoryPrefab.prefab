@@ -348,8 +348,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278242303
-  m_fontColor: {r: 1, g: 0.79607844, b: 0, a: 1}
+    rgba: 4281843190
+  m_fontColor: {r: 0.9647059, g: 0.7411765, b: 0.21568628, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -513,7 +513,6 @@ GameObject:
   - component: {fileID: 2079588131576347361}
   - component: {fileID: 8921357863844107517}
   - component: {fileID: 5278882018767592961}
-  - component: {fileID: 3505917488781236404}
   - component: {fileID: 6476906691467240378}
   m_Layer: 5
   m_Name: SigilSlotInventoryPrefab
@@ -570,9 +569,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -3947572242648437755, guid: e64fae2acb5a316428e47c33e76de81d, type: 3}
+  m_Sprite: {fileID: -2878759944293000461, guid: 9e8769e003f4140448f67d91e117f3a2, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -580,30 +579,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3505917488781236404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7252277133496005869}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89055afbfb1ae824d97c8ed4be8def94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AnimatedButton
-  preset: {fileID: 11400000, guid: f38960ccd8735bc4487a2effb33d8391, type: 2}
-  graphics: {fileID: 2079588131576347361}
-  interactable: 1
-  OnClick:
-    m_PersistentCalls:
-      m_Calls: []
-  OnMouseEnter:
-    m_PersistentCalls:
-      m_Calls: []
-  OnMouseExit:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &6476906691467240378
 MonoBehaviour:
   m_ObjectHideFlags: 0
