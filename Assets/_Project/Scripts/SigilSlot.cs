@@ -2,10 +2,10 @@
 using UnityEngine.UI;
 using TMPro;
 
-// Attach to the SigilSlotPrefab.
-// Requires: TMP_Text "NameText", TMP_Text "DescText", TMP_Text "CostText", Button "BuyButton"
 public class SigilSlot : MonoBehaviour
 {
+    [SerializeField] private Image _icon;
+
     [SerializeField] private TMP_Text _nameText;
     [SerializeField] private TMP_Text _descText;
     [SerializeField] private TMP_Text _costText;
@@ -15,10 +15,12 @@ public class SigilSlot : MonoBehaviour
     public Sigil Sigil { get; private set; }
     private ShopController _shop;
 
-    public void Setup(Sigil sigil, ShopController shop, int displayedCost)
+    public void Setup(Sigil sigil, ShopController shop, int displayedCost, SigilSpriteDatabase spriteDatabase)
     {
         Sigil = sigil;
         _shop = shop;
+
+        _icon.sprite = spriteDatabase.GetSprite(sigil.SpriteKey);
 
         _nameText.text = sigil.Name;
         _descText.text = sigil.Description;

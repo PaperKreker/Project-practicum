@@ -11,11 +11,13 @@ public class UIElementFitter : MonoBehaviour
     {
         _mainCamera = Camera.main;
         _rectTransform = (RectTransform)transform;
-        _canvasRect = (RectTransform)(GetComponentInParent<Canvas>().rootCanvas.transform);
     }
 
     public void SetPosition(Vector2 worldPosition)
     {
+        if (_canvasRect == null)
+            _canvasRect = (RectTransform)(GetComponentInParent<Canvas>().rootCanvas.transform);
+
         Vector2 clampedPosition = ClampToCanvas(worldPosition);
         _rectTransform.position = clampedPosition;
     }

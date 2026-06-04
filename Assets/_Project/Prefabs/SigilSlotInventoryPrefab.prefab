@@ -616,7 +616,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d9dec2753d7a4d43b5e0fb0963a6d42, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SigilInventorySlot
-  _nameText: {fileID: 0}
+  _icon: {fileID: 5278882018767592961}
   _tooltip: {fileID: 6399057352463399062}
   _tooltipFitter: {fileID: 507447496820999706}
   _tooltipName: {fileID: 3294693535401269817}
