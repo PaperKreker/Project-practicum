@@ -118,7 +118,7 @@
 ### Сборка и запуск
 1. Склонируйте репозиторий:
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/PaperKreker/Project-practicum
    ```
 2. Откройте папку проекта в Unity Hub и запустите через редактор **или** скачайте готовую сборку из раздела Releases
 3. Запустите `Fablehand.exe`.
