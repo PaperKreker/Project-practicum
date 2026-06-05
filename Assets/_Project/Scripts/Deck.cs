@@ -10,9 +10,10 @@ public class Deck
 
     public int Remaining => _cards.Count;
 
-    public Deck()
+    public Deck(bool reset = true)
     {
-        Reset();
+        if (reset)
+            Reset();
     }
 
     // Creates a standard 52-card deck and shuffles it
@@ -64,6 +65,17 @@ public class Deck
             drawn.Add(c);
         }
         return drawn;
+    }
+
+    public List<Card> GetCards()
+    {
+        return new List<Card>(_cards);
+    }
+
+    public void SetCards(List<Card> cards)
+    {
+        _cards = new List<Card>(cards);
+        OnRefresh?.Invoke();
     }
 
     // Applies critical chance to a list of cards

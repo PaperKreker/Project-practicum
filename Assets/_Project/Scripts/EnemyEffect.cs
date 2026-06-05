@@ -11,6 +11,8 @@ public abstract class EnemyEffect
     public virtual void OnEnemyAttack(BattleContext ctx) { }
     public virtual int ModifyPlayerDamage(BattleContext ctx, ComboResult result, int damage) => damage;
     public virtual void OnBattleEnd(BattleContext ctx) { }
+    public virtual SaveSystem.EnemyEffectSaveData CreateSaveData() => new SaveSystem.EnemyEffectSaveData();
+    public virtual void RestoreSaveData(SaveSystem.EnemyEffectSaveData save, BattleContext ctx) { }
 
     // Shown in enemy UI
     public abstract string Description { get; }
@@ -64,6 +66,20 @@ public class FaceDownCards : EnemyEffect
     {
         _drawCounter = 0;
         ctx.Hand.OnCardDrawn += HandleCardDrawn;
+    }
+
+    public override SaveSystem.EnemyEffectSaveData CreateSaveData()
+    {
+        return new SaveSystem.EnemyEffectSaveData
+        {
+            IntValue = _drawCounter,
+        };
+    }
+
+    public override void RestoreSaveData(SaveSystem.EnemyEffectSaveData save, BattleContext ctx)
+    {
+        if (save != null)
+            _drawCounter = save.IntValue;
     }
 
     public override void OnBattleEnd(BattleContext ctx)
@@ -235,6 +251,20 @@ public class NoRepeatCombo : EnemyEffect
 
     public override void OnBattleStart(BattleContext ctx) => _recentCombos.Clear();
 
+    public override SaveSystem.EnemyEffectSaveData CreateSaveData()
+    {
+        return new SaveSystem.EnemyEffectSaveData
+        {
+            ComboValue = _lastCombo,
+        };
+    }
+
+    public override void RestoreSaveData(SaveSystem.EnemyEffectSaveData save, BattleContext ctx)
+    {
+        if (save != null)
+            _lastCombo = save.ComboValue;
+    }
+
     public bool IsRepeatBlocked(ComboResult result)
         => result.Type != ComboType.None && result.Type == _lastCombo;
 
@@ -296,6 +326,20 @@ public class CyclingPenalty : EnemyEffect
     {
         _phaseIndex = 0;
         _phases[_phaseIndex].OnBattleStart(ctx);
+    }
+
+    public override SaveSystem.EnemyEffectSaveData CreateSaveData()
+    {
+        return new SaveSystem.EnemyEffectSaveData
+        {
+            IntValue = _phaseIndex,
+        };
+    }
+
+    public override void RestoreSaveData(SaveSystem.EnemyEffectSaveData save, BattleContext ctx)
+    {
+        if (save != null)
+            _phaseIndex = Mathf.Clamp(save.IntValue, 0, _phases.Length - 1);
     }
 
     public override void OnEnemyAttack(BattleContext ctx)

@@ -32,11 +32,21 @@ public class RunData
     public Random ShopRng;
 
     public Random Rng;
+    public int ShopRandomCalls;
 
     public void InitRngs()
     {
         Rng = MakeRng(Seed, 0x0001);
         ShopRng = MakeRng(Seed, 0x0002);
+
+        for (int i = 0; i < ShopRandomCalls; i++)
+            ShopRng.Next();
+    }
+
+    public int NextShopIndex(int maxValue)
+    {
+        ShopRandomCalls++;
+        return ShopRng.Next(maxValue);
     }
 
     private static Random MakeRng(int seed, int salt)

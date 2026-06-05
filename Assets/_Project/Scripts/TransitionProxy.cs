@@ -15,4 +15,10 @@ public class TransitionProxy : MonoBehaviour
         }
         Instance = this;
     }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
 }

@@ -33,6 +33,11 @@ public class UITransition : MonoBehaviour
         Destroy(_overlayMaterial);
     }
 
+    private void OnDisable()
+    {
+        ResetState();
+    }
+
     [EasyButtons.Button]
     public void PlayTransition(TransitionType transitionType)
     {
@@ -43,7 +48,7 @@ public class UITransition : MonoBehaviour
     {
         if (TransitionProxy.Instance == null)
         {
-            _overlay.enabled = false;
+            ResetState();
             yield break;
         }
 
@@ -133,6 +138,23 @@ public class UITransition : MonoBehaviour
         }
 
         _isLerping = false;
+    }
+
+    private void ResetState()
+    {
+        _isLerping = false;
+
+        if (_overlay != null)
+            _overlay.enabled = false;
+
+        if (_image != null)
+            _image.enabled = false;
+
+        if (_targetCanvas != null)
+            _targetCanvas.SetActive(true);
+
+        if (_ignoreCanvas != null)
+            _ignoreCanvas.SetActive(true);
     }
 
     private IEnumerator AnimateShow()
