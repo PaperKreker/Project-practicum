@@ -848,7 +848,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5497831961139666827, guid: 2d39e6b85b97bd44283f1d3064770226, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnMainMenuClicked
+      value: OnRetryClicked
       objectReference: {fileID: 0}
     - target: {fileID: 5497831961139666827, guid: 2d39e6b85b97bd44283f1d3064770226, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName

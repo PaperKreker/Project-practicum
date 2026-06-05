@@ -35,6 +35,7 @@ public class BattleController : MonoBehaviour
     private Deck _deck;
     private bool _battleOver;
     private bool _hasPlayerAttackedInTutorial = false;
+    private bool _isResolvingAction;
 
     public struct State
     {
@@ -58,6 +59,37 @@ public class BattleController : MonoBehaviour
         ctx = _ctx,
     };
 
+    public SaveSystem.BattleSaveData CreateSaveData()
+    {
+        if (_isResolvingAction)
+            return null;
+
+        SaveSystem.BattleSaveData save = new SaveSystem.BattleSaveData
+        {
+            AttackCoins = _attackCoins,
+            DiscardsLeft = _discardsLeft,
+            EnemyHp = _enemyHp,
+            PlayerHp = _ctx.PlayerHp,
+            EnemyDamage = _ctx.EnemyDamage,
+            BattleOver = _battleOver,
+            HasPlayerAttackedInTutorial = _hasPlayerAttackedInTutorial,
+            EnemyName = _enemyData.EnemyName,
+            BlockedDamageSuits = _ctx.BlockedDamageSuits != null ? new List<Suit>(_ctx.BlockedDamageSuits) : new List<Suit>(),
+            EnemyEffect = _enemyEffect.CreateSaveData(),
+        };
+
+        foreach (Card card in _deck.GetCards())
+            save.DeckCards.Add(SaveSystem.CardSaveData.FromCard(card));
+
+        foreach (CardView view in _hand.GetCardViews())
+            save.HandCards.Add(SaveSystem.CardViewSaveData.FromView(view));
+
+        foreach (Sigil sigil in _sigils)
+            save.Sigils.Add(sigil.CreateSaveData());
+
+        return save;
+    }
+
     private void Start()
     {
         // В режиме обучения запуск боя берёт на себя TutorialBattleHook
@@ -74,7 +106,11 @@ public class BattleController : MonoBehaviour
         var run = GameManager.Instance.Run;
         var enemy = GameManager.Instance.GetCurrentEnemy();
         Debug.Log($"[BattleController] Starting battle. PlayerHp={run.PlayerHp}, Enemy={enemy.EnemyName}");
-        StartBattle(new Deck(), enemy, run.PlayerHp, run.PlayerMaxHp);
+        SaveSystem.BattleSaveData save = GameManager.Instance.ConsumePendingBattleSave();
+        if (save != null)
+            RestoreBattle(save, enemy, run.PlayerMaxHp);
+        else
+            StartBattle(new Deck(), enemy, run.PlayerHp, run.PlayerMaxHp);
     }
 
     private void Update()
@@ -125,6 +161,63 @@ public class BattleController : MonoBehaviour
         OnRefreshAll?.Invoke();
     }
 
+    public void RestoreBattle(SaveSystem.BattleSaveData save, EnemyData enemy, int maxHp)
+    {
+        _battleOver = save.BattleOver;
+        _isResolvingAction = false;
+        _deck = new Deck(false);
+        List<Card> deckCards = new List<Card>();
+        foreach (SaveSystem.CardSaveData cardSave in save.DeckCards)
+            deckCards.Add(cardSave.ToCard());
+        _deck.SetCards(deckCards);
+
+        _enemyData = enemy;
+        _enemyHp = save.EnemyHp;
+        _attackCoins = save.AttackCoins;
+        _discardsLeft = save.DiscardsLeft;
+        _hasPlayerAttackedInTutorial = save.HasPlayerAttackedInTutorial;
+        _sigils = GameManager.Instance?.Run?.ActiveSigils ?? new List<Sigil>();
+        var difficulty = GameManager.Instance?.Run != null ? GameManager.Instance.Run.Difficulty : enemy.DifficultyLevel;
+        _difficultyModifiers = GameBalance.GetDifficulty(difficulty);
+
+        _ctx = new BattleContext
+        {
+            Hand = _hand,
+            PlayerHp = save.PlayerHp,
+            PlayerMaxHp = maxHp,
+            EnemyDamage = save.EnemyDamage,
+            Discards = save.DiscardsLeft,
+            BlockedDamageSuits = new List<Suit>(save.BlockedDamageSuits),
+            RequestUIRefresh = () => OnRefresh?.Invoke(),
+        };
+
+        _enemyEffect = enemy.CreateEffect();
+        if (_enemyEffect is FaceDownCards)
+            _enemyEffect.OnBattleStart(_ctx);
+
+        foreach (Sigil sigil in _sigils)
+        {
+            sigil.OnBattleStart(_ctx);
+        }
+
+        _ctx.PlayerHp = save.PlayerHp;
+        _ctx.EnemyDamage = save.EnemyDamage;
+        _ctx.Discards = save.DiscardsLeft;
+        _ctx.BlockedDamageSuits = new List<Suit>(save.BlockedDamageSuits);
+        _discardsLeft = save.DiscardsLeft;
+
+        _hand.Restore(_deck, save.HandCards);
+        _enemyEffect.RestoreSaveData(save.EnemyEffect, _ctx);
+
+        foreach (Sigil sigil in _sigils)
+        {
+            SaveSystem.SigilSaveData sigilSave = save.Sigils.Find(s => s.Name == sigil.Name);
+            sigil.RestoreSaveData(sigilSave, _ctx);
+        }
+
+        OnRefreshAll?.Invoke();
+    }
+
     // Attack enemy
     public void Attack()
     {
@@ -133,15 +226,21 @@ public class BattleController : MonoBehaviour
 
     private IEnumerator AttackSequence()
     {
+        _isResolvingAction = true;
         OnAnimationStarted?.Invoke();
         _hand.SetCardsInteractable(false);
 
-        if (_battleOver) yield break;
+        if (_battleOver)
+        {
+            _isResolvingAction = false;
+            yield break;
+        }
         List<Card> selected = _hand.GetSelectedCards();
         if (selected.Count == 0 || _attackCoins <= 0)
         {
             _hand.SetCardsInteractable(true);
             OnAnimationStopped?.Invoke();
+            _isResolvingAction = false;
             yield break;
         }
 
@@ -210,6 +309,7 @@ public class BattleController : MonoBehaviour
         {
             OnRefreshAll?.Invoke();
             OnAnimationStopped?.Invoke();
+            _isResolvingAction = false;
             EndBattle(playerWon: true);
             yield break;
         }
@@ -225,6 +325,7 @@ public class BattleController : MonoBehaviour
 
         OnRefreshAll?.Invoke();
         OnAnimationStopped?.Invoke();
+        _isResolvingAction = false;
     }
 
     // Discard selected cards
@@ -235,15 +336,25 @@ public class BattleController : MonoBehaviour
 
     private IEnumerator DiscardSequence()
     {
+        _isResolvingAction = true;
         OnAnimationStarted?.Invoke();
 
-        if (_battleOver) yield break;
-        if (_discardsLeft <= 0) yield break;
+        if (_battleOver)
+        {
+            _isResolvingAction = false;
+            yield break;
+        }
+        if (_discardsLeft <= 0)
+        {
+            _isResolvingAction = false;
+            yield break;
+        }
 
         int count = _hand.GetSelectedCards().Count;
         if (count == 0)
         {
             OnAnimationStopped?.Invoke();
+            _isResolvingAction = false;
             yield break;
         }
 
@@ -268,6 +379,7 @@ public class BattleController : MonoBehaviour
 
         OnRefreshAll?.Invoke();
         OnAnimationStopped?.Invoke();
+        _isResolvingAction = false;
     }
 
     // No cards attack

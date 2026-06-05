@@ -73,7 +73,7 @@ public class ShopController : MonoBehaviour
         int offeredCount = GetOfferedCount();
         for (int i = 0; i < offeredCount && pool.Count > 0; i++)
         {
-            int idx = run.ShopRng.Next(pool.Count);
+            int idx = run.NextShopIndex(pool.Count);
             _offered.Add(pool[idx]);
             pool.RemoveAt(idx);
         }

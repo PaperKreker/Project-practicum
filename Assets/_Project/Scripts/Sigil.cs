@@ -38,6 +38,16 @@ public abstract class Sigil
     public virtual int BonusDamage(BattleContext ctx, ComboResult result) => 0;
 
     public virtual float BonusMultiplier(BattleContext ctx, ComboResult result) => 0f;
+
+    public virtual SaveSystem.SigilSaveData CreateSaveData()
+    {
+        return new SaveSystem.SigilSaveData
+        {
+            Name = Name,
+        };
+    }
+
+    public virtual void RestoreSaveData(SaveSystem.SigilSaveData save, BattleContext ctx) { }
 }
 
 
@@ -144,6 +154,21 @@ public class SigilMalice : Sigil
 
     public override void OnBattleStart(BattleContext ctx) => _used = false;
 
+    public override SaveSystem.SigilSaveData CreateSaveData()
+    {
+        return new SaveSystem.SigilSaveData
+        {
+            Name = Name,
+            BoolValue = _used,
+        };
+    }
+
+    public override void RestoreSaveData(SaveSystem.SigilSaveData save, BattleContext ctx)
+    {
+        if (save != null)
+            _used = save.BoolValue;
+    }
+
     public override float BonusMultiplier(BattleContext ctx, ComboResult result)
     {
         if (_used) return 0f;
@@ -193,6 +218,21 @@ public class SigilFortification : Sigil
 
     public override void OnBattleStart(BattleContext ctx) => _triggered = false;
 
+    public override SaveSystem.SigilSaveData CreateSaveData()
+    {
+        return new SaveSystem.SigilSaveData
+        {
+            Name = Name,
+            BoolValue = _triggered,
+        };
+    }
+
+    public override void RestoreSaveData(SaveSystem.SigilSaveData save, BattleContext ctx)
+    {
+        if (save != null)
+            _triggered = save.BoolValue;
+    }
+
     public override void OnEnemyAttack(BattleContext ctx)
     {
         if (_triggered) return;
@@ -214,6 +254,21 @@ public class SigilMediation : Sigil
     public override SigilType Type => SigilType.Defense;
 
     public override void OnBattleStart(BattleContext ctx) => _hpAtStart = ctx.PlayerHp;
+
+    public override SaveSystem.SigilSaveData CreateSaveData()
+    {
+        return new SaveSystem.SigilSaveData
+        {
+            Name = Name,
+            IntValue = _hpAtStart,
+        };
+    }
+
+    public override void RestoreSaveData(SaveSystem.SigilSaveData save, BattleContext ctx)
+    {
+        if (save != null)
+            _hpAtStart = save.IntValue;
+    }
 
     public override void OnBattleEnd(BattleContext ctx)
     {

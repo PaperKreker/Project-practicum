@@ -1,5 +1,6 @@
-﻿using UnityEngine;
 using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class VictoryController : MonoBehaviour
 {
@@ -7,15 +8,32 @@ public class VictoryController : MonoBehaviour
 
     private void Start()
     {
-        if (GameManager.Instance == null) return;
-        var run = GameManager.Instance.Run;
-        _summaryText.text = $"Забег завершён!\n"
-                            + $"Здоровье: {run.PlayerHp} / {run.PlayerMaxHp}\n"
-                            + $"Золото: {run.Gold}";
+        Time.timeScale = 1f;
+
+        if (GameManager.Instance == null || GameManager.Instance.Run == null)
+            return;
+
+        GameManager.Instance.DeleteSave();
+        RunData run = GameManager.Instance.Run;
+
+        if (_summaryText != null)
+        {
+            _summaryText.text = $"Забег завершён!\n"
+                                + $"Здоровье: {run.PlayerHp} / {run.PlayerMaxHp}\n"
+                                + $"Золото: {run.Gold}";
+        }
     }
 
     public void OnMainMenuClicked()
     {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+        Time.timeScale = 1f;
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ReturnToMainMenu(false);
+            return;
+        }
+
+        SceneManager.LoadScene("MainMenu");
     }
 }

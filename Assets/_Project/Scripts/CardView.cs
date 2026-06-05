@@ -112,6 +112,26 @@ public class CardView : MonoBehaviour
         PlayMoveToTarget();
     }
 
+    public void RestoreFlags(bool selected, bool petrified, bool faceDown)
+    {
+        IsSelected = selected;
+        IsPetrified = petrified;
+        IsFaceDown = faceDown;
+
+        if (IsPetrified)
+        {
+            _background.material = Instantiate(_petrifyMaterial);
+            _background.material.SetFloat("_Transition", 1f);
+        }
+        else
+        {
+            _background.material = null;
+        }
+
+        _targetPosition = GetTargetPosition();
+        RefreshVisuals();
+    }
+
     private void PlayIdleAnimation()
     {
         if (_currentAnimation != null)

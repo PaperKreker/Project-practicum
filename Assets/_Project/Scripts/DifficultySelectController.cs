@@ -23,7 +23,7 @@ public class DifficultySelectController : MonoBehaviour
     private void OnDifficultySelected(DifficultyLevel level)
     {
         if (GameManager.Instance != null)
-            GameManager.Instance.StartNewRun(level);
+            GameManager.Instance.StartNewRun(level, GameManager.Instance.PendingSeed);
     }
 
     private void OnBackClicked()

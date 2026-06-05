@@ -256,6 +256,36 @@ public class HandController : MonoBehaviour
         return new List<CardView>(_selected);
     }
 
+    public List<CardView> GetCardViews()
+    {
+        return new List<CardView>(_hand);
+    }
+
+    public void Restore(Deck deck, List<SaveSystem.CardViewSaveData> cards)
+    {
+        foreach (CardView view in _hand)
+            Destroy(view.gameObject);
+
+        _hand.Clear();
+        _selected.Clear();
+        _deck = deck;
+        _runtimeMaxHandSize = ResolveMaxHandSize();
+
+        foreach (SaveSystem.CardViewSaveData cardSave in cards)
+        {
+            SpawnCard(cardSave.ToCard());
+            CardView view = _hand[^1];
+            view.RestoreFlags(cardSave.IsSelected, cardSave.IsPetrified, cardSave.IsFaceDown);
+
+            if (cardSave.IsSelected && !_selected.Contains(view))
+                _selected.Add(view);
+        }
+
+        ApplySort();
+        OnInit?.Invoke(deck);
+        OnSelectionChanged?.Invoke();
+    }
+
     private int ResolveMaxHandSize()
     {
         if (GameManager.Instance == null || GameManager.Instance.Run == null)
