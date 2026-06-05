@@ -27,6 +27,7 @@ public class ComboMenuController : MonoBehaviour
 
     [Header("Keys")]
     [SerializeField] private Button _openButton;
+    [SerializeField] private Button _closeButton;
     [SerializeField] private Key _toggleKey = Key.H;
 
     private bool _isOpen;
@@ -46,14 +47,14 @@ public class ComboMenuController : MonoBehaviour
 
     private void Start()
     {
-        if (_openButton != null)
-            _openButton.onClick.AddListener(Toggle);
+        if (_openButton != null) _openButton.onClick.AddListener(Open);
+        if (_closeButton != null) _closeButton.onClick.AddListener(Close);
     }
 
     private void OnDestroy()
     {
-        if (_openButton != null)
-            _openButton.onClick.RemoveListener(Toggle);
+        if (_openButton != null) _openButton.onClick.RemoveListener(Open);
+        if (_closeButton != null) _closeButton.onClick.RemoveListener(Close);
     }
 
     private void Update()
@@ -74,6 +75,7 @@ public class ComboMenuController : MonoBehaviour
 
     public void Open()
     {
+        if (_isOpen) return;
         _isOpen = true;
         if (_panelRoot != null) _panelRoot.SetActive(true);
         if (_openButton != null) _openButton.interactable = false;
@@ -81,10 +83,11 @@ public class ComboMenuController : MonoBehaviour
 
     public void Close()
     {
+        Debug.Log("Метод Close вызвался!");
         _isOpen = false;
         if (_panelRoot != null) _panelRoot.SetActive(false);
         HidePopup();
-        StartCoroutine(ReenableOpenButton());
+        if (_openButton != null) _openButton.interactable = true;
     }
 
     private System.Collections.IEnumerator ReenableOpenButton()
