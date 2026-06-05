@@ -83,7 +83,6 @@ public class ComboMenuController : MonoBehaviour
 
     public void Close()
     {
-        Debug.Log("Метод Close вызвался!");
         _isOpen = false;
         if (_panelRoot != null) _panelRoot.SetActive(false);
         HidePopup();

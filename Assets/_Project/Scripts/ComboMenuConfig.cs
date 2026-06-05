@@ -37,7 +37,7 @@ public class ComboMenuConfig : ScriptableObject
             new ComboEntryConfig
             {
                 Type = ComboType.High,
-                DisplayName = "Старшая карта",
+                DisplayName = "Соло",
                 Description = "Засчитывается только наивысший ранг из выбранных карт.",
                 ExampleCards = new List<CardPreviewData>
                 {
@@ -47,7 +47,7 @@ public class ComboMenuConfig : ScriptableObject
             new ComboEntryConfig
             {
                 Type = ComboType.Pair,
-                DisplayName = "Пара",
+                DisplayName = "Дуэт",
                 Description = "2 карты одного ранга. Обе засчитываются.",
                 ExampleCards = new List<CardPreviewData>
                 {
@@ -58,7 +58,7 @@ public class ComboMenuConfig : ScriptableObject
             new ComboEntryConfig
             {
                 Type = ComboType.TwoPair,
-                DisplayName = "Две пары",
+                DisplayName = "Квартет",
                 Description = "2 разные пары. Засчитываются все 4 карты.",
                 ExampleCards = new List<CardPreviewData>
                 {
@@ -71,7 +71,7 @@ public class ComboMenuConfig : ScriptableObject
             new ComboEntryConfig
             {
                 Type = ComboType.Set,
-                DisplayName = "Тройка",
+                DisplayName = "Триада",
                 Description = "3 карты одного ранга. Все три засчитываются.",
                 ExampleCards = new List<CardPreviewData>
                 {
@@ -83,8 +83,8 @@ public class ComboMenuConfig : ScriptableObject
             new ComboEntryConfig
             {
                 Type = ComboType.Straight,
-                DisplayName = "Стрит",
-                Description = "5 карт с последовательными рангами, любые масти.",
+                DisplayName = "Ряд",
+                Description = "5 карт с последовательными рангами, любые цвета.",
                 ExampleCards = new List<CardPreviewData>
                 {
                     new CardPreviewData { Suit = Suit.Stone, Rank = Rank.Five },
@@ -97,8 +97,8 @@ public class ComboMenuConfig : ScriptableObject
             new ComboEntryConfig
             {
                 Type = ComboType.Flush,
-                DisplayName = "Флеш",
-                Description = "5 карт одной масти, любые ранги.",
+                DisplayName = "Поток",
+                Description = "5 карт одного цвета, любые ранги.",
                 ExampleCards = new List<CardPreviewData>
                 {
                     new CardPreviewData { Suit = Suit.Moon, Rank = Rank.Two   },
@@ -111,7 +111,7 @@ public class ComboMenuConfig : ScriptableObject
             new ComboEntryConfig
             {
                 Type = ComboType.FullHouse,
-                DisplayName = "Фулл-хаус",
+                DisplayName = "Крепость",
                 Description = "3 карты одного ранга + 2 карты другого ранга.",
                 ExampleCards = new List<CardPreviewData>
                 {
@@ -125,7 +125,7 @@ public class ComboMenuConfig : ScriptableObject
             new ComboEntryConfig
             {
                 Type = ComboType.FOK,
-                DisplayName = "Каре",
+                DisplayName = "Цитадель",
                 Description = "4 карты одного ранга. Все засчитываются.",
                 ExampleCards = new List<CardPreviewData>
                 {
@@ -138,8 +138,8 @@ public class ComboMenuConfig : ScriptableObject
             new ComboEntryConfig
             {
                 Type = ComboType.StraightFlush,
-                DisplayName = "Стрит-флеш",
-                Description = "5 карт одной масти с последовательными рангами.",
+                DisplayName = "Катаклизм",
+                Description = "5 карт одного цвета с последовательными рангами.",
                 ExampleCards = new List<CardPreviewData>
                 {
                     new CardPreviewData { Suit = Suit.Fire, Rank = Rank.Three },
@@ -152,8 +152,8 @@ public class ComboMenuConfig : ScriptableObject
             new ComboEntryConfig
             {
                 Type = ComboType.RoyalFlush,
-                DisplayName = "Роял-флеш",
-                Description = "10 J Q K A одной масти. Максимальная комбинация.",
+                DisplayName = "Fablehand",
+                Description = "10 J Q K A одного цвета. Лучшая комбинация.",
                 ExampleCards = new List<CardPreviewData>
                 {
                     new CardPreviewData { Suit = Suit.Sun, Rank = Rank.Ten   },
