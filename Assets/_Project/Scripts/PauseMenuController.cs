@@ -6,19 +6,23 @@ using UnityEngine.UI;
 
 public class PauseMenuController : MonoBehaviour
 {
-    private Canvas _canvas;
-    private RectTransform _root;
-    private RectTransform _openButtonRoot;
-    private TMP_Text _statusText;
+    [SerializeField] private GameObject _root;
+    [SerializeField] private GameObject _openButtonRoot;
+    [SerializeField] private TMP_Text _statusText;
+    [SerializeField] private Button _openButton;
+    [SerializeField] private Button _resumeButton;
+    [SerializeField] private Button _saveButton;
+    [SerializeField] private Button _saveExitButton;
+    [SerializeField] private Button _exitWithoutSaveButton;
+
     private bool _isOpen;
     private float _previousTimeScale = 1f;
-    private TMP_FontAsset _fontAsset;
 
     private void Start()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
-        ResolveFontAsset();
-        BuildUI();
+        ResolveReferences();
+        WireButtons();
         Close();
     }
 
@@ -31,6 +35,7 @@ public class PauseMenuController : MonoBehaviour
     private void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+        UnwireButtons();
 
         if (_isOpen)
             Time.timeScale = _previousTimeScale;
@@ -51,10 +56,10 @@ public class PauseMenuController : MonoBehaviour
 
         _previousTimeScale = Time.timeScale;
         Time.timeScale = 0f;
-        _root.gameObject.SetActive(true);
+        _root.SetActive(true);
 
         if (_openButtonRoot != null)
-            _openButtonRoot.gameObject.SetActive(false);
+            _openButtonRoot.SetActive(false);
 
         _isOpen = true;
 
@@ -65,13 +70,76 @@ public class PauseMenuController : MonoBehaviour
     public void Close()
     {
         if (_root != null)
-            _root.gameObject.SetActive(false);
+            _root.SetActive(false);
 
         if (_openButtonRoot != null)
-            _openButtonRoot.gameObject.SetActive(true);
+            _openButtonRoot.SetActive(true);
 
         Time.timeScale = _previousTimeScale;
         _isOpen = false;
+    }
+
+    private void ResolveReferences()
+    {
+        if (_root == null)
+            _root = FindChildObject("PauseMenu");
+
+        if (_openButtonRoot == null)
+            _openButtonRoot = FindChildObject("PauseOpenButton");
+
+        if (_statusText == null)
+            _statusText = FindChildComponent<TMP_Text>("StatusText");
+
+        if (_openButton == null)
+            _openButton = FindChildComponent<Button>("PauseOpenButton");
+
+        if (_resumeButton == null)
+            _resumeButton = FindChildComponent<Button>("ResumeButton");
+
+        if (_saveButton == null)
+            _saveButton = FindChildComponent<Button>("SaveButton");
+
+        if (_saveExitButton == null)
+            _saveExitButton = FindChildComponent<Button>("SaveExitButton");
+
+        if (_exitWithoutSaveButton == null)
+            _exitWithoutSaveButton = FindChildComponent<Button>("ExitButton");
+    }
+
+    private void WireButtons()
+    {
+        if (_openButton != null)
+            _openButton.onClick.AddListener(Open);
+
+        if (_resumeButton != null)
+            _resumeButton.onClick.AddListener(Close);
+
+        if (_saveButton != null)
+            _saveButton.onClick.AddListener(OnSaveClicked);
+
+        if (_saveExitButton != null)
+            _saveExitButton.onClick.AddListener(OnSaveAndExitClicked);
+
+        if (_exitWithoutSaveButton != null)
+            _exitWithoutSaveButton.onClick.AddListener(OnExitWithoutSaveClicked);
+    }
+
+    private void UnwireButtons()
+    {
+        if (_openButton != null)
+            _openButton.onClick.RemoveListener(Open);
+
+        if (_resumeButton != null)
+            _resumeButton.onClick.RemoveListener(Close);
+
+        if (_saveButton != null)
+            _saveButton.onClick.RemoveListener(OnSaveClicked);
+
+        if (_saveExitButton != null)
+            _saveExitButton.onClick.RemoveListener(OnSaveAndExitClicked);
+
+        if (_exitWithoutSaveButton != null)
+            _exitWithoutSaveButton.onClick.RemoveListener(OnExitWithoutSaveClicked);
     }
 
     private void OnSaveClicked()
@@ -106,10 +174,10 @@ public class PauseMenuController : MonoBehaviour
     private void HideForSceneTransition()
     {
         if (_root != null)
-            _root.gameObject.SetActive(false);
+            _root.SetActive(false);
 
         if (_openButtonRoot != null)
-            _openButtonRoot.gameObject.SetActive(false);
+            _openButtonRoot.SetActive(false);
 
         _isOpen = false;
     }
@@ -123,158 +191,21 @@ public class PauseMenuController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void BuildUI()
+    private GameObject FindChildObject(string objectName)
     {
-        Canvas canvas = ResolveCanvas();
-        if (canvas == null)
-            return;
+        Transform[] children = GetComponentsInChildren<Transform>(true);
+        foreach (Transform child in children)
+        {
+            if (child.name == objectName)
+                return child.gameObject;
+        }
 
-        _openButtonRoot = CreateIconButton("PauseOpenButton", canvas.transform, "II", new Vector2(1f, 1f), new Vector2(-54f, -54f), Open);
-
-        _root = CreateRect("PauseMenu", canvas.transform);
-        Stretch(_root, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-        _root.SetAsLastSibling();
-
-        Image shade = _root.gameObject.AddComponent<Image>();
-        shade.color = new Color(0f, 0f, 0f, 0.66f);
-        shade.raycastTarget = true;
-
-        RectTransform panel = CreatePanel("Panel", _root, new Color(0.08f, 0.09f, 0.11f, 0.96f));
-        panel.anchorMin = new Vector2(0.5f, 0.5f);
-        panel.anchorMax = new Vector2(0.5f, 0.5f);
-        panel.pivot = new Vector2(0.5f, 0.5f);
-        panel.sizeDelta = new Vector2(520f, 520f);
-        panel.anchoredPosition = Vector2.zero;
-
-        TMP_Text title = CreateText("Title", panel, "Пауза", 54f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(1f, 0.94f, 0.74f));
-        Stretch(title.rectTransform, new Vector2(0.08f, 0.78f), new Vector2(0.92f, 0.94f), Vector2.zero, Vector2.zero);
-
-        CreateButton("ResumeButton", panel, "Вернуться", new Vector2(0.5f, 0.62f), Close);
-        CreateButton("ExitButton", panel, "Выйти без сохранения", new Vector2(0.5f, 0.48f), OnExitWithoutSaveClicked);
-        CreateButton("SaveButton", panel, "Сохранить", new Vector2(0.5f, 0.34f), OnSaveClicked);
-        CreateButton("SaveExitButton", panel, "Сохранить и выйти", new Vector2(0.5f, 0.20f), OnSaveAndExitClicked);
-
-        _statusText = CreateText("StatusText", panel, string.Empty, 24f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.84f, 0.92f, 0.82f));
-        Stretch(_statusText.rectTransform, new Vector2(0.08f, 0.06f), new Vector2(0.92f, 0.13f), Vector2.zero, Vector2.zero);
+        return null;
     }
 
-    private Canvas ResolveCanvas()
+    private T FindChildComponent<T>(string objectName) where T : Component
     {
-        if (_canvas != null)
-            return _canvas;
-
-        GameObject go = new GameObject("PauseCanvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
-        go.transform.SetParent(transform, false);
-
-        Canvas canvasComponent = go.GetComponent<Canvas>();
-        canvasComponent.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvasComponent.sortingOrder = 1000;
-
-        CanvasScaler scaler = go.GetComponent<CanvasScaler>();
-        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(1920f, 1080f);
-
-        _canvas = canvasComponent;
-        return canvasComponent;
-    }
-
-    private RectTransform CreateIconButton(string name, Transform parent, string label, Vector2 anchor, Vector2 position, UnityEngine.Events.UnityAction action)
-    {
-        RectTransform rect = CreatePanel(name, parent, new Color(0.08f, 0.09f, 0.11f, 0.92f));
-        rect.anchorMin = anchor;
-        rect.anchorMax = anchor;
-        rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.sizeDelta = new Vector2(72f, 72f);
-        rect.anchoredPosition = position;
-        rect.SetAsLastSibling();
-
-        Button button = rect.gameObject.AddComponent<Button>();
-        button.targetGraphic = rect.GetComponent<Image>();
-        button.onClick.AddListener(action);
-
-        TMP_Text text = CreateText("Label", rect, label, 30f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(1f, 0.94f, 0.74f));
-        Stretch(text.rectTransform, Vector2.zero, Vector2.one, new Vector2(8f, 8f), new Vector2(-8f, -8f));
-
-        return rect;
-    }
-
-    private void ResolveFontAsset()
-    {
-        _fontAsset = TMP_Settings.defaultFontAsset;
-
-        TMP_Text text = FindFirstObjectByType<TMP_Text>();
-        if (text != null && text.font != null)
-            _fontAsset = text.font;
-    }
-
-    private Button CreateButton(string name, Transform parent, string label, Vector2 anchor, UnityEngine.Events.UnityAction action)
-    {
-        RectTransform rect = CreatePanel(name, parent, new Color(0.78f, 0.72f, 0.58f, 1f));
-        rect.anchorMin = anchor;
-        rect.anchorMax = anchor;
-        rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.sizeDelta = new Vector2(360f, 68f);
-        rect.anchoredPosition = Vector2.zero;
-
-        Button button = rect.gameObject.AddComponent<Button>();
-        button.targetGraphic = rect.GetComponent<Image>();
-        button.onClick.AddListener(action);
-
-        TMP_Text text = CreateText("Label", rect, label, 28f, FontStyles.Bold, TextAlignmentOptions.Center, new Color(0.08f, 0.07f, 0.06f));
-        Stretch(text.rectTransform, Vector2.zero, Vector2.one, new Vector2(12f, 8f), new Vector2(-12f, -8f));
-
-        return button;
-    }
-
-    private RectTransform CreatePanel(string name, Transform parent, Color color)
-    {
-        RectTransform rect = CreateRect(name, parent);
-        Image image = rect.gameObject.AddComponent<Image>();
-        image.color = color;
-        image.raycastTarget = true;
-
-        Shadow shadow = rect.gameObject.AddComponent<Shadow>();
-        shadow.effectColor = new Color(0f, 0f, 0f, 0.26f);
-        shadow.effectDistance = new Vector2(8f, -8f);
-
-        return rect;
-    }
-
-    private RectTransform CreateRect(string name, Transform parent)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform));
-        go.transform.SetParent(parent, false);
-        go.layer = parent.gameObject.layer;
-
-        RectTransform rect = go.GetComponent<RectTransform>();
-        rect.localScale = Vector3.one;
-        return rect;
-    }
-
-    private TMP_Text CreateText(string name, Transform parent, string value, float fontSize, FontStyles style, TextAlignmentOptions alignment, Color color)
-    {
-        GameObject go = new GameObject(name, typeof(RectTransform), typeof(TextMeshProUGUI));
-        go.transform.SetParent(parent, false);
-        go.layer = parent.gameObject.layer;
-
-        TMP_Text text = go.GetComponent<TextMeshProUGUI>();
-        text.font = _fontAsset;
-        text.text = value;
-        text.fontSize = fontSize;
-        text.fontStyle = style;
-        text.alignment = alignment;
-        text.color = color;
-        text.textWrappingMode = TextWrappingModes.Normal;
-        text.raycastTarget = false;
-
-        return text;
-    }
-
-    private static void Stretch(RectTransform rect, Vector2 anchorMin, Vector2 anchorMax, Vector2 offsetMin, Vector2 offsetMax)
-    {
-        rect.anchorMin = anchorMin;
-        rect.anchorMax = anchorMax;
-        rect.offsetMin = offsetMin;
-        rect.offsetMax = offsetMax;
+        GameObject child = FindChildObject(objectName);
+        return child != null ? child.GetComponent<T>() : null;
     }
 }

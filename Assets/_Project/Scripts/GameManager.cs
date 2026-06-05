@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     private const string SCENE_SHOP = "Shop";
     private const string SCENE_GAME_OVER = "GameOver";
     private const string SCENE_VICTORY = "Victory";
+    private const string PAUSE_MENU_PREFAB_PATH = "PauseMenuController";
 
     private static readonly HashSet<string> PauseScenes = new HashSet<string>
     {
@@ -327,7 +328,13 @@ public class GameManager : MonoBehaviour
         if (FindFirstObjectByType<PauseMenuController>() != null)
             return;
 
-        GameObject go = new GameObject("PauseMenuController");
-        go.AddComponent<PauseMenuController>();
+        PauseMenuController prefab = Resources.Load<PauseMenuController>(PAUSE_MENU_PREFAB_PATH);
+        if (prefab == null)
+        {
+            Debug.LogError("GameManager: PauseMenuController prefab не найден в Resources.");
+            return;
+        }
+
+        Instantiate(prefab);
     }
 }
