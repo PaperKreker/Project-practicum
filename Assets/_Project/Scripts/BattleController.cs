@@ -34,6 +34,7 @@ public class BattleController : MonoBehaviour
     private int _enemyHp;
     private Deck _deck;
     private bool _battleOver;
+    private bool _hasPlayerAttackedInTutorial = false;
 
     public struct State
     {
@@ -172,6 +173,19 @@ public class BattleController : MonoBehaviour
                 mult += s.BonusMultiplier(_ctx, result);
             }
             damage = Mathf.RoundToInt((damage + bonus) * mult * _difficultyModifiers.PlayerDamageMultiplier);
+        }
+
+        if (TutorialManager.Instance != null && TutorialManager.Instance.IsTutorialActive)
+        {
+            if (!_hasPlayerAttackedInTutorial)
+            {
+                _hasPlayerAttackedInTutorial = true;
+
+                if (damage >= _enemyHp)
+                {
+                    damage = Mathf.Max(0, _enemyHp - 1);
+                }
+            }
         }
 
         _enemyHp -= damage;
