@@ -86,7 +86,7 @@ public class SigilTheSun : Sigil
 public class SigilIsolation : Sigil
 {
     public override string Name => "Изоляция";
-    public override string Description => "Старшая карта даёт +20 урона";
+    public override string Description => "Соло даёт +20 урона";
     public override int Cost => 8;
     public override SigilType Type => SigilType.Damage;
 
@@ -97,7 +97,7 @@ public class SigilIsolation : Sigil
 public class SigilDyadic : Sigil
 {
     public override string Name => "Двойная связь";
-    public override string Description => "Пара даёт +12 урона, две пары +24, фулл-хаус +12.";
+    public override string Description => "Дуэт даёт +12 урона, квартет +24, крепость +12.";
     public override int Cost => 9;
     public override SigilType Type => SigilType.Damage;
 
@@ -113,7 +113,7 @@ public class SigilDyadic : Sigil
 public class SigilTriadic : Sigil
 {
     public override string Name => "Триада";
-    public override string Description => "Атаки с сетом получают +40 урона.";
+    public override string Description => "Атаки с \"Триадой\" получают +40 урона.";
     public override int Cost => 10;
     public override SigilType Type => SigilType.Damage;
 
@@ -124,7 +124,7 @@ public class SigilTriadic : Sigil
 public class SigilAlignment : Sigil
 {
     public override string Name => "Линия";
-    public override string Description => "Атаки со стритом получают +32.";
+    public override string Description => "Атаки с \"Рядом\" получают +32.";
     public override int Cost => 9;
     public override SigilType Type => SigilType.Damage;
 
@@ -135,7 +135,7 @@ public class SigilAlignment : Sigil
 public class SigilFlow : Sigil
 {
     public override string Name => "Флоу";
-    public override string Description => "Атаки с флешем получают +45 урона.";
+    public override string Description => "Атаки с \"Потоком\" получают +45 урона.";
     public override int Cost => 10;
     public override SigilType Type => SigilType.Damage;
 

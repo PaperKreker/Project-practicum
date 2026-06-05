@@ -207,16 +207,16 @@ public class BattleView : MonoBehaviour
     // Display name for combo types
     private static string ComboDisplayName(ComboType t) => t switch
     {
-        ComboType.High => "Старшая карта",
-        ComboType.Pair => "Пара",
-        ComboType.TwoPair => "Две пары",
-        ComboType.Set => "Сет",
-        ComboType.FOK => "Каре",
-        ComboType.Straight => "Стрит",
-        ComboType.Flush => "Флеш",
-        ComboType.FullHouse => "Фулл хаус",
-        ComboType.StraightFlush => "Стрит флеш",
-        ComboType.RoyalFlush => "Флеш рояль",
+        ComboType.High => "Соло",
+        ComboType.Pair => "Дуэт",
+        ComboType.TwoPair => "Квартет",
+        ComboType.Set => "Триада",
+        ComboType.FOK => "Цитадель",
+        ComboType.Straight => "Ряд",
+        ComboType.Flush => "Поток",
+        ComboType.FullHouse => "Крепость",
+        ComboType.StraightFlush => "Катаклизм",
+        ComboType.RoyalFlush => "Fablehand",
         _ => "?"
     };
 }
