@@ -12,6 +12,8 @@ public class MainMenuController : MonoBehaviour
 
     private void Start()
     {
+        Application.targetFrameRate = 120;
+
         ResolveMenuButtons();
         WireContinueButton();
         RefreshContinueButton();
